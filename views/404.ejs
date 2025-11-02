@@ -1,0 +1,16 @@
+<%- include("./partials/head") %>
+<body>
+  <div class="page">
+    <%- include("./partials/header") %>
+    <%- include("./partials/nav") %>
+
+    <main id="main">
+      <h1 class="welcome">404 – Not Found</h1>
+      <p>We couldn’t find “<code><%= url %></code>”.</p>
+      <p><a class="btn-primary" href="/">Go Home</a></p>
+    </main>
+
+    <%- include("./partials/footer") %>
+  </div>
+  <script src="/js/App.js" defer></script>
+</body>

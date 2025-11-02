@@ -1,6 +1,453 @@
-/******* Change Box Model ***************/
+/* =========================================
+   CSE Motors — Pixel-match styles
+   Mobile-first; 1 desktop MQ at 960px
+   ========================================= */
+
+/* Reset-ish */
 *,
-*:before,
-*:after {
-  box-sizing: border-box;
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  line-height: 1.55;
+  color: #101418;
+
+  /* Checkerboard image background */
+  background: url("/images/site/checkerboard.jpg") repeat center;
+  background-size: 700px 700px; /* adjust to taste */
+}
+
+/* Media should never overflow the container */
+img, video, svg, canvas { max-width: 100%; height: auto; display: block; }
+
+/* ===== Accessibility: Skip link ===== */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+}
+.skip-link:focus {
+  left: 1rem; top: 1rem;
+  background: #fff; color: #0a2848;
+  padding: .5rem .75rem; border-radius: .5rem;
+  outline: 3px solid #00c2ff;
+}
+
+/* ===== Page container ===== */
+.page {
+  width: min(980px, 100%);
+  margin: 16px auto;
+  background: #fff;
+  border: 4px solid #78d0ff;
+  border-radius: 14px;
+  box-shadow: 0 14px 34px rgba(0,0,0,.18);
+  overflow: clip;
+}
+
+/* ===== Header ===== */
+.site-header .brand-row {
+  display: grid;
+  grid-template-columns: 1fr auto; /* brand | account */
+  align-items: center;
+  gap: .75rem;
+  padding: 14px 16px 8px;
+}
+.brand {
+  font-family: Raleway, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.05rem, 6vw, 2.4rem);
+  line-height: 1;
+  margin: 0;
+  color: #0c1022;
+}
+.brand span { color: #2c63ff; }
+.account-link {
+  justify-self: end;
+  text-decoration: none;
+  font-size: .95rem;
+  color: #2a3656;
+}
+.account-link:hover,
+.account-link:focus-visible { text-decoration: underline; }
+
+.nav-toggle { display: none; }
+
+/* ===== Navigation ===== */
+.site-nav {
+  background: #2b2e43;
+  overflow-x: hidden;
+}
+
+.nav-list {
+  list-style: none;
+  margin: 0;
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;              /* wraps on small screens (no cut-off) */
+  gap: 12px 18px;               /* more space between pills */
+  white-space: normal;
+}
+
+.nav-list li { flex: 0 0 auto; }
+
+.nav-list a {
+  display: inline-block;
+  text-align: center;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: #1f2133;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: clamp(13px, 3.5vw, 15px);
+  letter-spacing: 0.1px;
+  box-shadow: 0 2px 0 rgba(0,0,0,.25) inset;
+}
+.nav-list a:hover { filter: brightness(1.08); }
+.nav-list a:focus-visible { outline: 3px solid #00c2ff; }
+.nav-list a[aria-current="page"] { outline: 3px solid #78d0ff; }
+
+/* Ultra-narrow devices: make pills extra compact */
+@media (max-width: 360px) {
+  .nav-list { gap: 8px 10px; padding: 8px 10px; }
+  .nav-list a { padding: 7px 12px; font-size: 13px; }
+}
+
+/* ===== Main ===== */
+main { padding: 0 16px 18px; }
+.welcome {
+  font-family: Raleway, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.35rem, 4.6vw, 1.75rem);
+  margin: 14px 0 14px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  position: relative;
+  background: #eef5ff;  /* light blue pane */
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.hero img { width: 100%; height: auto; display: block; }
+
+/* ===== Callout (desktop base) ===== */
+.callout {
+  position: absolute;
+  top: 9%;
+  left: 5%;
+  width: clamp(240px, 32vw, 300px);
+  background: rgba(0,190,238,0.85); /* semi-transparent cyan desktop */
+  color: #ffffff;                   /* readable text on cyan */
+  padding: 14px 16px 18px;
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+}
+.callout h2 {
+  margin: 0 0 6px;
+  font: 800 1.06rem/1.18 Raleway, system-ui, sans-serif;
+  letter-spacing: 0.2px;
+  color: #073c7a;                   /* title pop */
+}
+.callout .features {
+  list-style: disc;
+  margin: 0 0 10px 18px;
+  padding: 0;
+  line-height: 1.25;
+}
+.callout .features li { color: #ffffff; opacity: 0.95; }
+
+/* ===== Primary button (desktop base) ===== */
+.btn-primary {
+  display: inline-block;
+  padding: 9px 14px;
+  background: rgba(10,39,73,0.88);  /* translucent navy */
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.22);
+  margin-top: 10px;
+}
+.btn-primary:focus-visible {
+  outline: 3px solid #031424;
+  box-shadow: 0 0 0 4px #78d0ff;
+}
+
+/* ===== Columns (mobile first) ===== */
+.columns {
+  display: grid;
+  gap: 18px;
+  margin-top: 14px;
+}
+/* Order: Reviews first on mobile */
+.reviews { order: 1; }
+.upgrades { order: 2; }
+
+.columns h2 {
+  font-family: Raleway, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.25rem;
+  margin: 0 0 12px;
+}
+
+/* Reviews */
+.reviews ul { margin: 6px 0 0; padding-left: 1.1rem; }
+.reviews li { margin: 10px 0; }
+
+/* Upgrades grid */
+.upgrades .cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.card {
+  background: #09b6d1;
+  border-radius: 10px;
+  padding: 8px;
+  text-align: center;
+  text-decoration: none;
+  color: #0a1022;
+  box-shadow: 0 10px 20px rgba(0,0,0,.12);
+}
+.card img { border-radius: 8px; }
+.card span {
+  display:inline-block; margin-top: 8px; font-weight: 700;
+  text-decoration: underline;
+}
+.card:focus-visible { outline: 3px solid #031424; box-shadow: 0 0 0 4px #78d0ff; }
+
+/* Footer */
+.site-footer {
+  border-top: 1px solid #e8eef7;
+  padding: 14px 16px 18px;
+  color: #3a435a;
+  font-size: .95rem;
+}
+
+/* ===== Desktop layout ===== */
+@media (min-width: 960px) {
+  .site-header .brand-row {
+    grid-template-columns: auto 1fr auto;  /* brand | spacer | account */
+    padding: 18px 20px 8px;
+  }
+
+  .site-nav { padding: 0; }
+  .nav-list {
+    padding: 12px 20px;
+    justify-content: center;     /* center pills on desktop */
+    gap: 14px 22px;              /* more space between pills */
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .nav-list a { padding: 10px 20px; }
+
+  main { padding: 0 20px 22px; }
+  .hero { margin-bottom: 14px; }
+  .callout { top: 12%; left: 10%; width: 260px; }
+
+  /* Two columns: Upgrades left, Reviews right */
+  .columns {
+    grid-template-columns: 1.1fr .9fr;
+    align-items: start;
+    gap: 22px;
+    margin-top: 16px;
+  }
+  .upgrades { order: 1; }
+  .reviews { order: 2; }
+}
+
+/* ===== Mobile hero: transparent left slab + vivid blue button ===== */
+@media (max-width: 600px) {
+  .hero { position: relative; }
+
+  .callout {
+    top: 10%;
+    left: 2.5%;
+    width: 58%;                        /* narrow slab over headlight */
+    background: rgba(0,190,238,0.42);  /* transparent cyan */
+    color: #062232;
+    padding: 10px 12px 14px;
+    border-radius: 6px;
+    box-shadow: none;
+    z-index: 1;
+  }
+  .callout h2 {
+    margin: 0 0 4px;
+    font-weight: 800;
+    font-size: 0.98rem;
+    color: #0b5bd3;
+    letter-spacing: 0.1px;
+  }
+  .callout .features {
+    margin: 0 0 8px 16px;
+    line-height: 1.25;
+  }
+  .callout .features li { color: #0b2840; }
+
+  .btn-primary {
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: #007bff;            
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 800;
+    box-shadow: 0 3px 10px rgba(0,0,0,.18);
+  }
+  .btn-primary:hover { background: #0069d9; }
+  .btn-primary:focus-visible {
+    outline: 3px solid #031424;
+    box-shadow: 0 0 0 3px #78d0ff;
+  }
+}
+
+.columns {
+  display: grid;
+  gap: 20px;
+  margin-top: 14px;
+}
+
+/* Side-by-side layout for desktop */
+@media (min-width: 960px) {
+  .columns {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 24px;
+  }
+
+  .upgrades, .reviews {
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+  }
+}
+/* =========================================
+   Pixel-match: Delorean Upgrades tiles
+   (Overrides placed at end for precedence)
+   ========================================= */
+
+/* Keep your 2x2 grid */
+.upgrades .cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 18px;
+}
+
+/* Card container: strip old look; center label beneath */
+.upgrades .card {
+  background: transparent;
+  padding: 0;
+  text-align: center;
+  text-decoration: none;
+  color: #0a1022;
+  box-shadow: none;
+  display: block;
+  border-radius: 0; /* the cyan tile has its own radius */
+}
+
+/* Fixed cyan rectangle with image aligned to the LEFT */
+.upgrades .card .thumb {
+  background: #09b6d1;
+  border-radius: 8px;
+  height: 96px;            /* rectangle height to match ref */
+  display: flex;
+  align-items: center;     /* vertical centering of image */
+  justify-content: flex-start;
+  padding-left: 10px;      /* space before the image */
+  overflow: hidden;
+}
+
+/* Image: fixed square inside the cyan rectangle */
+.upgrades .card .thumb img {
+  width: 68px;
+  height: 68px;
+  object-fit: contain;     /* do NOT crop */
+  border-radius: 6px;
+  display: block;
+}
+
+/* Blue, underlined label centered under the tile */
+.upgrades .card .label,
+.upgrades .card span {
+  display: block;
+  margin-top: 6px;
+  text-align: center;
+  font-weight: 700;
+  text-decoration: underline;
+  color: #2c63ff;
+  line-height: 1.1;
+  font-size: 0.92rem;
+}
+
+/* Reviews spacing to match screenshot rhythm */
+.reviews ul { margin: 6px 0 0; padding-left: 1.2rem; }
+.reviews li { margin: 10px 0; }
+
+/* Desktop: keep your side-by-side columns */
+@media (min-width: 960px) {
+  .columns {
+    grid-template-columns: 1.1fr .9fr; /* upgrades | reviews */
+    align-items: start;
+    gap: 22px;
+  }
+}
+
+/* =========================================
+   Alignment & visual refinement
+   ========================================= */
+
+/* Center upgrade images better inside the cyan box */
+.upgrades .card .thumb {
+  display: flex;
+  align-items: center;       /* vertically centered */
+  justify-content: center;   /* horizontally centered */
+  background: #09b6d1;
+  border-radius: 8px;
+  height: 96px;
+  overflow: hidden;
+}
+
+/* Keep image neat and proportional inside */
+.upgrades .card .thumb img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+  display: block;
+  border-radius: 6px;
+}
+
+/* Label styling (already consistent) */
+.upgrades .card .label,
+.upgrades .card span {
+  display: block;
+  margin-top: 6px;
+  text-align: center;
+  font-weight: 700;
+  text-decoration: underline;
+  color: #2c63ff;
+  line-height: 1.1;
+  font-size: 0.92rem;
+}
+
+/* Drop the reviews section slightly to align visually with upgrades */
+.reviews {
+  margin-top: 18px; /* adjust this value for exact balance */
+}
+
+/* Keep grid alignment on desktop */
+@media (min-width: 960px) {
+  .columns {
+    grid-template-columns: 1.1fr .9fr;
+    align-items: start;
+    gap: 22px;
+  }
 }
