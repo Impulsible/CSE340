@@ -38,3 +38,21 @@ To check your versions:
 ```bash
 node -v
 npm -v
+
+
+🔗 Important Links
+
+🌐 Live Site: https://cse340-p6g9.onrender.com/
+
+💻 GitHub Repository: https://github.com/Impulsible/CSE340.git
+
+🧑‍💻 Author
+
+CSE Motors Project
+Created by Impulsible for CSE340 Web Backend Development coursework.
+Built with ❤️ using Node.js, Express, and EJS.
+
+📜 License
+
+This project is licensed under the MIT License.
+You’re free to use, modify, and distribute it for educational purposes.
