@@ -19,10 +19,15 @@ body {
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   line-height: 1.55;
   color: #101418;
+  background: #fff; /* Default background for mobile */
+}
 
-  /* Checkerboard image background */
-  background: url("/images/site/checkerboard.jpg") repeat center;
-  background-size: 700px 700px; /* adjust to taste */
+/* Checkerboard background only for desktop */
+@media (min-width: 961px) {
+  body {
+    background: url("/images/site/checkerboard.jpg") repeat center;
+    background-size: 700px 700px;
+  }
 }
 
 /* Media should never overflow the container */
@@ -310,6 +315,7 @@ main { padding: 0 16px 18px; }
   }
 }
 
+/* Remove duplicate .columns rule and consolidate */
 .columns {
   display: grid;
   gap: 20px;
@@ -330,9 +336,9 @@ main { padding: 0 16px 18px; }
     border-radius: 10px;
   }
 }
+
 /* =========================================
    Pixel-match: Delorean Upgrades tiles
-   (Overrides placed at end for precedence)
    ========================================= */
 
 /* Keep your 2x2 grid */
@@ -351,18 +357,18 @@ main { padding: 0 16px 18px; }
   color: #0a1022;
   box-shadow: none;
   display: block;
-  border-radius: 0; /* the cyan tile has its own radius */
+  border-radius: 0;
 }
 
 /* Fixed cyan rectangle with image aligned to the LEFT */
 .upgrades .card .thumb {
   background: #09b6d1;
   border-radius: 8px;
-  height: 96px;            /* rectangle height to match ref */
+  height: 96px;
   display: flex;
-  align-items: center;     /* vertical centering of image */
+  align-items: center;
   justify-content: flex-start;
-  padding-left: 10px;      /* space before the image */
+  padding-left: 10px;
   overflow: hidden;
 }
 
@@ -370,7 +376,7 @@ main { padding: 0 16px 18px; }
 .upgrades .card .thumb img {
   width: 68px;
   height: 68px;
-  object-fit: contain;     /* do NOT crop */
+  object-fit: contain;
   border-radius: 6px;
   display: block;
 }
@@ -392,15 +398,6 @@ main { padding: 0 16px 18px; }
 .reviews ul { margin: 6px 0 0; padding-left: 1.2rem; }
 .reviews li { margin: 10px 0; }
 
-/* Desktop: keep your side-by-side columns */
-@media (min-width: 960px) {
-  .columns {
-    grid-template-columns: 1.1fr .9fr; /* upgrades | reviews */
-    align-items: start;
-    gap: 22px;
-  }
-}
-
 /* =========================================
    Alignment & visual refinement
    ========================================= */
@@ -408,8 +405,8 @@ main { padding: 0 16px 18px; }
 /* Center upgrade images better inside the cyan box */
 .upgrades .card .thumb {
   display: flex;
-  align-items: center;       /* vertically centered */
-  justify-content: center;   /* horizontally centered */
+  align-items: center;
+  justify-content: center;
   background: #09b6d1;
   border-radius: 8px;
   height: 96px;
@@ -425,7 +422,7 @@ main { padding: 0 16px 18px; }
   border-radius: 6px;
 }
 
-/* Label styling (already consistent) */
+/* Label styling */
 .upgrades .card .label,
 .upgrades .card span {
   display: block;
@@ -440,14 +437,5 @@ main { padding: 0 16px 18px; }
 
 /* Drop the reviews section slightly to align visually with upgrades */
 .reviews {
-  margin-top: 18px; /* adjust this value for exact balance */
-}
-
-/* Keep grid alignment on desktop */
-@media (min-width: 960px) {
-  .columns {
-    grid-template-columns: 1.1fr .9fr;
-    align-items: start;
-    gap: 22px;
-  }
+  margin-top: 18px;
 }
