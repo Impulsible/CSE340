@@ -38,6 +38,50 @@ app.get("/", (req, res) => {
 });
 
 /* ***********************
+ * Additional Routes
+ *************************/
+app.get("/custom", (req, res) => {
+  res.render("custom", { title: "Custom Shop | CSE Motors" });
+});
+
+app.get("/sedan", (req, res) => {
+  res.render("sedan", { title: "Sedan | CSE Motors" });
+});
+
+app.get("/suv", (req, res) => {
+  res.render("suv", { title: "SUV | CSE Motors" });
+});
+
+app.get("/truck", (req, res) => {
+  res.render("truck", { title: "Truck | CSE Motors" });
+});
+
+app.get("/account", (req, res) => {
+  res.render("account", { title: "My Account | CSE Motors" });
+});
+
+/* ***********************
+ * 404 Handler - Catch All
+ *************************/
+app.use((req, res) => {
+  res.status(404).render("404", { 
+    title: "Page Not Found | CSE Motors",
+    url: req.originalUrl
+  });
+});
+
+/* ***********************
+ * 500 Error Handler
+ *************************/
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render("500", { 
+    title: "Server Error | CSE Motors",
+    error: process.env.NODE_ENV === 'development' ? err : {}
+  });
+});
+
+/* ***********************
  * Local Server Information
  * Values from .env (environment) file
  *************************/
@@ -49,4 +93,5 @@ const host = process.env.HOST || "localhost";
  *************************/
 app.listen(port, () => {
   console.log(`🚗 CSE Motors running at http://${host}:${port}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
