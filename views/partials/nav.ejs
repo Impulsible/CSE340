@@ -1,9 +1,10 @@
 <nav id="site-nav" class="site-nav" aria-label="Primary">
   <ul class="nav-list">
-    <li><a href="/" aria-current="<%= (title||'').startsWith('CSE Motors') ? 'page' : null %>">Home</a></li>
-    <li><a href="/custom" aria-current="<%= (title||'').startsWith('Custom') ? 'page' : null %>">Custom</a></li>
-    <li><a href="/sedan" aria-current="<%= (title||'').startsWith('Sedan') ? 'page' : null %>">Sedan</a></li>
-    <li><a href="/suv" aria-current="<%= (title||'').startsWith('SUV') ? 'page' : null %>">SUV</a></li>
-    <li><a href="/truck" aria-current="<%= (title||'').startsWith('Truck') ? 'page' : null %>">Truck</a></li>
+    <li><a href="/" <%= (title||'').startsWith('CSE Motors') ? 'aria-current="page"' : '' %>>Home</a></li>
+    <li><a href="/custom" <%= (title||'').startsWith('Custom') ? 'aria-current="page"' : '' %>>Custom</a></li>
+    <li><a href="/sedan" <%= (title||'').startsWith('Sedan') ? 'aria-current="page"' : '' %>>Sedan</a></li>
+    <li><a href="/suv" <%= (title||'').startsWith('SUV') ? 'aria-current="page"' : '' %>>SUV</a></li>
+    <li><a href="/truck" <%= (title||'').startsWith('Truck') ? 'aria-current="page"' : '' %>>Truck</a></li>
+    <li><a href="/account" <%= (title||'').startsWith('My Account') ? 'aria-current="page"' : '' %>>Account</a></li>
   </ul>
 </nav>
