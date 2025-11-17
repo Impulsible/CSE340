@@ -1,67 +1,68 @@
 <nav id="site-nav" class="site-nav" aria-label="Primary">
   <ul class="nav-list">
 
+    <% 
+      const homeActive = title && title.startsWith('CSE Motors');
+      const customActive = title && title.startsWith('Custom');
+      const sedanActive = title && title.startsWith('Sedan');
+      const suvActive = title && title.startsWith('SUV');
+      const truckActive = title && title.startsWith('Truck');
+      const accountActive = title && title.startsWith('My Account');
+    %>
+
+    <!-- Home -->
     <li>
       <a href="/"
-         class="<%= title && title.startsWith('CSE Motors') ? 'current-page' : '' %>"
-         <%= title && title.startsWith('CSE Motors') ? 'aria-current="page"' : '' %>>
+         class="<%= homeActive ? 'current-page' : '' %>"
+         <%= homeActive ? 'aria-current="page"' : '' %>>
         Home
       </a>
     </li>
 
+    <!-- Custom Shop -->
     <li>
       <a href="/custom"
-         class="<%= title && title.startsWith('Custom') ? 'current-page' : '' %>"
-         <%= title && title.startsWith('Custom') ? 'aria-current="page"' : '' %>>
+         class="<%= customActive ? 'current-page' : '' %>"
+         <%= customActive ? 'aria-current="page"' : '' %>>
         Custom
       </a>
     </li>
 
+    <!-- Sedan -->
     <li>
       <a href="/sedan"
-         class="<%= title && title.startsWith('Sedan') ? 'current-page' : '' %>"
-         <%= title && title.startsWith('Sedan') ? 'aria-current="page"' : '' %>>
+         class="<%= sedanActive ? 'current-page' : '' %>"
+         <%= sedanActive ? 'aria-current="page"' : '' %>>
         Sedan
       </a>
     </li>
 
+    <!-- SUV -->
     <li>
       <a href="/suv"
-         class="<%= title && title.startsWith('SUV') ? 'current-page' : '' %>"
-         <%= title && title.startsWith('SUV') ? 'aria-current="page"' : '' %>>
+         class="<%= suvActive ? 'current-page' : '' %>"
+         <%= suvActive ? 'aria-current="page"' : '' %>>
         SUV
       </a>
     </li>
 
+    <!-- Truck -->
     <li>
       <a href="/truck"
-         class="<%= title && title.startsWith('Truck') ? 'current-page' : '' %>"
-         <%= title && title.startsWith('Truck') ? 'aria-current="page"' : '' %>>
+         class="<%= truckActive ? 'current-page' : '' %>"
+         <%= truckActive ? 'aria-current="page"' : '' %>>
         Truck
       </a>
     </li>
 
+    <!-- Account -->
     <li>
       <a href="/account"
-         class="<%= title && title.startsWith('My Account') ? 'current-page' : '' %>"
-         <%= title && title.startsWith('My Account') ? 'aria-current="page"' : '' %>>
+         class="<%= accountActive ? 'current-page' : '' %>"
+         <%= accountActive ? 'aria-current="page"' : '' %>>
         Account
       </a>
     </li>
 
   </ul>
 </nav>
-<script>
-  // Highlight current page in navigation
-  document.addEventListener('DOMContentLoaded', function() {
-    const navLinks = document.querySelectorAll('#site-nav a');
-    const currentPath = window.location.pathname;
-
-    navLinks.forEach(link => {
-      if (link.getAttribute('href') === currentPath) {
-        link.classList.add('current-page');
-        link.setAttribute('aria-current', 'page');
-      }
-    });
-  });
-</script>
