@@ -1,21 +1,26 @@
-<%- include("./partials/head") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include("../partials/head") %>
+  <title><%= title %></title>
+</head>
 <body>
-  <div class="page">
-    <%- include("./partials/header") %>
-    <%- include("./partials/nav") %>
+  <%- nav %>
 
-    <main id="main">
-      <h1 class="welcome">Sedans</h1>
-      <p>Comfort, efficiency, and tech-forward safety features for your daily drive.</p>
-      <ul>
-        <li>Hybrid and EV options</li>
-        <li>Advanced driver assistance</li>
-        <li>12-year anti-corrosion warranty</li>
-      </ul>
-      <p><a class="btn-primary" href="/">Back to Home</a></p>
-    </main>
+  <main class="inv-listing">
+    <h1>Sedans</h1>
 
-    <%- include("./partials/footer") %>
-  </div>
-  <script src="/js/main.js" defer></script>
+    <ul class="vehicle-list">
+      <li class="vehicle-card">
+        <a href="/inv/detail/5">
+          <img src="/images/vehicles/crown-victoria-tn.jpg" alt="Ford Crown Victoria">
+          <h2>2013 Ford Crown Victoria</h2>
+        </a>
+      </li>
+    </ul>
+
+  </main>
+
+  <%- include("../partials/footer") %>
 </body>
+</html>

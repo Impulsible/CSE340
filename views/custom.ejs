@@ -1,16 +1,35 @@
-<%- include("./partials/head") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include("../partials/head") %>
+  <title><%= title %></title>
+</head>
 <body>
-  <div class="page">
-    <%- include("./partials/header") %>
-    <%- include("./partials/nav") %>
+  <%- nav %>
 
-    <main id="main">
-      <h1 class="welcome">Custom Shop</h1>
-      <p>From performance kits to bespoke interiors, our team builds the ride you imagine—safely and street-legal.</p>
-      <p><a class="btn-primary" href="/">Back to Home</a></p>
-    </main>
+  <main class="inv-listing">
+    <h1>Sport Cars</h1>
 
-    <%- include("./partials/footer") %>
-  </div>
-  <script src="/js/main.js" defer></script>
+    <ul class="vehicle-list">
+
+      <li class="vehicle-card">
+        <a href="/inv/detail/1">
+          <img src="/images/vehicles/camaro-tn.jpg" alt="Chevy Camaro">
+          <h2>2018 Chevy Camaro</h2>
+        </a>
+      </li>
+
+      <li class="vehicle-card">
+        <a href="/inv/detail/2">
+          <img src="/images/vehicles/mustang-tn.jpg" alt="Ford Mustang">
+          <h2>2020 Ford Mustang</h2>
+        </a>
+      </li>
+
+    </ul>
+
+  </main>
+
+  <%- include("../partials/footer") %>
 </body>
+</html>

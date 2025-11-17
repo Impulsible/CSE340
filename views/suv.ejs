@@ -1,16 +1,26 @@
-<%- include("./partials/head") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include("../partials/head") %>
+  <title><%= title %></title>
+</head>
 <body>
-  <div class="page">
-    <%- include("./partials/header") %>
-    <%- include("./partials/nav") %>
+  <%- nav %>
 
-    <main id="main">
-      <h1 class="welcome">SUVs</h1>
-      <p>Space for family and gear, with towing power and off-road capability.</p>
-      <p><a class="btn-primary" href="/">Back to Home</a></p>
-    </main>
+  <main class="inv-listing">
+    <h1>SUVs</h1>
 
-    <%- include("./partials/footer") %>
-  </div>
-  <script src="/js/main.js" defer></script>
+    <ul class="vehicle-list">
+      <li class="vehicle-card">
+        <a href="/inv/detail/4">
+          <img src="/images/vehicles/hummer-tn.jpg" alt="GM Hummer">
+          <h2>2016 GM Hummer</h2>
+        </a>
+      </li>
+    </ul>
+
+  </main>
+
+  <%- include("../partials/footer") %>
 </body>
+</html>
