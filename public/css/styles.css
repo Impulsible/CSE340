@@ -439,3 +439,8 @@ main { padding: 0 16px 18px; }
 .reviews {
   margin-top: 18px;
 }
+
+.current-page {
+  background-color: #555;
+  color: white;
+}
