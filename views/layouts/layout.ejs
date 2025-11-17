@@ -4,15 +4,17 @@
     <%- include("../partials/head") %>
   </head>
   <body>
-    <!-- Everything is inside .page so nothing floats on the checker bg -->
     <div class="page">
       <%- include("../partials/header") %>
       <%- include("../partials/nav") %>
+
       <main id="main">
         <%- body %>
       </main>
+
       <%- include("../partials/footer") %>
     </div>
+
     <script src="/js/main.js" defer></script>
   </body>
 </html>

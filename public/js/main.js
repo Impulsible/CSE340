@@ -55,3 +55,26 @@ app.use(async (err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
+
+    dropdownToggles.forEach(toggle => {
+      toggle.addEventListener('click', () => {
+        const isExpanded = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', !isExpanded);
+
+        // Close other dropdowns
+        dropdownToggles.forEach(other => {
+          if (other !== toggle) other.setAttribute('aria-expanded', 'false');
+        });
+      });
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.nav-dropdown')) {
+        dropdownToggles.forEach(toggle => toggle.setAttribute('aria-expanded', 'false'));
+      }
+    });
+  });

@@ -1,19 +1,26 @@
 <header class="site-header">
-  <!-- Hidden unless keyboard focus -->
+  <!-- Skip link for accessibility -->
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- Brand row -->
   <div class="brand-row">
     <p class="brand">CSE <span>Motors</span></p>
     <a class="account-link" href="/account" aria-label="My account">My Account</a>
   </div>
 
-  <!-- Main Navigation -->
+  <!-- Main Navigation (Dropdown-ready) -->
   <nav class="main-nav" aria-label="Main navigation">
     <ul class="nav-list">
+
+      <!-- Home -->
       <li>
-        <a href="/" class="current-page">Home</a>
+        <a href="/"
+           class="<%= title && title.startsWith('CSE Motors') ? 'current-page' : '' %>"
+           <%= title && title.startsWith('CSE Motors') ? 'aria-current="page"' : '' %>>
+          Home
+        </a>
       </li>
-      
+
       <!-- Inventory Dropdown -->
       <li class="nav-dropdown">
         <button class="nav-dropdown-toggle" aria-expanded="false" aria-controls="inventory-menu">
@@ -36,8 +43,15 @@
         </ul>
       </li>
 
-      <li><a href="/custom">Custom Shop</a></li>
-      
+      <!-- Custom Shop -->
+      <li>
+        <a href="/custom"
+           class="<%= title && title.startsWith('Custom') ? 'current-page' : '' %>"
+           <%= title && title.startsWith('Custom') ? 'aria-current="page"' : '' %>>
+          Custom Shop
+        </a>
+      </li>
+
       <!-- Assignment Testing Dropdown -->
       <li class="nav-dropdown">
         <button class="nav-dropdown-toggle" aria-expanded="false" aria-controls="testing-menu">
@@ -48,35 +62,19 @@
           <li><a href="/trigger-error">Test Error Handling</a></li>
         </ul>
       </li>
+
     </ul>
   </nav>
 </header>
-
 <script>
-  // Simple dropdown functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const dropdownToggles = document.querySelectorAll('.nav-dropdown-toggle');
-    
-    dropdownToggles.forEach(toggle => {
-      toggle.addEventListener('click', function() {
-        const isExpanded = this.getAttribute('aria-expanded') === 'true';
-        this.setAttribute('aria-expanded', !isExpanded);
-        
-        // Close other dropdowns
-        dropdownToggles.forEach(otherToggle => {
-          if (otherToggle !== toggle) {
-            otherToggle.setAttribute('aria-expanded', 'false');
-          }
-        });
-      });
-    });
-    
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-      if (!event.target.closest('.nav-dropdown')) {
-        dropdownToggles.forEach(toggle => {
-          toggle.setAttribute('aria-expanded', 'false');
-        });
+  // Dropdown toggle functionality
+  document.querySelectorAll('.nav-dropdown-toggle').forEach(button => {
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') === 'true' || false;
+      button.setAttribute('aria-expanded', !expanded);
+      const menu = document.getElementById(button.getAttribute('aria-controls'));
+      if (menu) {
+        menu.style.display = expanded ? 'none' : 'block';
       }
     });
   });

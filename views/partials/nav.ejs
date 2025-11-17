@@ -1,47 +1,67 @@
-<li>
-  <a href="/"
-     class="<%= title && title.startsWith('CSE Motors') ? 'current-page' : '' %>"
-     <%= title && title.startsWith('CSE Motors') ? 'aria-current="page"' : '' %>>
-    Home
-  </a>
-</li>
+<nav id="site-nav" class="site-nav" aria-label="Primary">
+  <ul class="nav-list">
 
-<li>
-  <a href="/custom"
-     class="<%= title && title.startsWith('Custom') ? 'current-page' : '' %>"
-     <%= title && title.startsWith('Custom') ? 'aria-current="page"' : '' %>>
-    Custom
-  </a>
-</li>
+    <li>
+      <a href="/"
+         class="<%= title && title.startsWith('CSE Motors') ? 'current-page' : '' %>"
+         <%= title && title.startsWith('CSE Motors') ? 'aria-current="page"' : '' %>>
+        Home
+      </a>
+    </li>
 
-<li>
-  <a href="/sedan"
-     class="<%= title && title.startsWith('Sedan') ? 'current-page' : '' %>"
-     <%= title && title.startsWith('Sedan') ? 'aria-current="page"' : '' %>>
-    Sedan
-  </a>
-</li>
+    <li>
+      <a href="/custom"
+         class="<%= title && title.startsWith('Custom') ? 'current-page' : '' %>"
+         <%= title && title.startsWith('Custom') ? 'aria-current="page"' : '' %>>
+        Custom
+      </a>
+    </li>
 
-<li>
-  <a href="/suv"
-     class="<%= title && title.startsWith('SUV') ? 'current-page' : '' %>"
-     <%= title && title.startsWith('SUV') ? 'aria-current="page"' : '' %>>
-    SUV
-  </a>
-</li>
+    <li>
+      <a href="/sedan"
+         class="<%= title && title.startsWith('Sedan') ? 'current-page' : '' %>"
+         <%= title && title.startsWith('Sedan') ? 'aria-current="page"' : '' %>>
+        Sedan
+      </a>
+    </li>
 
-<li>
-  <a href="/truck"
-     class="<%= title && title.startsWith('Truck') ? 'current-page' : '' %>"
-     <%= title && title.startsWith('Truck') ? 'aria-current="page"' : '' %>>
-    Truck
-  </a>
-</li>
+    <li>
+      <a href="/suv"
+         class="<%= title && title.startsWith('SUV') ? 'current-page' : '' %>"
+         <%= title && title.startsWith('SUV') ? 'aria-current="page"' : '' %>>
+        SUV
+      </a>
+    </li>
 
-<li>
-  <a href="/account"
-     class="<%= title && title.startsWith('My Account') ? 'current-page' : '' %>"
-     <%= title && title.startsWith('My Account') ? 'aria-current="page"' : '' %>>
-    Account
-  </a>
-</li>
+    <li>
+      <a href="/truck"
+         class="<%= title && title.startsWith('Truck') ? 'current-page' : '' %>"
+         <%= title && title.startsWith('Truck') ? 'aria-current="page"' : '' %>>
+        Truck
+      </a>
+    </li>
+
+    <li>
+      <a href="/account"
+         class="<%= title && title.startsWith('My Account') ? 'current-page' : '' %>"
+         <%= title && title.startsWith('My Account') ? 'aria-current="page"' : '' %>>
+        Account
+      </a>
+    </li>
+
+  </ul>
+</nav>
+<script>
+  // Highlight current page in navigation
+  document.addEventListener('DOMContentLoaded', function() {
+    const navLinks = document.querySelectorAll('#site-nav a');
+    const currentPath = window.location.pathname;
+
+    navLinks.forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('current-page');
+        link.setAttribute('aria-current', 'page');
+      }
+    });
+  });
+</script>
