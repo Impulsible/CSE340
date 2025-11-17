@@ -2,67 +2,25 @@
   <ul class="nav-list">
 
     <% 
-      const homeActive = title && title.startsWith('CSE Motors');
-      const customActive = title && title.startsWith('Custom');
-      const sedanActive = title && title.startsWith('Sedan');
-      const suvActive = title && title.startsWith('SUV');
-      const truckActive = title && title.startsWith('Truck');
-      const accountActive = title && title.startsWith('My Account');
+      // Define links and their active state
+      const links = [
+        { href: '/', label: 'Home', active: title && title.startsWith('CSE Motors') },
+        { href: '/custom', label: 'Custom', active: title && title.startsWith('Custom') },
+        { href: '/sedan', label: 'Sedan', active: title && title.startsWith('Sedan') },
+        { href: '/suv', label: 'SUV', active: title && title.startsWith('SUV') },
+        { href: '/truck', label: 'Truck', active: title && title.startsWith('Truck') },
+        { href: '/account', label: 'Account', active: title && title.startsWith('My Account') }
+      ];
     %>
 
-    <!-- Home -->
-    <li>
-      <a href="/"
-         class="<%= homeActive ? 'current-page' : '' %>"
-         <%= homeActive ? 'aria-current="page"' : '' %>>
-        Home
-      </a>
-    </li>
-
-    <!-- Custom Shop -->
-    <li>
-      <a href="/custom"
-         class="<%= customActive ? 'current-page' : '' %>"
-         <%= customActive ? 'aria-current="page"' : '' %>>
-        Custom
-      </a>
-    </li>
-
-    <!-- Sedan -->
-    <li>
-      <a href="/sedan"
-         class="<%= sedanActive ? 'current-page' : '' %>"
-         <%= sedanActive ? 'aria-current="page"' : '' %>>
-        Sedan
-      </a>
-    </li>
-
-    <!-- SUV -->
-    <li>
-      <a href="/suv"
-         class="<%= suvActive ? 'current-page' : '' %>"
-         <%= suvActive ? 'aria-current="page"' : '' %>>
-        SUV
-      </a>
-    </li>
-
-    <!-- Truck -->
-    <li>
-      <a href="/truck"
-         class="<%= truckActive ? 'current-page' : '' %>"
-         <%= truckActive ? 'aria-current="page"' : '' %>>
-        Truck
-      </a>
-    </li>
-
-    <!-- Account -->
-    <li>
-      <a href="/account"
-         class="<%= accountActive ? 'current-page' : '' %>"
-         <%= accountActive ? 'aria-current="page"' : '' %>>
-        Account
-      </a>
-    </li>
+    <% links.forEach(link => { %>
+      <li>
+        <a href="<%= link.href %>" 
+           <%= link.active ? 'class="current-page" aria-current="page"' : '' %>>
+          <%= link.label %>
+        </a>
+      </li>
+    <% }) %>
 
   </ul>
 </nav>
