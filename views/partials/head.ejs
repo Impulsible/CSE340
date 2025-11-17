@@ -1,58 +1,56 @@
-<meta charset="utf-8">
-<title><%= title || "CSE Motors" %></title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="CSE Motors – quality vehicles, car sales, and custom upgrades.">
-<meta name="keywords" content="CSE Motors, car sales, auto upgrades, dealership">
-<meta name="theme-color" content="#0d1117">
-<meta name="robots" content="index,follow">
-
-<!-- App identity -->
-<meta name="application-name" content="CSE Motors">
-<meta name="apple-mobile-web-app-title" content="CSE Motors">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="mobile-web-app-capable" content="yes">
-
-<!-- Favicons and Manifest -->
-<link rel="icon" type="image/png" sizes="32x32" href="/images/site/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/images/site/favicon-32x32.png">
-<link rel="apple-touch-icon" href="/images/site/icon.png">
-<link rel="manifest" href="/manifest.json">
-
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:title" content="CSE Motors – Quality Cars & Custom Upgrades">
-<meta property="og:description" content="Shop high-quality vehicles and premium upgrades.">
-<meta property="og:image" content="/images/vehicles/delorean-tn.jpg">
-<meta property="og:url" content="https://cse340-p6g9.onrender.com/">
-<meta property="og:site_name" content="CSE Motors">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="CSE Motors – Quality Cars & Custom Upgrades">
-<meta name="twitter:description" content="Shop high-quality vehicles and premium upgrades.">
-<meta name="twitter:image" content="/images/vehicles/delorean-tn.jpg">
-
-<!-- Fonts & Styles -->
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/styles.css" media="screen">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    
-    <!-- Your existing styles -->
-    <link rel="stylesheet" href="/css/styles.css">
-    
-    <!-- Navigation Styles -->
+    <!-- Required Metadata -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><%= title || "CSE Motors" %></title>
+
+    <meta name="description" content="CSE Motors – quality vehicles, car sales, and custom upgrades.">
+    <meta name="keywords" content="CSE Motors, car sales, auto upgrades, dealership">
+    <meta name="theme-color" content="#0d1117">
+    <meta name="robots" content="index,follow">
+
+    <!-- App identity -->
+    <meta name="application-name" content="CSE Motors">
+    <meta name="apple-mobile-web-app-title" content="CSE Motors">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Favicons and Manifest -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/site/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/site/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/images/site/icon.png">
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="CSE Motors – Quality Cars & Custom Upgrades">
+    <meta property="og:description" content="Shop high-quality vehicles and premium upgrades.">
+    <meta property="og:image" content="/images/vehicles/delorean-tn.jpg">
+    <meta property="og:url" content="https://cse340-p6g9.onrender.com/">
+    <meta property="og:site_name" content="CSE Motors">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CSE Motors – Quality Cars & Custom Upgrades">
+    <meta name="twitter:description" content="Shop high-quality vehicles and premium upgrades.">
+    <meta name="twitter:image" content="/images/vehicles/delorean-tn.jpg">
+
+    <!-- Fonts & Styles -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@600;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Main stylesheet -->
+    <link rel="stylesheet" href="/css/styles.css" media="screen">
+
+    <!-- Navigation Styles (inline) -->
     <style>
         .main-nav {
             background: #333;
             padding: 1rem 0;
         }
-        
+
         .nav-list {
             list-style: none;
             margin: 0;
@@ -61,7 +59,7 @@
             gap: 2rem;
             justify-content: center;
         }
-        
+
         .nav-list a {
             color: white;
             text-decoration: none;
@@ -69,17 +67,17 @@
             border-radius: 4px;
             transition: background-color 0.3s;
         }
-        
+
         .nav-list a:hover,
         .nav-list a.current-page {
             background-color: #555;
         }
-        
+
         /* Dropdown Styles */
         .nav-dropdown {
             position: relative;
         }
-        
+
         .nav-dropdown-toggle {
             background: none;
             border: none;
@@ -89,11 +87,11 @@
             cursor: pointer;
             font-size: inherit;
         }
-        
+
         .nav-dropdown-toggle:hover {
             background-color: #555;
         }
-        
+
         .nav-dropdown-menu {
             position: absolute;
             top: 100%;
@@ -108,22 +106,22 @@
             display: none;
             z-index: 1000;
         }
-        
+
         .nav-dropdown:hover .nav-dropdown-menu {
             display: block;
         }
-        
+
         .nav-dropdown-menu a {
             color: #333;
             display: block;
             padding: 0.5rem 1rem;
             text-decoration: none;
         }
-        
+
         .nav-dropdown-menu a:hover {
             background-color: #f5f5f5;
         }
-        
+
         .dropdown-header {
             padding: 0.5rem 1rem;
             font-weight: bold;
@@ -131,7 +129,7 @@
             font-size: 0.9rem;
             text-transform: uppercase;
         }
-        
+
         .dropdown-divider {
             height: 1px;
             background: #ddd;
