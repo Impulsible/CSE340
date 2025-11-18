@@ -20,24 +20,42 @@ async function getInventoryByClassificationId(classification_id) {
   }
 }
 
-async function getInventoryItemById(inventory_id) {
+// FIX: Rename this function to match what the controller expects
+async function getVehicleDetailById(inv_id) {  // Changed from getInventoryItemById
   try {
     const sql = `
-      SELECT inv.*, classification_name 
-      FROM inventory inv
-      INNER JOIN classification c ON inv.classification_id = c.classification_id
-      WHERE inv_id = $1
+      SELECT i.*, c.classification_name 
+      FROM public.inventory i
+      INNER JOIN public.classification c ON i.classification_id = c.classification_id
+      WHERE i.inv_id = $1
     `;
-    const data = await pool.query(sql, [inventory_id]);
+    const data = await pool.query(sql, [inv_id]);
     return data.rows[0];
   } catch (error) {
-    console.error("getInventoryItemById error: " + error);
+    console.error("getVehicleDetailById error: " + error);
     return null;
+  }
+}
+
+// Add this function for featured vehicles in navigation
+async function getFeaturedInventory() {
+  try {
+    const data = await pool.query(`
+      SELECT inv_id, inv_make, inv_model, inv_year 
+      FROM public.inventory 
+      ORDER BY inv_year DESC 
+      LIMIT 5
+    `);
+    return data.rows;
+  } catch (error) {
+    console.error("getFeaturedInventory error: " + error);
+    return [];
   }
 }
 
 module.exports = {
   getClassifications,
   getInventoryByClassificationId,
-  getInventoryItemById
+  getVehicleDetailById,  // Changed from getInventoryItemById
+  getFeaturedInventory   // Added this new function
 };

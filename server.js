@@ -16,6 +16,8 @@ const app = express();
  *************************/
 app.use(express.static("public"));
 app.use(expressLayouts);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.set("layout", "./layouts/layout");
 
@@ -56,60 +58,110 @@ app.get("/trigger-error", (req, res, next) => {
   next(error);
 });
 
-/* ***********************
- * Error Handlers
- *************************/
-
-// 404 Handler - MUST BE LAST
-app.use((req, res) => {
-  console.log(`❌ 404 - Route not found: ${req.originalUrl}`);
-  res.status(404).send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>404 - Page Not Found | CSE Motors</title>
-      <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        h1 { color: #dc3545; }
-        a { color: #007bff; text-decoration: none; }
-      </style>
-    </head>
-    <body>
-      <h1>404 - Page Not Found</h1>
-      <p>Sorry, the page "${req.originalUrl}" could not be found.</p>
-      <a href="/">Return to Home</a>
-    </body>
-    </html>
-  `);
+// DEBUG ROUTES - ADD THESE
+app.get('/debug-db', async (req, res) => {
+  try {
+    const pool = require('./database/');
+    
+    // Test classifications
+    const classifications = await pool.query('SELECT * FROM classification');
+    
+    // Test inventory
+    const inventory = await pool.query('SELECT * FROM inventory');
+    
+    // Test specific vehicle with ID 1
+    const vehicle1 = await pool.query('SELECT * FROM inventory WHERE inv_id = 1');
+    
+    res.json({
+      database_status: 'Connected',
+      classifications_count: classifications.rows.length,
+      inventory_count: inventory.rows.length,
+      vehicle_1_exists: vehicle1.rows.length > 0,
+      all_classifications: classifications.rows,
+      all_inventory: inventory.rows
+    });
+  } catch (error) {
+    res.json({
+      database_status: 'ERROR',
+      error: error.message
+    });
+  }
 });
 
-// Add this with your other routes
+app.get('/debug-vehicle/:id', async (req, res) => {
+  try {
+    const pool = require('./database/');
+    const vehicle = await pool.query('SELECT * FROM inventory WHERE inv_id = $1', [req.params.id]);
+    
+    res.json({
+      vehicle_id_requested: req.params.id,
+      vehicle_found: vehicle.rows.length > 0,
+      vehicle_data: vehicle.rows[0] || 'NOT FOUND'
+    });
+  } catch (error) {
+    res.json({
+      error: error.message
+    });
+  }
+});
+
+app.get('/test-vehicle/:id', async (req, res) => {
+  try {
+    const invModel = require('./models/inventory-model');
+    const vehicle = await invModel.getVehicleDetailById(req.params.id);
+    res.json({
+      vehicleFound: !!vehicle,
+      vehicle: vehicle
+    });
+  } catch (error) {
+    res.json({ error: error.message });
+  }
+});
+
 app.get("/test-vehicles", (req, res) => {
   res.render("test-vehicles", { title: "Test Vehicles | CSE Motors" });
 });
 
-// 500 Error Handler - MUST BE AFTER 404
+/* ***********************
+ * Error Handlers - FIXED ORDER
+ *************************/
+
+// 500 Error Handler - MUST COME BEFORE 404
 app.use((err, req, res, next) => {
   console.error('🔥 500 Error:', err.message);
   
-  res.status(err.status || 500).send(`
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>500 - Server Error | CSE Motors</title>
-      <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-        h1 { color: #dc3545; }
-        a { color: #007bff; text-decoration: none; }
-      </style>
-    </head>
-    <body>
-      <h1>500 - Server Error</h1>
-      <p>${err.message}</p>
-      <a href="/">Return to Home</a>
-    </body>
-    </html>
-  `);
+  let nav = '';
+  try {
+    const utilities = require('./utilities/');
+    nav = utilities.getNav ? utilities.getNav() : '<nav>Navigation</nav>';
+  } catch (e) {
+    nav = '<nav>Navigation</nav>';
+  }
+  
+  res.status(err.status || 500).render("errors/error", {
+    title: "500 - Server Error",
+    nav: nav,
+    message: err.message
+  });
+});
+
+// 404 Handler - MUST BE LAST
+app.use(async (req, res) => {
+  console.log(`❌ 404 - Route not found: ${req.originalUrl}`);
+  
+  let nav = '';
+  try {
+    const utilities = require('./utilities/');
+    nav = await utilities.getNav();
+  } catch (e) {
+    nav = '<nav>Navigation</nav>';
+  }
+  
+  res.status(404).render("errors/error", {
+    title: "404 - Page Not Found",
+    nav: nav,
+    message: `Sorry, the page "${req.originalUrl}" could not be found.`
+  });
 });
 
 /* ***********************
@@ -122,6 +174,8 @@ app.listen(port, () => {
   console.log(`🚗 CSE Motors running at http://${host}:${port}`);
   console.log(`Try these test URLs:`);
   console.log(`  Home: http://${host}:${port}/`);
+  console.log(`  Debug DB: http://${host}:${port}/debug-db`);
+  console.log(`  Debug Vehicle 1: http://${host}:${port}/debug-vehicle/1`);
   console.log(`  Trigger Error: http://${host}:${port}/trigger-error`);
   console.log(`  Test Vehicle: http://${host}:${port}/inv/detail/1`);
   console.log(`  Test 404: http://${host}:${port}/fake-page`);
