@@ -1,23 +1,35 @@
 <nav class="main-nav" aria-label="Main navigation">
   <ul class="nav-list">
 
-    <% 
-      // Define links and their active state
+    <%
+      const currentPath = currentPath || '/'; // from res.render
+
       const links = [
-        { href: '/', label: 'Home', active: title && title.startsWith('CSE Motors') },
-        { href: '/custom', label: 'Custom Shop (All Vehicles)', active: title && title.startsWith('Custom') },
-        { href: '/sport', label: 'Sport Cars', active: title && title.startsWith('Sport') },
-        { href: '/suv', label: 'SUVs', active: title && title.startsWith('SUV') },
-        { href: '/sedan', label: 'Sedans', active: title && title.startsWith('Sedan') },
-        { href: '/truck', label: 'Trucks', active: title && title.startsWith('Truck') },
-        { href: '/account', label: 'Account', active: title && title.startsWith('My Account') }
+        { href: '/',        label: 'Home' },
+        { href: '/custom',  label: 'Custom Shop (All Vehicles)' },
+        { href: '/sport',   label: 'Sport Cars' },
+        { href: '/suv',     label: 'SUVs' },
+        { href: '/sedan',   label: 'Sedans' },
+        { href: '/truck',   label: 'Trucks' },
+        { href: '/account', label: 'Account' }
       ];
+
+      function isActive(href) {
+        if (href === '/') {
+          return currentPath === '/';
+        }
+        // Active on the main section and any sub-path, e.g. /sedan, /sedan/something
+        return currentPath === href || currentPath.startsWith(href + '/');
+      }
     %>
 
-    <% links.forEach(link => { %>
+    <% links.forEach(link => { 
+         const active = isActive(link.href);
+    %>
       <li>
-        <a href="<%= link.href %>" 
-           <%= link.active ? 'class="current-page" aria-current="page"' : '' %>>
+        <a href="<%= link.href %>"
+           class="<%= active ? 'current-page' : '' %>"
+           <%= active ? 'aria-current="page"' : '' %>>
           <%= link.label %>
         </a>
       </li>
@@ -37,29 +49,3 @@
 
   </ul>
 </nav>
-
-<script>
-  // Dropdown toggle functionality
-  document.querySelectorAll('.nav-dropdown-toggle').forEach(button => {
-    button.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const expanded = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', !expanded);
-      
-      const menu = document.getElementById(button.getAttribute('aria-controls'));
-      if (menu) {
-        menu.style.display = expanded ? 'none' : 'block';
-      }
-    });
-  });
-
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.nav-dropdown-menu').forEach(menu => {
-      menu.style.display = 'none';
-    });
-    document.querySelectorAll('.nav-dropdown-toggle').forEach(button => {
-      button.setAttribute('aria-expanded', 'false');
-    });
-  });
-</script>
