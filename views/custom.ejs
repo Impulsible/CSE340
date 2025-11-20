@@ -1,35 +1,935 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include("../partials/head") %>
-  <title><%= title %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Vehicle Collection | CSE Motors</title>
+
+  <!-- Your main CSE Motors stylesheet -->
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ===== Premium Vehicle Collection (page-specific) ===== */
+
+    .premium-page {
+      padding: 14px 16px 20px;
+    }
+
+    .premium-header {
+      text-align: center;
+      margin-bottom: 18px;
+      padding: 18px 16px 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #eef5ff, #dbeafe);
+      border: 1px solid #c4ddff;
+    }
+
+    .premium-title {
+      font-family: Raleway, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.55rem, 4.6vw, 1.95rem);
+      margin: 0 0 8px;
+      color: #0c1022;
+      text-align: center;
+    }
+
+    .premium-title span {
+      color: #2c63ff;
+    }
+
+    .premium-subtitle {
+      margin: 0;
+      font-size: 0.97rem;
+      color: #3a435a;
+      max-width: 34rem;
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    /* Classification Navigation */
+    .classification-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      padding: 16px;
+      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #e3edff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .classification-btn {
+      padding: 8px 16px;
+      border: 2px solid #2c63ff;
+      background: white;
+      color: #2c63ff;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+
+    .classification-btn:hover,
+    .classification-btn.active {
+      background: #2c63ff;
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(44, 99, 255, 0.25);
+    }
+
+    /* Vehicle grid - 3 columns horizontally */
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      justify-content: center;
+      align-items: start;
+    }
+
+    /* Card */
+    .vehicle-card {
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #e3edff;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      height: 100%;
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+      border-color: #b7d5ff;
+    }
+
+    /* Image area */
+    .vehicle-card .image-container {
+      height: 210px;
+      background: #eef5ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vehicle-card .vehicle-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.35s ease;
+    }
+
+    .vehicle-card:hover .vehicle-image {
+      transform: scale(1.04);
+    }
+
+    /* Badges */
+    .vehicle-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+      text-align: center;
+    }
+
+    .badge-sport { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+    .badge-suv { background: linear-gradient(135deg, #059669, #047857); }
+    .badge-sedan { background: linear-gradient(135deg, #6b7280, #4b5563); }
+    .badge-truck { background: linear-gradient(135deg, #d97706, #b45309); }
+    .badge-custom { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+
+    /* Card body */
+    .vehicle-info {
+      padding: 16px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-grow: 1;
+    }
+
+    .vehicle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      text-align: left;
+    }
+
+    .vehicle-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: Raleway, system-ui, sans-serif;
+      color: #0c1022;
+      margin: 0;
+      text-align: left;
+    }
+
+    .vehicle-price {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #059669;
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* Details pills */
+    .vehicle-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-start;
+    }
+
+    .detail-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #f3f6ff;
+      font-size: 0.85rem;
+      color: #3a435a;
+      text-align: center;
+    }
+
+    .detail-item i {
+      font-size: 0.8rem;
+      color: #2c63ff;
+    }
+
+    /* Description - Justified text */
+    .vehicle-description {
+      margin: 4px 0 10px;
+      font-size: 0.92rem;
+      color: #3a435a;
+      line-height: 1.55;
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+      flex-grow: 1;
+    }
+
+    /* CTA button */
+    .view-details {
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: #2c63ff;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      box-shadow: 0 7px 18px rgba(44, 99, 255, 0.28);
+      transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+      text-align: center;
+    }
+
+    .view-details i {
+      font-size: 0.85rem;
+    }
+
+    .view-details:hover {
+      background: #1e40af;
+      transform: translateY(-2px);
+      box-shadow: 0 9px 22px rgba(30, 64, 175, 0.35);
+    }
+
+    .view-details:focus-visible {
+      outline: 3px solid #00c2ff;
+      outline-offset: 2px;
+    }
+
+    /* Hidden state for filtering */
+    .hidden {
+      display: none;
+    }
+
+    /* Layout enhancements for responsive design */
+    @media (max-width: 1024px) {
+      .vehicle-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .vehicle-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .premium-page {
+        padding: 12px 12px 16px;
+      }
+      
+      .classification-nav {
+        padding: 12px;
+        gap: 6px;
+      }
+      
+      .classification-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .vehicle-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      
+      .premium-header {
+        padding: 14px 12px 16px;
+      }
+      
+      .vehicle-info {
+        padding: 14px 14px 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <%- nav %>
+  <a href="#premium-vehicles-heading" class="skip-link">Skip to main content</a>
 
-  <main class="inv-listing">
-    <h1>Sport Cars</h1>
+  <div class="page">
 
-    <ul class="vehicle-list">
+    <main class="premium-page" aria-labelledby="premium-vehicles-heading">
+      <section class="premium-section">
+        <header class="premium-header">
+          <h1 id="premium-vehicles-heading" class="premium-title">
+            Premium <span>Vehicle</span> Collection
+          </h1>
+          <p class="premium-subtitle">
+            Discover our exclusive range of premium vehicles, each meticulously selected for performance, style, and exceptional quality.
+          </p>
+        </header>
 
-      <li class="vehicle-card">
-        <a href="/inv/detail/1">
-          <img src="/images/vehicles/camaro-tn.jpg" alt="Chevy Camaro">
-          <h2>2018 Chevy Camaro</h2>
-        </a>
-      </li>
+        <nav class="classification-nav" aria-label="Vehicle categories">
+          <button class="classification-btn active" data-category="all">All Vehicles</button>
+          <button class="classification-btn" data-category="sport">Sport Cars</button>
+          <button class="classification-btn" data-category="suv">SUVs</button>
+          <button class="classification-btn" data-category="sedan">Sedans</button>
+          <button class="classification-btn" data-category="truck">Trucks</button>
+          <button class="classification-btn" data-category="custom">Custom</button>
+        </nav>
 
-      <li class="vehicle-card">
-        <a href="/inv/detail/2">
-          <img src="/images/vehicles/mustang-tn.jpg" alt="Ford Mustang">
-          <h2>2020 Ford Mustang</h2>
-        </a>
-      </li>
+        <section class="vehicle-grid" aria-label="Complete vehicle inventory">
+          <!-- SPORT CARS -->
+          <!-- Chevy Camaro (ID: 1) -->
+          <article class="vehicle-card" data-category="sport">
+            <div class="image-container">
+              <span class="vehicle-badge badge-sport">Sport</span>
+              <img src="/images/vehicles/camaro-tn.jpg" alt="2018 Chevy Camaro in black" class="vehicle-image">
+            </div>
 
-    </ul>
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2018 Chevy Camaro</h2>
+                <div class="vehicle-price">$25,000</div>
+              </div>
 
-  </main>
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>10,122 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Black</span>
+                </div>
+              </div>
 
-  <%- include("../partials/footer") %>
+              <p class="vehicle-description">
+                Experience the thrill of driving with this 2018 Chevy Camaro. With its powerful engine and sleek silver exterior, 
+                this sport edition delivers exceptional performance at an affordable price. Perfect for those who want to make 
+                a statement on the road while enjoying the reliability of a modern sports car with low mileage and premium features.
+              </p>
+
+              <a href="/inv/detail/1" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Ford Mustang (ID: 2) -->
+          <article class="vehicle-card" data-category="sport">
+            <div class="image-container">
+              <span class="vehicle-badge badge-sport">Sport</span>
+              <img src="/images/vehicles/wrangler-tn.jpg" alt="2020 Ford Mustang in Yellow" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2020 Ford Mustang</h2>
+                <div class="vehicle-price">$32,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>8,500 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Yellow</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The iconic 2020 Ford Mustang combines classic American muscle with modern technology. This vibrant red sports car 
+                features advanced safety systems, premium interior amenities, and a powerful engine that delivers exhilarating 
+                performance. With low mileage and meticulous maintenance, this Mustang offers both style and substance.
+              </p>
+
+              <a href="/inv/detail/2" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Lamborghini Aventador (ID: 7) -->
+          <article class="vehicle-card" data-category="sport">
+            <div class="image-container">
+              <span class="vehicle-badge badge-sport">Supercar</span>
+              <img src="/images/vehicles/adventador-tn.jpg" alt="2023 Lamborghini Adventador in White" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2023 Lamborghini Aventador</h2>
+                <div class="vehicle-price">$507,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>1,234 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Orange</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                Experience automotive excellence with the 2023 Lamborghini Aventador, a masterpiece of Italian engineering. 
+                This vibrant orange supercar features a powerful V12 engine, advanced aerodynamics, and cutting-edge technology 
+                that delivers unparalleled performance. With extremely low mileage and pristine condition, this Aventador represents 
+                the pinnacle of supercar design for discerning collectors.
+              </p>
+
+              <a href="/inv/detail/7" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- SUVs -->
+          <!-- GM Hummer (ID: 4) -->
+          <article class="vehicle-card" data-category="suv">
+            <div class="image-container">
+              <span class="vehicle-badge badge-suv">SUV</span>
+              <img src="/images/vehicles/hummer-tn.jpg" alt="2016 GM Hummer in yellow" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2016 GM Hummer</h2>
+                <div class="vehicle-price">$58,800</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>48,563 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Yellow</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2016 GM Hummer combines rugged capability with spacious comfort. This distinctive yellow SUV features impressive 
+                off-road capabilities while providing ample interior space for passengers and cargo. With its powerful engine and 
+                durable construction, this Hummer is perfect for adventurous families or outdoor enthusiasts who demand both 
+                performance and practicality in their vehicle.
+              </p>
+
+              <a href="/inv/detail/4" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Cadillac Escalade (ID: 10) -->
+          <article class="vehicle-card" data-category="suv">
+            <div class="image-container">
+              <span class="vehicle-badge badge-suv">Luxury SUV</span>
+              <img src="/images/vehicles/escalade-tn.jpg" alt="2023 Cadillac Escalade in black" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2023 Cadillac Escalade</h2>
+                <div class="vehicle-price">$89,990</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>3,450 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Black</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2023 Cadillac Escalade redefines luxury SUV standards with its sophisticated black exterior and premium amenities. 
+                This vehicle offers an exceptionally comfortable ride with advanced technology features, spacious interior with premium 
+                materials, and powerful performance that makes every journey a first-class experience for both driver and passengers.
+              </p>
+
+              <a href="/inv/detail/10" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Custom Surf Van (ID: 11) -->
+          <article class="vehicle-card" data-category="suv">
+            <div class="image-container">
+              <span class="vehicle-badge badge-suv">Adventure Van</span>
+              <img src="/images/vehicles/survan-tn.jpg" alt="2020 Custom Surf Van in blue and white" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2020 Custom Surf Van</h2>
+                <div class="vehicle-price">$68,500</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>23,450 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Blue/White</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                This 2020 Custom Surf Van is the perfect companion for beach adventures and road trips. Featuring a comfortable sleeping area, 
+                compact kitchenette, and specialized surfboard storage, this blue and white van has been thoughtfully designed for outdoor 
+                enthusiasts who value both functionality and style in their mobile adventure headquarters.
+              </p>
+
+              <a href="/inv/detail/11" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- SEDANS -->
+          <!-- Ford Crown Victoria (ID: 12) -->
+          <article class="vehicle-card" data-category="sedan">
+            <div class="image-container">
+              <span class="vehicle-badge badge-sedan">Sedan</span>
+              <img src="/images/vehicles/crwn-vic-tn.jpg" alt="2013 Ford Crown Victoria in white" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2013 Ford Crown Victoria</h2>
+                <div class="vehicle-price">$25,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>25,578 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>White</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2013 Ford Crown Victoria offers legendary reliability and spacious comfort in a classic sedan package. 
+                This white former police vehicle features durable construction and powerful performance, making it an excellent 
+                choice for those who value practicality and longevity in their daily driver or fleet vehicle.
+              </p>
+
+              <a href="/inv/detail/12" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- TRUCKS -->
+          <!-- Emergency Fire Truck (ID: 13) -->
+          <article class="vehicle-card" data-category="truck">
+            <div class="image-container">
+              <span class="vehicle-badge badge-truck">Emergency</span>
+              <img src="/images/vehicles/fire-truck-tn.jpg" alt="2021 Emergency Fire Truck in red" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2021 Emergency Fire Truck</h2>
+                <div class="vehicle-price">$650,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>8,765 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Red</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                This professional-grade 2021 Emergency Fire Truck is equipped with state-of-the-art firefighting technology and safety features. 
+                The bright red vehicle includes a powerful water pump and extensive hose systems, making it ready for immediate deployment 
+                in municipal fire departments or industrial fire protection services requiring reliable emergency response capabilities.
+              </p>
+
+              <a href="/inv/detail/13" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Mobile Mechanic Truck (ID: 14) -->
+          <article class="vehicle-card" data-category="truck">
+            <div class="image-container">
+              <span class="vehicle-badge badge-truck">Service</span>
+              <img src="/images/vehicles/mechanic-tn.jpg" alt="2022 Mobile Mechanic Truck in white" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2022 Mobile Mechanic Truck</h2>
+                <div class="vehicle-price">$85,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>12,340 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>White</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2022 Mobile Mechanic Truck is a fully-equipped service vehicle designed for professional automotive repair on the go. 
+                This white truck features comprehensive tool storage and diagnostic equipment, providing everything needed for efficient 
+                field service operations for automotive repair businesses, fleet maintenance teams, or roadside assistance services.
+              </p>
+
+              <a href="/inv/detail/14" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Grave Digger Monster Truck (ID: 15) -->
+          <article class="vehicle-card" data-category="truck">
+            <div class="image-container">
+              <span class="vehicle-badge badge-truck">Monster Truck</span>
+              <img src="/images/vehicles/monster-truck-tn.jpg" alt="2021 Grave Digger Monster Truck in black and green" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2021 Grave Digger Monster Truck</h2>
+                <div class="vehicle-price">$250,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>560 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Black/Green</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                Experience extreme power with the 2021 Grave Digger Monster Truck, featuring massive 66-inch tires and custom suspension. 
+                This black and green beast is equipped with a supercharged engine capable of incredible performance in monster truck shows, 
+                exhibitions, or promotional events where maximum visual impact and raw power are essential for thrilling audiences.
+              </p>
+
+              <a href="/inv/detail/15" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- CUSTOM VEHICLES -->
+          <!-- Tesla Model T (ID: 6) -->
+          <article class="vehicle-card" data-category="custom">
+            <div class="image-container">
+              <span class="vehicle-badge badge-custom">Classic</span>
+              <img src="/images/vehicles/model-t-tn.jpg" alt="1919 Ford Model T Touring in black" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">1919 Ford Model T Touring</h2>
+                <div class="vehicle-price">$24,500</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>8,120 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Gloss Black</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                A beautifully restored 1919 Ford Model T Touring, representing one of the most influential vehicles in automotive history. 
+                This Model-T-TN features elegant wooden-spoke wheels, a classic open-top touring body, and the timeless engineering that 
+                helped define early motoring. Its clean restoration and authentic components make it a standout choice for collectors.
+              </p>
+
+              <a href="/inv/detail/6" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Batmobile Custom (ID: 16) -->
+          <article class="vehicle-card" data-category="custom">
+            <div class="image-container">
+              <span class="vehicle-badge badge-custom">Custom</span>
+              <img src="/images/vehicles/batmobile-tn.jpg" alt="2021 Batmobile Custom in black" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2021 Batmobile Custom</h2>
+                <div class="vehicle-price">$65,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>2,987 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Black</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2021 Batmobile Custom offers a unique driving experience with its innovative design and special features. 
+                This black custom vehicle includes transforming capabilities and advanced technology systems that make it perfect 
+                for collectors, film productions, or promotional events where a distinctive and memorable vehicle presence is required.
+              </p>
+
+              <a href="/inv/detail/16" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Aero Car Concept (ID: 17) -->
+          <article class="vehicle-card" data-category="custom">
+            <div class="image-container">
+              <span class="vehicle-badge badge-custom">Concept</span>
+              <img src="/images/vehicles/aerocar-tn.jpg" alt="2022 Aero Car Concept in silver" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2022 Aero Car Concept</h2>
+                <div class="vehicle-price">$325,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>890 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Silver</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2022 Aero Car Concept represents cutting-edge automotive design with its revolutionary aerodynamic shape and advanced technology. 
+                This silver concept vehicle features innovative materials and engineering solutions that push the boundaries of what's possible 
+                in automotive design, making it an exceptional acquisition for design studios, collectors, or automotive museums.
+              </p>
+
+              <a href="/inv/detail/17" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Mystery Machine (ID: 18) -->
+          <article class="vehicle-card" data-category="custom">
+            <div class="image-container">
+              <span class="vehicle-badge badge-custom">Custom Van</span>
+              <img src="/images/vehicles/mystery-van-tn.jpg" alt="1978 Mystery Machine in green and blue" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">1978 Mystery Machine</h2>
+                <div class="vehicle-price">$125,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>45,670 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Green/Blue</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                This iconic 1978 Mystery Machine has been meticulously restored to its original psychedelic glory. 
+                The green and blue custom van features unique interior modifications and nostalgic charm that will 
+                delight fans and collectors alike, making it perfect for promotional events, film productions, or 
+                as a standout piece in any collection of pop culture memorabilia.
+              </p>
+
+              <a href="/inv/detail/18" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Custom Dog Mobile (ID: 19) -->
+          <article class="vehicle-card" data-category="custom">
+            <div class="image-container">
+              <span class="vehicle-badge badge-custom">Pet Vehicle</span>
+              <img src="/images/vehicles/dog-car-tn.jpg" alt="2022 Custom Dog Mobile in multi-color" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2022 Custom Dog Mobile</h2>
+                <div class="vehicle-price">$45,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>8,900 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Multi-color</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2022 Custom Dog Mobile is specially designed for pet owners who travel with their furry companions. 
+                This multi-color vehicle features secure kennels and climate control systems that ensure comfort and safety 
+                for pets during transportation, making it ideal for professional pet services, veterinary clinics, or 
+                dedicated pet owners who prioritize their animals' wellbeing during travel.
+              </p>
+
+              <a href="/inv/detail/19" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Classification functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const classificationBtns = document.querySelectorAll('.classification-btn');
+      const vehicleCards = document.querySelectorAll('.vehicle-card');
+      
+      classificationBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Remove active class from all buttons
+          classificationBtns.forEach(b => b.classList.remove('active'));
+          
+          // Add active class to clicked button
+          this.classList.add('active');
+          
+          const category = this.getAttribute('data-category');
+          
+          // Show/hide vehicles based on category
+          vehicleCards.forEach(card => {
+            if (category === 'all' || card.getAttribute('data-category') === category) {
+              card.classList.remove('hidden');
+            } else {
+              card.classList.add('hidden');
+            }
+          });
+        });
+      });
+    });
+  </script>
 </body>
 </html>

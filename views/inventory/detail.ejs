@@ -1,40 +1,631 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <%- include('../partials/head', {title: title}) %>
-    <style>
-        .vehicle-detail-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-        .vehicle-image img {
-            width: 100%;
-            height: auto;
-        }
-        .price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #28a745;
-        }
-        .mileage {
-            font-size: 1.1rem;
-        }
-        @media (min-width: 768px) {
-            .vehicle-detail-container {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %> | CSE Motors</title>
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <style>
+    /* ============================
+       Vehicle Detail – premium info
+       Scoped to this page
+       ============================ */
+
+    .vehicle-detail-wrapper {
+      margin-top: 18px;
+      margin-bottom: 18px;
+      background: radial-gradient(circle at top left, #f9fbff 0%, #eef5ff 45%, #f9fafb 100%);
+      border-radius: 14px;
+      border: 1px solid #d7e6ff;
+      padding: 18px 16px 20px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
+    }
+
+    @media (min-width: 960px) {
+      .vehicle-detail-wrapper {
+        margin-top: 20px;
+        margin-bottom: 22px;
+        padding: 22px 20px 24px;
+      }
+    }
+
+    .vehicle-detail-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .vehicle-detail-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2c63ff, #1d4ed8);
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+    }
+
+    .vehicle-detail-badge i {
+      font-size: 0.75rem;
+    }
+
+    .vehicle-detail-title {
+      font-family: Raleway, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.6rem, 4.6vw, 2.2rem);
+      margin: 0;
+      background: linear-gradient(135deg, #0f172a, #2c63ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.03em;
+    }
+
+    .vehicle-detail-subtitle {
+      font-size: 0.9rem;
+      color: #3a435a;
+      margin-top: 6px;
+      opacity: 0.95;
+    }
+
+    /* Layout: image + info */
+    .vehicle-detail-grid {
+      display: grid;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    @media (min-width: 768px) {
+      .vehicle-detail-grid {
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+        gap: 24px;
+      }
+    }
+
+    /* Image card */
+    .vehicle-image-card {
+      background: #eef5ff;
+      border-radius: 12px;
+      border: 1px solid #d3e4ff;
+      padding: 14px 14px 16px;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
+    }
+
+    .vehicle-image-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+      color: #1f2937;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .stock-tag,
+    .image-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .stock-tag {
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    .image-chip {
+      background: #e0f2fe;
+      color: #1d4ed8;
+    }
+
+    .stock-tag i,
+    .image-chip i {
+      font-size: 0.7rem;
+    }
+
+    .vehicle-image-container {
+      border-radius: 10px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #eff6ff 0%, #e5e7eb 100%);
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .vehicle-main-image {
+      width: 100%;
+      max-height: 340px;
+      object-fit: contain;
+      display: block;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+      opacity: 0;
+      transform: scale(1.02);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .vehicle-main-image.loaded {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* === Category highlight pill badges under image === */
+
+    .vehicle-category-highlights {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .highlight-pill {
+      flex: 1 1 140px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #1f2937;
+      text-align: center;
+      min-width: 0;
+      opacity: 0;
+      transform: translateY(4px);
+      animation: pillFadeUp 0.45s ease forwards;
+    }
+
+    .highlight-pill i {
+      font-size: 0.9rem;
+      color: #2563eb;
+    }
+
+    .highlight-pill.delay-1 {
+      animation-delay: 0.08s;
+    }
+
+    .highlight-pill.delay-2 {
+      animation-delay: 0.16s;
+    }
+
+    @keyframes pillFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .vehicle-image-footer {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: #4b5563;
+      flex-wrap: wrap;
+    }
+
+    .vehicle-image-footer span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .vehicle-image-footer i {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+
+    /* Info panel */
+    .vehicle-info-card {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e0e7ff;
+      padding: 18px 16px 18px;
+      box-shadow: 0 12px 26px rgba(15, 23, 42, 0.16);
+    }
+
+    @media (min-width: 960px) {
+      .vehicle-info-card {
+        padding: 22px 18px 20px;
+      }
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .vehicle-price-large {
+      font-size: 2.05rem;
+      font-weight: 800;
+      color: #059669;
+      letter-spacing: 0.03em;
+    }
+
+    .vehicle-price-note {
+      font-size: 0.8rem;
+      color: #6b7280;
+      text-align: right;
+      max-width: 200px;
+      line-height: 1.4;
+    }
+
+    .vehicle-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-bottom: 16px;
+      font-size: 0.86rem;
+      color: #4b5563;
+    }
+
+    .vehicle-meta-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #f3f4ff;
+    }
+
+    .vehicle-meta-row i {
+      font-size: 0.85rem;
+      color: #2563eb;
+    }
+
+    .vehicle-details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    @media (min-width: 600px) {
+      .vehicle-details-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    .detail-card {
+      background: #f9fafb;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 10px 8px;
+      text-align: center;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .detail-card:hover {
+      border-color: #78d0ff;
+      box-shadow: 0 10px 20px rgba(120, 208, 255, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .detail-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #6b7280;
+      margin-bottom: 3px;
+    }
+
+    .detail-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .vehicle-description {
+      position: relative;
+      background: #f9fafb;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 14px 12px 14px 14px;
+      margin-bottom: 16px;
+      color: #374151;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .vehicle-description::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #2c63ff, #78d0ff);
+    }
+
+    .vehicle-description h3 {
+      margin: 0 0 6px 4px;
+      font-size: 1rem;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .vehicle-description h3 i {
+      font-size: 0.9rem;
+      color: #2563eb;
+    }
+
+    .vehicle-description p {
+      margin: 0 0 0 4px;
+    }
+
+    .vehicle-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .vehicle-actions .btn-primary,
+    .vehicle-actions .btn-secondary {
+      flex: 1 1 180px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 0.94rem;
+      text-decoration: none;
+      white-space: nowrap;
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+    }
+
+    .vehicle-actions .btn-primary {
+      background: #2c63ff;
+      box-shadow: 0 8px 18px rgba(44, 99, 255, 0.4);
+      color: #fff;
+      border: none;
+    }
+
+    .vehicle-actions .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(44, 99, 255, 0.5);
+      background: #1e40af;
+    }
+
+    .vehicle-actions .btn-secondary {
+      background: #ffffff;
+      color: #2c63ff;
+      border: 2px solid #2c63ff;
+    }
+
+    .vehicle-actions .btn-secondary:hover {
+      background: #2c63ff;
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(44, 99, 255, 0.35);
+    }
+
+    @media (max-width: 480px) {
+      .vehicle-actions .btn-primary,
+      .vehicle-actions .btn-secondary {
+        font-size: 0.9rem;
+        padding: 10px 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <%- include('../partials/header') %>
-    
-    <main class="container">
-        <%- grid %>
-    </main>
+  <main id="main">
+    <section class="vehicle-detail-wrapper" aria-label="Vehicle details">
+      <header class="vehicle-detail-header">
+        <div class="vehicle-detail-badge">
+          <i class="fas fa-car-side"></i>
+          <%= vehicle.classification_name %>
+        </div>
+        <h1 class="vehicle-detail-title">
+          <%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>
+        </h1>
+        <p class="vehicle-detail-subtitle">
+          Premium listing · CSE Motors · Carefully inspected and ready to drive
+        </p>
+      </header>
 
-    <%- include('../partials/footer') %>
+      <div class="vehicle-detail-grid">
+        <!-- IMAGE SIDE -->
+        <article class="vehicle-image-card">
+          <div class="vehicle-image-header">
+            <span class="stock-tag">
+              <i class="fas fa-hashtag"></i>
+              Stock ID: <%= vehicle.inv_id %>
+            </span>
+            <span class="image-chip">
+              <i class="fas fa-camera"></i>
+              Actual vehicle
+            </span>
+          </div>
+
+          <div class="vehicle-image-container">
+            <img
+              src="<%= vehicle.inv_image %>"
+              alt="<%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
+              class="vehicle-main-image"
+              onload="this.classList.add('loaded')"
+              onerror="this.src='/images/placeholder-vehicle.jpg'; this.alt='Vehicle image not available'; this.classList.add('loaded');"
+            />
+          </div>
+
+          <!-- CATEGORY-AWARE PILL BADGES -->
+          <div class="vehicle-category-highlights">
+            <% if (vehicle.classification_name === "Sedan") { %>
+              <div class="highlight-pill">
+                <i class="fas fa-car-side" aria-hidden="true"></i>
+                <span>Smooth, comfort-focused daily driver</span>
+              </div>
+              <div class="highlight-pill delay-1">
+                <i class="fas fa-couch" aria-hidden="true"></i>
+                <span>Spacious cabin for relaxed commuting</span>
+              </div>
+            <% } else if (vehicle.classification_name === "Sport") { %>
+              <div class="highlight-pill">
+                <i class="fas fa-flag-checkered" aria-hidden="true"></i>
+                <span>Performance-tuned for sharp response</span>
+              </div>
+              <div class="highlight-pill delay-1">
+                <i class="fas fa-gauge-high" aria-hidden="true"></i>
+                <span>Engaging, driver-focused experience</span>
+              </div>
+            <% } else if (vehicle.classification_name === "SUV") { %>
+              <div class="highlight-pill">
+                <i class="fas fa-car" aria-hidden="true"></i>
+                <span>Versatile SUV for family and cargo</span>
+              </div>
+              <div class="highlight-pill delay-1">
+                <i class="fas fa-mountain" aria-hidden="true"></i>
+                <span>Ready for weekend trips & adventures</span>
+              </div>
+            <% } else if (vehicle.classification_name === "Truck") { %>
+              <div class="highlight-pill">
+                <i class="fas fa-truck-pickup" aria-hidden="true"></i>
+                <span>Built for towing and hauling confidence</span>
+              </div>
+              <div class="highlight-pill delay-1">
+                <i class="fas fa-screwdriver-wrench" aria-hidden="true"></i>
+                <span>Durable chassis for tough conditions</span>
+              </div>
+            <% } else if (vehicle.classification_name === "Custom") { %>
+              <div class="highlight-pill">
+                <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
+                <span>Unique custom build with standout style</span>
+              </div>
+              <div class="highlight-pill delay-1">
+                <i class="fas fa-screwdriver-wrench" aria-hidden="true"></i>
+                <span>Upgrades beyond standard factory spec</span>
+              </div>
+            <% } else { %>
+              <!-- Classic / Other -->
+              <div class="highlight-pill">
+                <i class="fas fa-medal" aria-hidden="true"></i>
+                <span>Classic collector vehicle with iconic styling</span>
+              </div>
+              <div class="highlight-pill delay-1">
+                <i class="fas fa-star" aria-hidden="true"></i>
+                <span>Ideal for shows, cruises & enthusiasts</span>
+              </div>
+            <% } %>
+          </div>
+
+          <div class="vehicle-image-footer">
+            <span>
+              <i class="fas fa-location-dot"></i>
+              View at CSE Motors showroom
+            </span>
+            <span>
+              <i class="fas fa-clock"></i>
+              Book a test drive today
+            </span>
+          </div>
+        </article>
+
+        <!-- INFO SIDE -->
+        <article class="vehicle-info-card">
+          <div class="price-row">
+            <div class="vehicle-price-large">
+              $<%= vehicle.inv_price.toLocaleString() %>
+            </div>
+            <div class="vehicle-price-note">
+              <i class="fas fa-info-circle"></i>
+              Price excludes tax, registration & optional warranty.
+            </div>
+          </div>
+
+          <div class="vehicle-meta-row">
+            <span>
+              <i class="fas fa-gauge-high"></i>
+              <%= vehicle.inv_miles.toLocaleString() %> miles
+            </span>
+            <span>
+              <i class="fas fa-palette"></i>
+              Exterior: <%= vehicle.inv_color %>
+            </span>
+            <span>
+              <i class="fas fa-tags"></i>
+              Category: <%= vehicle.classification_name %>
+            </span>
+          </div>
+
+          <div class="vehicle-details-grid">
+            <div class="detail-card">
+              <div class="detail-label">Year</div>
+              <div class="detail-value"><%= vehicle.inv_year %></div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Make</div>
+              <div class="detail-value"><%= vehicle.inv_make %></div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Model</div>
+              <div class="detail-value"><%= vehicle.inv_model %></div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Mileage</div>
+              <div class="detail-value"><%= vehicle.inv_miles.toLocaleString() %></div>
+            </div>
+          </div>
+
+          <div class="vehicle-description">
+            <h3>
+              <i class="fas fa-clipboard-list"></i>
+              Vehicle Description
+            </h3>
+            <p><%= vehicle.inv_description %></p>
+          </div>
+
+          <div class="vehicle-actions">
+            <a href="/" class="btn-secondary">
+              <i class="fas fa-home"></i>
+              Back to Home
+            </a>
+            <a href="/contact?vehicle=<%= vehicle.inv_id %>" class="btn-primary">
+              <i class="fas fa-envelope"></i>
+              Contact about this vehicle
+            </a>
+            <a href="/inv/type/<%= vehicle.classification_id %>" class="btn-secondary">
+              <i class="fas fa-arrow-left"></i>
+              View similar vehicles
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

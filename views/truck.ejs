@@ -1,16 +1,360 @@
-<%- include("./partials/head") %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Trucks Collection | CSE Motors</title>
+
+  <!-- Your main CSE Motors stylesheet -->
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ===== Premium Trucks Collection (page-specific) ===== */
+
+    .premium-page {
+      padding: 14px 16px 20px;
+    }
+
+    .premium-header {
+      text-align: center;
+      margin-bottom: 18px;
+      padding: 18px 16px 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 1px solid #fcd34d;
+    }
+
+    .premium-title {
+      font-family: Raleway, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.55rem, 4.6vw, 1.95rem);
+      margin: 0 0 8px;
+      color: #0c1022;
+    }
+
+    .premium-title span {
+      color: #d97706;
+    }
+
+    .premium-subtitle {
+      margin: 0;
+      font-size: 0.97rem;
+      color: #3a435a;
+      max-width: 34rem;
+      margin-inline: auto;
+    }
+
+    /* Vehicle grid */
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    /* Card */
+    .vehicle-card {
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #fde68a;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+      border-color: #fcd34d;
+    }
+
+    /* Image area */
+    .vehicle-card .image-container {
+      height: 210px;
+      background: #fffbeb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vehicle-card .vehicle-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.35s ease;
+    }
+
+    .vehicle-card:hover .vehicle-image {
+      transform: scale(1.04);
+    }
+
+    /* Badge */
+    .vehicle-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #d97706, #b45309);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Card body */
+    .vehicle-info {
+      padding: 16px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .vehicle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .vehicle-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: Raleway, system-ui, sans-serif;
+      color: #0c1022;
+      margin: 0;
+    }
+
+    .vehicle-price {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #059669;
+      white-space: nowrap;
+    }
+
+    /* Details pills */
+    .vehicle-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .detail-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #fffbeb;
+      font-size: 0.85rem;
+      color: #3a435a;
+    }
+
+    .detail-item i {
+      font-size: 0.8rem;
+      color: #d97706;
+    }
+
+    /* Description */
+    .vehicle-description {
+      margin: 4px 0 10px;
+      font-size: 0.92rem;
+      color: #3a435a;
+      line-height: 1.55;
+    }
+
+    /* CTA button */
+    .view-details {
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: #d97706;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      box-shadow: 0 7px 18px rgba(217, 119, 6, 0.28);
+      transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .view-details i {
+      font-size: 0.85rem;
+    }
+
+    .view-details:hover {
+      background: #b45309;
+      transform: translateY(-2px);
+      box-shadow: 0 9px 22px rgba(180, 83, 9, 0.35);
+    }
+
+    .view-details:focus-visible {
+      outline: 3px solid #00c2ff;
+      outline-offset: 2px;
+    }
+
+    /* Layout enhancements for wider screens */
+    @media (min-width: 720px) {
+      .vehicle-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 960px) {
+      .premium-page {
+        padding: 4px 20px 20px;
+      }
+
+      .premium-header {
+        margin-bottom: 20px;
+      }
+
+      .vehicle-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+    }
+  </style>
+</head>
 <body>
+  <a href="#premium-trucks-heading" class="skip-link">Skip to main content</a>
+
   <div class="page">
-    <%- include("./partials/header") %>
-    <%- include("./partials/nav") %>
 
-    <main id="main">
-      <h1 class="welcome">Trucks</h1>
-      <p>Work-ready payload, smart bed systems, and best-in-class durability.</p>
-      <p><a class="btn-primary" href="/">Back to Home</a></p>
+    <main class="premium-page" aria-labelledby="premium-trucks-heading">
+      <section class="premium-section">
+        <header class="premium-header">
+          <h1 id="premium-trucks-heading" class="premium-title">
+            Premium <span>Trucks</span> Collection
+          </h1>
+          <p class="premium-subtitle">
+            Discover powerful and versatile trucks built for work, adventure, and everything in between.
+          </p>
+        </header>
+
+        <section class="vehicle-grid" aria-label="Premium trucks inventory">
+          <!-- Emergency Fire Truck (ID: 13) -->
+          <article class="vehicle-card">
+            <div class="image-container">
+              <span class="vehicle-badge">Emergency</span>
+              <img src="/images/vehicles/fire-truck.jpg" alt="2021 Emergency Fire Truck in red" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2021 Emergency Fire Truck</h2>
+                <div class="vehicle-price">$650,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>8,765 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Red</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                This professional-grade 2021 Emergency Fire Truck is equipped with state-of-the-art firefighting technology and safety features. 
+                The bright red vehicle includes a powerful water pump and extensive hose systems.
+              </p>
+
+              <a href="/inv/detail/13" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Mobile Mechanic Truck (ID: 14) -->
+          <article class="vehicle-card">
+            <div class="image-container">
+              <span class="vehicle-badge">Service</span>
+              <img src="/images/vehicles/mechanic-tn.jpg" alt="2022 Mobile Mechanic Truck in white" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2022 Mobile Mechanic Truck</h2>
+                <div class="vehicle-price">$85,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>12,340 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>White</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2022 Mobile Mechanic Truck is a fully-equipped service vehicle designed for professional automotive repair on the go. 
+                This white truck features comprehensive tool storage and diagnostic equipment.
+              </p>
+
+              <a href="/inv/detail/14" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          <!-- Grave Digger Monster Truck (ID: 15) -->
+          <article class="vehicle-card">
+            <div class="image-container">
+              <span class="vehicle-badge">Monster Truck</span>
+              <img src="/images/vehicles/monster-truck-tn.jpg" alt="2021 Grave Digger Monster Truck in black and green" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2021 Grave Digger Monster Truck</h2>
+                <div class="vehicle-price">$250,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>560 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>Black/Green</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                Experience extreme power with the 2021 Grave Digger Monster Truck, featuring massive 66-inch tires and custom suspension. 
+                This black and green beast is equipped with a supercharged engine.
+              </p>
+
+              <a href="/inv/detail/15" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+        </section>
+      </section>
     </main>
-
-    <%- include("./partials/footer") %>
   </div>
-  <script src="/js/main.js" defer></script>
 </body>
+</html>

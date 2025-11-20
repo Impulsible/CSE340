@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Premium SUVs Collection | CSE Motors</title>
+  <title>Premium Sport Cars Collection | CSE Motors</title>
 
   <!-- Your main CSE Motors stylesheet -->
   <link rel="stylesheet" href="/css/styles.css">
@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
-    /* ===== Premium SUVs Collection (page-specific) ===== */
+    /* ===== Premium Sport Cars Collection (page-specific) ===== */
 
     .premium-page {
       padding: 14px 16px 20px;
@@ -23,8 +23,8 @@
       margin-bottom: 18px;
       padding: 18px 16px 20px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-      border: 1px solid #bbf7d0;
+      background: linear-gradient(135deg, #fff5f5, #fed7d7);
+      border: 1px solid #feb2b2;
     }
 
     .premium-title {
@@ -36,7 +36,7 @@
     }
 
     .premium-title span {
-      color: #059669;
+      color: #dc2626;
     }
 
     .premium-subtitle {
@@ -59,7 +59,7 @@
       background: #ffffff;
       border-radius: 14px;
       overflow: hidden;
-      border: 1px solid #dcfce7;
+      border: 1px solid #ffe4e6;
       box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10);
       display: flex;
       flex-direction: column;
@@ -69,13 +69,13 @@
     .vehicle-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
-      border-color: #bbf7d0;
+      border-color: #fecaca;
     }
 
     /* Image area */
     .vehicle-card .image-container {
       height: 210px;
-      background: #f0fdf4;
+      background: #fef2f2;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -106,7 +106,7 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: #ffffff;
-      background: linear-gradient(135deg, #059669, #047857);
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
       box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
     }
 
@@ -153,14 +153,14 @@
       gap: 6px;
       padding: 5px 10px;
       border-radius: 999px;
-      background: #f0fdf4;
+      background: #fef2f2;
       font-size: 0.85rem;
       color: #3a435a;
     }
 
     .detail-item i {
       font-size: 0.8rem;
-      color: #059669;
+      color: #dc2626;
     }
 
     /* Description */
@@ -181,12 +181,12 @@
       width: 100%;
       padding: 9px 12px;
       border-radius: 10px;
-      background: #059669;
+      background: #dc2626;
       color: #ffffff;
       text-decoration: none;
       font-weight: 800;
       font-size: 0.92rem;
-      box-shadow: 0 7px 18px rgba(5, 150, 105, 0.28);
+      box-shadow: 0 7px 18px rgba(220, 38, 38, 0.28);
       transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -195,9 +195,9 @@
     }
 
     .view-details:hover {
-      background: #047857;
+      background: #b91c1c;
       transform: translateY(-2px);
-      box-shadow: 0 9px 22px rgba(4, 120, 87, 0.35);
+      box-shadow: 0 9px 22px rgba(185, 28, 28, 0.35);
     }
 
     .view-details:focus-visible {
@@ -229,75 +229,39 @@
   </style>
 </head>
 <body>
-  <a href="#premium-suvs-heading" class="skip-link">Skip to main content</a>
+  <a href="#premium-sport-heading" class="skip-link">Skip to main content</a>
 
   <div class="page">
 
-    <main class="premium-page" aria-labelledby="premium-suvs-heading">
+    <main class="premium-page" aria-labelledby="premium-sport-heading">
       <section class="premium-section">
         <header class="premium-header">
-          <h1 id="premium-suvs-heading" class="premium-title">
-            Premium <span>SUVs</span> Collection
+          <h1 id="premium-sport-heading" class="premium-title">
+            Premium <span>Sport Cars</span> Collection
           </h1>
           <p class="premium-subtitle">
-            Discover rugged capability and spacious comfort with our premium SUV lineup, perfect for family adventures and outdoor exploration.
+            Experience the thrill of high-performance sports cars with unmatched speed, precision, and adrenaline-pumping excitement.
           </p>
         </header>
 
-        <section class="vehicle-grid" aria-label="Premium SUVs inventory">
-          <!-- GM Hummer (ID: 4) -->
+        <section class="vehicle-grid" aria-label="Premium sport cars inventory">
+          <!-- Chevy Camaro (ID: 1) -->
           <article class="vehicle-card">
             <div class="image-container">
-              <span class="vehicle-badge">SUV</span>
-              <img src="/images/vehicles/hummer.jpg" alt="2016 GM Hummer in yellow" class="vehicle-image">
+              <span class="vehicle-badge">Sport</span>
+              <img src="/images/vehicles/camaro-tn.jpg" alt="2018 Chevy Camaro in Black" class="vehicle-image">
             </div>
 
             <div class="vehicle-info">
               <div class="vehicle-header">
-                <h2 class="vehicle-title">2016 GM Hummer</h2>
-                <div class="vehicle-price">$58,800</div>
+                <h2 class="vehicle-title">2018 Chevy Camaro</h2>
+                <div class="vehicle-price">$25,000</div>
               </div>
 
               <div class="vehicle-details">
                 <div class="detail-item">
                   <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
-                  <span>48,563 miles</span>
-                </div>
-                <div class="detail-item">
-                  <i class="fas fa-palette" aria-hidden="true"></i>
-                  <span>Yellow</span>
-                </div>
-              </div>
-
-              <p class="vehicle-description">
-                The 2016 GM Hummer combines rugged capability with spacious comfort. This distinctive yellow SUV features impressive 
-                off-road capabilities while providing ample interior space for passengers and cargo.
-              </p>
-
-              <a href="/inv/detail/4" class="view-details">
-                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
-                <span>View Full Details</span>
-              </a>
-            </div>
-          </article>
-
-          <!-- Cadillac Escalade (ID: 10) -->
-          <article class="vehicle-card">
-            <div class="image-container">
-              <span class="vehicle-badge">Luxury SUV</span>
-              <img src="/images/vehicles/escalade.jpg" alt="2023 Cadillac Escalade in black" class="vehicle-image">
-            </div>
-
-            <div class="vehicle-info">
-              <div class="vehicle-header">
-                <h2 class="vehicle-title">2023 Cadillac Escalade</h2>
-                <div class="vehicle-price">$89,990</div>
-              </div>
-
-              <div class="vehicle-details">
-                <div class="detail-item">
-                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
-                  <span>3,450 miles</span>
+                  <span>10,122 miles</span>
                 </div>
                 <div class="detail-item">
                   <i class="fas fa-palette" aria-hidden="true"></i>
@@ -306,47 +270,84 @@
               </div>
 
               <p class="vehicle-description">
-                The 2023 Cadillac Escalade redefines luxury SUV standards with its sophisticated black exterior and premium amenities. 
-                This vehicle offers an exceptionally comfortable ride with advanced technology features.
+                Experience the thrill of driving with this 2018 Chevy Camaro. With its powerful engine and sleek black exterior, 
+                this sport edition delivers exceptional performance at an affordable price.
               </p>
 
-              <a href="/inv/detail/10" class="view-details">
+              <a href="/inv/detail/1" class="view-details">
                 <i class="fas fa-external-link-alt" aria-hidden="true"></i>
                 <span>View Full Details</span>
               </a>
             </div>
           </article>
 
-          <!-- Custom Surf Van (ID: 11) -->
+          <!-- Ford Mustang (ID: 2) -->
           <article class="vehicle-card">
             <div class="image-container">
-              <span class="vehicle-badge">Adventure Van</span>
-              <img src="/images/vehicles/survan-tn.jpg" alt="2020 Custom Surf Van in blue and white" class="vehicle-image">
+              <span class="vehicle-badge">Sport</span>
+              <img src="/images/vehicles/wrangler-tn.jpg" alt="2020 Ford Mustang in yellow" class="vehicle-image">
             </div>
 
             <div class="vehicle-info">
               <div class="vehicle-header">
-                <h2 class="vehicle-title">2020 Custom Surf Van</h2>
-                <div class="vehicle-price">$68,500</div>
+                <h2 class="vehicle-title">2020 Ford Mustang</h2>
+                <div class="vehicle-price">$32,000</div>
               </div>
 
               <div class="vehicle-details">
                 <div class="detail-item">
                   <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
-                  <span>23,450 miles</span>
+                  <span>8,500 miles</span>
                 </div>
                 <div class="detail-item">
                   <i class="fas fa-palette" aria-hidden="true"></i>
-                  <span>Blue/White</span>
+                  <span>Yellow</span>
                 </div>
               </div>
 
               <p class="vehicle-description">
-                This 2020 Custom Surf Van is the perfect companion for beach adventures and road trips. Featuring a comfortable sleeping area, 
-                compact kitchenette, and specialized surfboard storage.
+                The iconic 2020 Ford Mustang combines classic American muscle with modern technology. This vibrant yellow sports car 
+                features advanced safety systems and premium interior amenities.
               </p>
 
-              <a href="/inv/detail/11" class="view-details">
+              <a href="/inv/detail/2" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+
+          
+          <!-- Lamborghini Aventador (ID: 7) -->
+          <article class="vehicle-card">
+            <div class="image-container">
+              <span class="vehicle-badge">Supercar</span>
+              <img src="/images/vehicles/adventador-tn.jpg" alt="2023 Lamborghini Aventador in White" class="vehicle-image">
+            </div>
+
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2023 Lamborghini Aventador</h2>
+                <div class="vehicle-price">$507,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>1,234 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>White</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                Experience automotive excellence with the 2023 Lamborghini Aventador, a masterpiece of Italian engineering. 
+                This vibrant orange supercar features a powerful V12 engine and advanced aerodynamics.
+              </p>
+
+              <a href="/inv/detail/7" class="view-details">
                 <i class="fas fa-external-link-alt" aria-hidden="true"></i>
                 <span>View Full Details</span>
               </a>

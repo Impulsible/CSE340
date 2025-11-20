@@ -1,73 +1,49 @@
-const buildDetailView = async (data) => {
-  try {
-    const formattedPrice = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(data.inv_price);
+/* ***************************
+ *  Simple Navigation - No Database Calls
+ * ************************** */
+function getNav() {
+  return `
+    <nav class="main-nav" aria-label="Main navigation">
+      <ul class="nav-list">
+        <li><a href="/">Home</a></li>
+        <li><a href="/inv/type/1">Custom Shop</a></li>
+        <li><a href="/inv/type/2">Sport Cars</a></li>
+        <li><a href="/inv/type/3">SUVs</a></li>
+        <li><a href="/inv/type/4">Trucks</a></li>
+        <li><a href="/inv/type/5">Sedans</a></li>
+        <li><a href="/account">Account</a></li>
+      </ul>
+    </nav>
+  `;
+}
 
-    const formattedMiles = new Intl.NumberFormat('en-US').format(data.inv_miles);
+/* ***************************
+ *  Simple Vehicle Grid Builder
+ * ************************** */
+function buildClassificationGrid(vehicles) {
+  if (!vehicles || vehicles.length === 0) {
+    return '<div class="no-vehicles"><p>No vehicles found in this category.</p></div>';
+  }
 
-    return `
-      <div class="vehicle-detail-container">
-        <div class="vehicle-image">
-          <img src="${data.inv_image}" alt="${data.inv_make} ${data.inv_model}">
-        </div>
-        <div class="vehicle-info">
-          <h1>${data.inv_year} ${data.inv_make} ${data.inv_model}</h1>
-          <div class="price-mileage">
-            <p class="price">${formattedPrice}</p>
-            <p class="mileage">${formattedMiles} miles</p>
-          </div>
-          <div class="specifications">
-            <p><strong>Classification:</strong> ${data.classification_name}</p>
-            <p><strong>Color:</strong> ${data.inv_color}</p>
-            <p><strong>Year:</strong> ${data.inv_year}</p>
-          </div>
-          <div class="description">
-            <h2>Description</h2>
-            <p>${data.inv_description}</p>
-          </div>
-        </div>
+  let grid = '<div class="vehicle-grid">';
+  
+  vehicles.forEach(vehicle => {
+    grid += `
+      <div class="vehicle-card">
+        <a href="/inv/detail/${vehicle.inv_id}">
+          <img src="${vehicle.inv_thumbnail}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
+          <h3>${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}</h3>
+          <p class="price">$${vehicle.inv_price}</p>
+        </a>
       </div>
     `;
-  } catch (error) {
-    console.error("buildDetailView error: " + error);
-    return "<p>Error loading vehicle details.</p>";
-  }
-};
+  });
+  
+  grid += '</div>';
+  return grid;
+}
 
 module.exports = {
-  buildDetailView
-};
-
-const buildClassificationGrid = async (data) => {
-  try {
-    let grid = '';
-    
-    data.forEach(vehicle => {
-      const formattedPrice = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-      }).format(vehicle.inv_price);
-
-      grid += `
-        <div class="vehicle-card">
-          <img src="${vehicle.inv_thumbnail}" alt="${vehicle.inv_make} ${vehicle.inv_model}">
-          <div class="vehicle-name">${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}</div>
-          <div class="vehicle-price">${formattedPrice}</div>
-          <a href="/inv/detail/${vehicle.inv_id}" class="btn btn-primary btn-sm mt-2">View Details</a>
-        </div>
-      `;
-    });
-    
-    return grid;
-  } catch (error) {
-    console.error("buildClassificationGrid error: " + error);
-    return "<p>Error loading vehicles.</p>";
-  }
-};
-
-module.exports = {
-  buildDetailView,
+  getNav,
   buildClassificationGrid
 };

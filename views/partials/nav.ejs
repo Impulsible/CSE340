@@ -1,14 +1,15 @@
-<nav id="site-nav" class="site-nav" aria-label="Primary">
+<nav class="main-nav" aria-label="Main navigation">
   <ul class="nav-list">
 
     <% 
       // Define links and their active state
       const links = [
         { href: '/', label: 'Home', active: title && title.startsWith('CSE Motors') },
-        { href: '/custom', label: 'Custom', active: title && title.startsWith('Custom') },
-        { href: '/sedan', label: 'Sedan', active: title && title.startsWith('Sedan') },
-        { href: '/suv', label: 'SUV', active: title && title.startsWith('SUV') },
-        { href: '/truck', label: 'Truck', active: title && title.startsWith('Truck') },
+        { href: '/custom', label: 'Custom Shop (All Vehicles)', active: title && title.startsWith('Custom') },
+        { href: '/sport', label: 'Sport Cars', active: title && title.startsWith('Sport') },
+        { href: '/suv', label: 'SUVs', active: title && title.startsWith('SUV') },
+        { href: '/sedan', label: 'Sedans', active: title && title.startsWith('Sedan') },
+        { href: '/truck', label: 'Trucks', active: title && title.startsWith('Truck') },
         { href: '/account', label: 'Account', active: title && title.startsWith('My Account') }
       ];
     %>
@@ -22,5 +23,43 @@
       </li>
     <% }) %>
 
+    <!-- Assignment Testing Dropdown -->
+    <li class="nav-dropdown">
+      <button class="nav-dropdown-toggle" aria-expanded="false" aria-controls="testing-menu">
+        Testing ▼
+      </button>
+      <ul class="nav-dropdown-menu" id="testing-menu">
+        <li><a href="/debug-db">Debug Database</a></li>
+        <li><a href="/debug-vehicle/1">Test Vehicle #1</a></li>
+        <li><a href="/trigger-error">Test Error Handling</a></li>
+      </ul>
+    </li>
+
   </ul>
 </nav>
+
+<script>
+  // Dropdown toggle functionality
+  document.querySelectorAll('.nav-dropdown-toggle').forEach(button => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', !expanded);
+      
+      const menu = document.getElementById(button.getAttribute('aria-controls'));
+      if (menu) {
+        menu.style.display = expanded ? 'none' : 'block';
+      }
+    });
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.nav-dropdown-menu').forEach(menu => {
+      menu.style.display = 'none';
+    });
+    document.querySelectorAll('.nav-dropdown-toggle').forEach(button => {
+      button.setAttribute('aria-expanded', 'false');
+    });
+  });
+</script>

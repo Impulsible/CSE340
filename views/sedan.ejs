@@ -1,26 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <%- include("../partials/head") %>
-  <title><%= title %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Sedans Collection | CSE Motors</title>
+
+  <!-- Your main CSE Motors stylesheet -->
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* ===== Premium Sedans Collection (page-specific) ===== */
+
+    .premium-page {
+      padding: 14px 16px 20px;
+    }
+
+    .premium-header {
+      text-align: center;
+      margin-bottom: 18px;
+      padding: 18px 16px 20px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #eef5ff, #dbeafe);
+      border: 1px solid #c4ddff;
+    }
+
+    .premium-title {
+      font-family: Raleway, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.55rem, 4.6vw, 1.95rem);
+      margin: 0 0 8px;
+      color: #0c1022;
+    }
+
+    .premium-title span {
+      color: #2c63ff;
+    }
+
+    .premium-subtitle {
+      margin: 0;
+      font-size: 0.97rem;
+      color: #3a435a;
+      max-width: 34rem;
+      margin-inline: auto;
+    }
+
+    /* Vehicle grid */
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    /* Card */
+    .vehicle-card {
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #e3edff;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.10);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+      border-color: #b7d5ff;
+    }
+
+    /* Image area */
+    .vehicle-card .image-container {
+      height: 210px;
+      background: #eef5ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vehicle-card .vehicle-image {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.35s ease;
+    }
+
+    .vehicle-card:hover .vehicle-image {
+      transform: scale(1.04);
+    }
+
+    /* Badge */
+    .vehicle-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #059669, #047857); /* sedan green */
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Card body */
+    .vehicle-info {
+      padding: 16px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .vehicle-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .vehicle-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: Raleway, system-ui, sans-serif;
+      color: #0c1022;
+      margin: 0;
+    }
+
+    .vehicle-price {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #059669;
+      white-space: nowrap;
+    }
+
+    /* Details pills */
+    .vehicle-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .detail-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #f3f6ff;
+      font-size: 0.85rem;
+      color: #3a435a;
+    }
+
+    .detail-item i {
+      font-size: 0.8rem;
+      color: #2c63ff;
+    }
+
+    /* Description */
+    .vehicle-description {
+      margin: 4px 0 10px;
+      font-size: 0.92rem;
+      color: #3a435a;
+      line-height: 1.55;
+    }
+
+    /* CTA button */
+    .view-details {
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px 12px;
+      border-radius: 10px;
+      background: #2c63ff;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 0.92rem;
+      box-shadow: 0 7px 18px rgba(44, 99, 255, 0.28);
+      transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .view-details i {
+      font-size: 0.85rem;
+    }
+
+    .view-details:hover {
+      background: #1e40af;
+      transform: translateY(-2px);
+      box-shadow: 0 9px 22px rgba(30, 64, 175, 0.35);
+    }
+
+    .view-details:focus-visible {
+      outline: 3px solid #00c2ff;
+      outline-offset: 2px;
+    }
+
+    /* Layout enhancements for wider screens */
+    @media (min-width: 720px) {
+      .vehicle-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (min-width: 960px) {
+      .premium-page {
+        padding: 4px 20px 20px;
+      }
+
+      .premium-header {
+        margin-bottom: 20px;
+      }
+
+      .vehicle-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <%- nav %>
+  <a href="#premium-sedans-heading" class="skip-link">Skip to main content</a>
 
-  <main class="inv-listing">
-    <h1>Sedans</h1>
+  <div class="page">
 
-    <ul class="vehicle-list">
-      <li class="vehicle-card">
-        <a href="/inv/detail/5">
-          <img src="/images/vehicles/crown-victoria-tn.jpg" alt="Ford Crown Victoria">
-          <h2>2013 Ford Crown Victoria</h2>
-        </a>
-      </li>
-    </ul>
+    <main class="premium-page" aria-labelledby="premium-sedans-heading">
+      <section class="premium-section">
+        <header class="premium-header">
+          <h1 id="premium-sedans-heading" class="premium-title">
+            Premium <span>Sedans</span> Collection
+          </h1>
+          <p class="premium-subtitle">
+            Experience luxury, comfort, and dependable performance with our carefully curated sedan lineup.
+          </p>
+        </header>
 
-  </main>
+        <section class="vehicle-grid" aria-label="Premium sedans inventory">
+          <!-- Ford Crown Victoria (ID: 12) -->
+          <article class="vehicle-card">
+            <div class="image-container">
+              <span class="vehicle-badge">Sedan</span>
+              <img src="/images/vehicles/crwn-vic-tn.jpg" alt="2013 Ford Crown Victoria in white" class="vehicle-image">
+            </div>
 
-  <%- include("../partials/footer") %>
+            <div class="vehicle-info">
+              <div class="vehicle-header">
+                <h2 class="vehicle-title">2013 Ford Crown Victoria</h2>
+                <div class="vehicle-price">$25,000</div>
+              </div>
+
+              <div class="vehicle-details">
+                <div class="detail-item">
+                  <i class="fas fa-tachometer-alt" aria-hidden="true"></i>
+                  <span>25,578 miles</span>
+                </div>
+                <div class="detail-item">
+                  <i class="fas fa-palette" aria-hidden="true"></i>
+                  <span>White</span>
+                </div>
+              </div>
+
+              <p class="vehicle-description">
+                The 2013 Ford Crown Victoria delivers legendary durability and relaxed comfort in a full-size sedan.
+                This white example combines a roomy interior, smooth V8 power, and proven reliability—making it ideal for
+                long cruises, fleet duty, or collectors who appreciate classic body-on-frame sedans.
+              </p>
+
+              <a href="/inv/detail/12" class="view-details">
+                <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                <span>View Full Details</span>
+              </a>
+            </div>
+          </article>
+        </section>
+      </section>
+    </main>
+  </div>
 </body>
 </html>

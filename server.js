@@ -31,31 +31,27 @@ app.use("/inv", require("./routes/inventoryRoute"));
  * Additional Routes
  *************************/
 app.get("/custom", (req, res) => {
-  res.render("custom", { title: "Custom Shop | CSE Motors" });
+  res.render("custom", { title: "Custom Shop - All Vehicles | CSE Motors" });
 });
 
 app.get("/sedan", (req, res) => {
-  res.render("sedan", { title: "Sedan | CSE Motors" });
+  res.render("sedan", { title: "Sedans | CSE Motors" });
 });
 
 app.get("/suv", (req, res) => {
-  res.render("suv", { title: "SUV | CSE Motors" });
+  res.render("suv", { title: "SUVs | CSE Motors" });
+});
+
+app.get("/sport", (req, res) => {
+  res.render("sport", { title: "Sport Cars | CSE Motors" });
 });
 
 app.get("/truck", (req, res) => {
-  res.render("truck", { title: "Truck | CSE Motors" });
+  res.render("truck", { title: "Trucks | CSE Motors" });
 });
 
 app.get("/account", (req, res) => {
   res.render("account", { title: "My Account | CSE Motors" });
-});
-
-// TRIGGER ERROR ROUTE - Add this here
-app.get("/trigger-error", (req, res, next) => {
-  console.log("Trigger error route accessed!");
-  const error = new Error("Intentional 500 error for CSE 340 Assignment 3 testing");
-  error.status = 500;
-  next(error);
 });
 
 // DEBUG ROUTES - ADD THESE
@@ -123,19 +119,31 @@ app.get("/test-vehicles", (req, res) => {
 });
 
 /* ***********************
- * Error Handlers - FIXED ORDER
+ * Error Handlers - FIXED
  *************************/
 
 // 500 Error Handler - MUST COME BEFORE 404
-app.use((err, req, res, next) => {
+app.use(async (err, req, res, next) => {
   console.error('🔥 500 Error:', err.message);
   
   let nav = '';
   try {
-    const utilities = require('./utilities/');
-    nav = utilities.getNav ? utilities.getNav() : '<nav>Navigation</nav>';
+    // Use a simple fallback navigation instead of utilities.getNav
+    nav = `
+      <nav class="main-nav" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/inv/type/1">Custom Shop</a></li>
+          <li><a href="/inv/type/2">Sports Cars</a></li>
+          <li><a href="/inv/type/3">SUVs</a></li>
+          <li><a href="/inv/type/4">Trucks</a></li>
+          <li><a href="/inv/type/5">Sedans</a></li>
+          <li><a href="/account">Account</a></li>
+        </ul>
+      </nav>
+    `;
   } catch (e) {
-    nav = '<nav>Navigation</nav>';
+    nav = '<nav><a href="/">Home</a> | <a href="/inv">Inventory</a> | <a href="/account">Account</a></nav>';
   }
   
   res.status(err.status || 500).render("errors/error", {
@@ -151,10 +159,22 @@ app.use(async (req, res) => {
   
   let nav = '';
   try {
-    const utilities = require('./utilities/');
-    nav = await utilities.getNav();
+    // Use a simple fallback navigation instead of utilities.getNav
+    nav = `
+      <nav class="main-nav" aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="/">Home</a></li>
+          <li><a href="/inv/type/1">Custom Shop</a></li>
+          <li><a href="/inv/type/2">Sports Cars</a></li>
+          <li><a href="/inv/type/3">SUVs</a></li>
+          <li><a href="/inv/type/4">Trucks</a></li>
+          <li><a href="/inv/type/5">Sedans</a></li>
+          <li><a href="/account">Account</a></li>
+        </ul>
+      </nav>
+    `;
   } catch (e) {
-    nav = '<nav>Navigation</nav>';
+    nav = '<nav><a href="/">Home</a> | <a href="/inv">Inventory</a> | <a href="/account">Account</a></nav>';
   }
   
   res.status(404).render("errors/error", {
@@ -178,5 +198,6 @@ app.listen(port, () => {
   console.log(`  Debug Vehicle 1: http://${host}:${port}/debug-vehicle/1`);
   console.log(`  Trigger Error: http://${host}:${port}/trigger-error`);
   console.log(`  Test Vehicle: http://${host}:${port}/inv/detail/1`);
+  console.log(`  Test Classification: http://${host}:${port}/inv/type/1`);
   console.log(`  Test 404: http://${host}:${port}/fake-page`);
 });
