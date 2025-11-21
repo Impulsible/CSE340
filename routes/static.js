@@ -1,24 +1,38 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
 const router = express.Router();
+const baseController = require("../controllers/baseController");
 
-// Static Routes
-// Set up "public" folder / subfolders for static files (relative to project root)
-router.use(express.static(path.join(__dirname, '..', 'public')));
-router.use("/css", express.static(path.join(__dirname, '..', 'public', 'css')));
-router.use("/js", express.static(path.join(__dirname, '..', 'public', 'js')));
-router.use("/images", express.static(path.join(__dirname, '..', 'public', 'images')));
+// Home route
+router.get("/", baseController.buildHome);
 
-// Home page route
-router.get("/", (req, res) => {
-  res.render("index", { title: "CSE Motors" });
+// Other static routes
+router.get("/", function (req, res) {
+  res.render("index", { title: "Home | CSE Motors" });
 });
 
-// REMOVE THIS - we'll handle it in server.js
-// router.get("/trigger-error", (req, res, next) => {
-//   const error = new Error("Intentional 500 error for testing");
-//   error.status = 500;
-//   next(error);
-// });
+// Add these routes if they don't exist
+router.get("/custom", function (req, res) {
+  res.render("custom", { title: "Custom Shop - All Vehicles | CSE Motors" });
+});
+
+router.get("/sedan", function (req, res) {
+  res.render("sedan", { title: "Sedans | CSE Motors" });
+});
+
+router.get("/suv", function (req, res) {
+  res.render("suv", { title: "SUVs | CSE Motors" });
+});
+
+router.get("/sport", function (req, res) {
+  res.render("sport", { title: "Sport Cars | CSE Motors" });
+});
+
+router.get("/truck", function (req, res) {
+  res.render("truck", { title: "Trucks | CSE Motors" });
+});
+
+router.get("/account", function (req, res) {
+  res.render("account", { title: "My Account | CSE Motors" });
+});
 
 module.exports = router;
