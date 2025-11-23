@@ -21,7 +21,7 @@ body {
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
   line-height: 1.55;
   color: #101418;
-  background: #fff;          /* Default background for mobile */
+  background: #fff; /* default white bg for mobile */
 }
 
 /* Checkerboard background only for desktop */
@@ -32,7 +32,7 @@ body {
   }
 }
 
-/* Media should never overflow the container */
+/* ===== Images/Videos/Graphics ===== */
 img, video, svg, canvas {
   max-width: 100%;
   height: auto;
@@ -569,3 +569,351 @@ main {
   color: #856404;
   border-color: #ffeaa7;
 }
+
+/* Login Form Styles */
+.login-container {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.register-link a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+/* Premium "My Account" button */
+.account-link {
+  background: #1f2e3e;              /* deep navy from screenshot */
+  padding: 8px 18px;
+  border-radius: 10px;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-family: "Poppins", sans-serif;
+  border: 2px solid rgba(255,255,255,0.18);
+  box-shadow: 0px 3px 8px rgba(0,0,0,0.25);
+  transition: all 0.25s ease;
+}
+
+/* Hover effect */
+.account-link:hover {
+  background: #2d3f52;
+  color: #e7f6ff;
+  border-color: #90e0ff;
+  transform: translateY(-2px);
+  box-shadow: 0px 5px 14px rgba(0,0,0,0.3);
+}
+
+/* Focus for accessibility */
+.account-link:focus-visible {
+  outline: 3px solid #90e0ff;
+  outline-offset: 3px;
+}
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+  .account-link {
+    padding: 10px 22px;
+    font-size: 1rem;
+  }
+}
+/* ========== My Account button ========== */
+
+.account-menu {
+  position: relative;
+}
+
+/* Base button style */
+.account-link.account-toggle {
+  background: #1f2e3e;
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-weight: 700;
+  font-size: 0.95rem;
+  font-family: "Poppins", system-ui, sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.35),
+    0 0 0 0 rgba(144, 224, 255, 0.7);   /* base soft glow layer */
+  transition:
+    background 0.22s ease,
+    color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.18s ease,
+    border-color 0.22s ease;
+}
+
+/* Icon sizes */
+.account-link.account-toggle i.fas.fa-user-circle {
+  font-size: 1.1rem;
+}
+
+.account-link.account-toggle .caret {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+/* Hover / open glow + lift */
+.account-link.account-toggle:hover,
+.account-menu.open .account-link.account-toggle {
+  background: #263a4d;
+  color: #e6f7ff;
+  border-color: #90e0ff;
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.4),
+    0 0 12px rgba(144, 224, 255, 0.85);   /* stronger glow */
+}
+
+/* Focus ring */
+.account-link.account-toggle:focus-visible {
+  outline: 3px solid #90e0ff;
+  outline-offset: 3px;
+}
+
+/* ========== Dropdown menu ========== */
+
+.account-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 160px;
+  background: #1f2933;
+  border-radius: 10px;
+  padding: 6px 0;
+  margin: 0;
+  list-style: none;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 30;
+}
+
+/* Show menu when .open class is on wrapper */
+.account-menu.open .account-dropdown {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.account-dropdown li a {
+  display: block;
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  color: #e5edf5;
+  text-decoration: none;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+
+.account-dropdown li a:hover {
+  background: #304050;
+  color: #ffffff;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .account-link.account-toggle {
+    padding: 9px 20px;
+    font-size: 1rem;
+  }
+}
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Force the My Account button to stay right */
+.account-menu {
+  margin-left: auto;     /* pushes it right */
+  position: relative;    /* needed for dropdown positioning */
+}
+
+/* Make the dropdown align to right edge of button */
+.account-dropdown {
+  right: 0;               /* align dropdown to right */
+  left: auto;             /* ensure no left-side pull */
+}
+
+/* Keep brand + account at edges */
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Container for dropdown */
+.account-menu {
+  position: relative;
+  margin-left: auto;
+}
+
+/* === My Account pill button === */
+.account-link.account-toggle {
+  background: #162639;                 /* deep navy like screenshot */
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: none;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);  /* soft shadow underneath */
+  transition: background 0.2s ease, box-shadow 0.2s ease,
+              transform 0.15s ease;
+}
+
+/* icon in white circle */
+.account-link.account-toggle i.fas.fa-user-circle,
+.account-link.account-toggle i.fas.fa-user {
+  font-size: 0.9rem;
+  background: #ffffff;
+  color: #162639;
+  border-radius: 50%;
+  padding: 4px;
+}
+
+/* caret on the right */
+.account-link.account-toggle .caret {
+  font-size: 0.65rem;
+  opacity: 0.85;
+}
+
+/* hover / open state (slightly brighter + more shadow) */
+.account-link.account-toggle:hover,
+.account-menu.open .account-link.account-toggle {
+  background: #1d3148;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.45);
+  transform: translateY(-1px);
+}
+
+/* focus ring for keyboard users */
+.account-link.account-toggle:focus-visible {
+  outline: 3px solid #90e0ff;
+  outline-offset: 3px;
+}
+
+.auth-main {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,.08);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.auth-form label {
+  font-weight: 600;
+}
+
+.auth-form input {
+  padding: 0.5rem;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.primary-btn {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 999px;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #006dd9;
+  color: #fff;
+}
+
+.secondary-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 999px;
+  border: 1px solid #006dd9;
+  background: #fff;
+  cursor: pointer;
+}
+
+.flash {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  background: #fdecea;
+  color: #611a15;
+}
+.flash.success {
+  background: #e6ffed;
+  color: #1a4d15;
+}
+

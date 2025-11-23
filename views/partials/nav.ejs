@@ -42,17 +42,22 @@
       <% }) %>
 
       <!-- Assignment Testing Dropdown -->
-      <li class="nav-dropdown">
-        <button class="nav-dropdown-toggle" aria-expanded="false" aria-controls="testing-menu">
-          Testing ▼
+      <li class="dropdown">
+        <button
+          class="dropdown-toggle"
+          type="button"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          Assignment Tests
+          <i class="fas fa-chevron-down caret" aria-hidden="true"></i>
         </button>
-        <ul class="nav-dropdown-menu" id="testing-menu">
-          <li><a href="/debug-db">Debug Database</a></li>
-          <li><a href="/debug-vehicle/1">Test Vehicle #1</a></li>
-          <li><a href="/trigger-error">Test Error Handling</a></li>
+        <ul class="dropdown-menu" aria-label="Assignment test pages">
+          <li><a href="/account">Account Test Page</a></li>
+          <li><a href="/account/login">Login Test Page</a></li>
+          <li><a href="/account/register">Register Test Page</a></li>
         </ul>
       </li>
-
     </ul>
   </nav>
 </header>

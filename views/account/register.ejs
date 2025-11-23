@@ -1,0 +1,167 @@
+<div class="login-container">
+  <h1 class="welcome"><%= title %></h1>
+  <p>Create your account to track orders, service history, and saved builds.</p>
+
+  <form action="/account/register" method="post" novalidate>
+    <div class="form-group">
+      <label for="account_firstname">First name</label>
+      <input
+        type="text"
+        id="account_firstname"
+        name="account_firstname"
+        required
+        value="<%= typeof account_firstname !== 'undefined' ? account_firstname : '' %>"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="account_lastname">Last name</label>
+      <input
+        type="text"
+        id="account_lastname"
+        name="account_lastname"
+        required
+        value="<%= typeof account_lastname !== 'undefined' ? account_lastname : '' %>"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="account_email">Email address</label>
+      <input
+        type="email"
+        id="account_email"
+        name="account_email"
+        required
+        value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="account_password">Password</label>
+      <input
+        type="password"
+        id="account_password"
+        name="account_password"
+        required
+        minlength="12"
+        pattern="(?=.*[A-Z])(?=.*\\d)(?=.*[^\\w\\s]).{12,}"
+        title="At least 12 characters, 1 capital letter, 1 number, and 1 special character."
+      >
+      <small class="help-text">
+        Minimum 12 characters, including 1 capital letter, 1 number, and 1 special character.
+      </small>
+    </div>
+
+    <button type="submit" class="btn-primary">Register</button>
+  </form>
+
+  <div class="register-link">
+    <p>Already have an account? <a href="/account/login">Login here</a></p>
+  </div>
+
+  <p><a class="btn-secondary" href="/">Back to Home</a></p>
+</div>
+
+<style>
+  .login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+  }
+
+  .btn-primary {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .btn-primary:hover {
+    background: #0056b3;
+  }
+
+  .btn-secondary {
+    display: inline-block;
+    background: #6c757d;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .btn-secondary:hover {
+    background: #545b62;
+  }
+
+  .register-link {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .register-link a {
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .register-link a:hover {
+    text-decoration: underline;
+  }
+
+  .help-text {
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #555;
+  }
+
+  .alert {
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid transparent;
+  }
+
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+  }
+
+  .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+  }
+
+  .alert-notice {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-color: #bee5eb;
+  }
+</style>

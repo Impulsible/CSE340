@@ -1,74 +1,84 @@
 <header class="site-header">
   <a class="skip-link" href="#main">Skip to content</a>
 
+  <!-- BRAND + ACCOUNT (TOP ROW) -->
   <div class="brand-row">
     <p class="brand">CSE <span>Motors</span></p>
-    <a class="account-link" href="/account" aria-label="My account">My Account</a>
+
+    <!-- ACCOUNT DROPDOWN -->
+    <div class="account-menu">
+      <button
+        class="account-link account-toggle"
+        type="button"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <i class="fas fa-user-circle" aria-hidden="true"></i>
+        <span>My Account</span>
+        <i class="fas fa-chevron-down caret" aria-hidden="true"></i>
+      </button>
+
+      <ul class="account-dropdown" aria-label="Account options">
+        <li><a href="/account/login">Login</a></li>
+        <li><a href="/account/register">Sign-up</a></li>
+      </ul>
+    </div>
   </div>
 
+  <!-- MAIN NAV BAR -->
   <nav class="main-nav" aria-label="Main navigation">
     <ul class="nav-list">
 
       <% 
-        // Define links and their active state
         const links = [
-          { href: '/', label: 'Home', active: title && title.startsWith('CSE Motors') },
-          { href: '/custom', label: 'Custom Shop (All Vehicles)', active: title && title.startsWith('Custom') },
-          { href: '/sport', label: 'Sport Cars', active: title && title.startsWith('Sport') },
-          { href: '/suv', label: 'SUVs', active: title && title.startsWith('SUV') },
-          { href: '/sedan', label: 'Sedans', active: title && title.startsWith('Sedan') },
-          { href: '/truck', label: 'Trucks', active: title && title.startsWith('Truck') },
-          { href: '/account', label: 'Account', active: title && title.startsWith('My Account') }
+          { href: '/',        label: 'Home',     match: 'CSE Motors' },
+          { href: '/custom',  label: 'Custom Shop (All Vehicles)', match: 'Custom' },
+          { href: '/sport',   label: 'Sport Cars', match: 'Sport' },
+          { href: '/suv',     label: 'SUVs',      match: 'SUV' },
+          { href: '/sedan',   label: 'Sedans',    match: 'Sedan' },
+          { href: '/truck',   label: 'Trucks',    match: 'Truck' }
         ];
       %>
 
       <% links.forEach(link => { %>
         <li>
-          <a href="<%= link.href %>" 
-             <%= link.active ? 'class="current-page" aria-current="page"' : '' %>>
+          <a href="<%= link.href %>"
+             <%= title && title.startsWith(link.match) ? 'class="current-page" aria-current="page"' : '' %>>
             <%= link.label %>
           </a>
         </li>
       <% }) %>
 
-      <!-- Assignment Testing Dropdown -->
-      <li class="nav-dropdown">
-        <button class="nav-dropdown-toggle" aria-expanded="false" aria-controls="testing-menu">
-          Testing ▼
-        </button>
-        <ul class="nav-dropdown-menu" id="testing-menu">
-          <li><a href="/debug-db">Debug Database</a></li>
-          <li><a href="/debug-vehicle/1">Test Vehicle #1</a></li>
-          <li><a href="/trigger-error">Test Error Handling</a></li>
-        </ul>
-      </li>
-
     </ul>
   </nav>
 </header>
 
+<!-- SINGLE CLEAN SCRIPT HANDLING ONLY My Account DROPDOWN -->
 <script>
-  // Dropdown toggle functionality
-  document.querySelectorAll('.nav-dropdown-toggle').forEach(button => {
-    button.addEventListener('click', (e) => {
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ===== My Account dropdown ===== */
+  const accountMenu = document.querySelector(".account-menu");
+  const accountToggle = accountMenu?.querySelector(".account-toggle");
+
+  if (accountMenu && accountToggle) {
+    accountToggle.addEventListener("click", e => {
       e.stopPropagation();
-      const expanded = button.getAttribute('aria-expanded') === 'true';
-      button.setAttribute('aria-expanded', !expanded);
-      
-      const menu = document.getElementById(button.getAttribute('aria-controls'));
-      if (menu) {
-        menu.style.display = expanded ? 'none' : 'block';
-      }
+      const expanded = accountToggle.getAttribute("aria-expanded") === "true";
+      const newState = !expanded;
+
+      accountToggle.setAttribute("aria-expanded", String(newState));
+      accountMenu.classList.toggle("open", newState);
     });
+  }
+
+  /* ===== Global click to close dropdown ===== */
+  document.addEventListener("click", () => {
+    if (accountMenu && accountToggle) {
+      accountMenu.classList.remove("open");
+      accountToggle.setAttribute("aria-expanded", "false");
+    }
   });
 
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', () => {
-    document.querySelectorAll('.nav-dropdown-menu').forEach(menu => {
-      menu.style.display = 'none';
-    });
-    document.querySelectorAll('.nav-dropdown-toggle').forEach(button => {
-      button.setAttribute('aria-expanded', 'false');
-    });
-  });
+});
 </script>

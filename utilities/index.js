@@ -11,7 +11,7 @@ function getNav() {
         <li><a href="/inv/type/3">SUVs</a></li>
         <li><a href="/inv/type/4">Trucks</a></li>
         <li><a href="/inv/type/5">Sedans</a></li>
-        <li><a href="/account">Account</a></li>
+        <li><a href="/account/login">Account</a></li>
       </ul>
     </nav>
   `;
@@ -43,7 +43,17 @@ function buildClassificationGrid(vehicles) {
   return grid;
 }
 
+/* ***************************
+ *  Error Handler Middleware
+ * ************************** */
+function handleErrors(fn) {
+  return (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+}
+
 module.exports = {
   getNav,
-  buildClassificationGrid
+  buildClassificationGrid,
+  handleErrors
 };
