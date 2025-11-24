@@ -11,6 +11,9 @@ INSERT INTO classification (classification_id, classification_name) VALUES
 (5, 'Sedan')
 ON CONFLICT (classification_id) DO NOTHING;
 
+-- FIX: Reset classification sequence to ensure IDs match
+SELECT setval('classification_classification_id_seq', (SELECT MAX(classification_id) FROM classification));
+
 -- Insert inventory vehicles with SPECIFIC IDs that match your HTML links
 INSERT INTO inventory (
   inv_id, inv_make, inv_model, inv_year, inv_description, 
@@ -25,7 +28,7 @@ INSERT INTO inventory (
 (
   2, 'Ford', 'Mustang', 2020,
   'The iconic 2020 Ford Mustang combines classic American muscle with modern technology. This vibrant red sports car features advanced safety systems, premium interior amenities, and a powerful engine that delivers exhilarating performance. With low mileage and meticulous maintenance, this Mustang offers both style and substance for driving enthusiasts seeking an authentic muscle car experience.',
-  '/images/vehicles/wrangler.jpg', '/images/vehicles/wrangler.jpg', 32000, 8500, 'Yellow', 2
+  '/images/vehicles/mustang.jpg', '/images/vehicles/wrangler-tn.jpg', 32000, 8500, 'Yellow', 2
 ),
 (
   7, 'Lamborghini', 'Adventador', 2023,
@@ -101,3 +104,6 @@ INSERT INTO inventory (
   '/images/vehicles/dog-car.jpg', '/images/vehicles/dog-car-tn.jpg', 45000, 8900, 'Multi-color', 1
 )
 ON CONFLICT (inv_id) DO NOTHING;
+
+-- FIX: Reset the inventory sequence to continue from the highest ID used
+SELECT setval('inventory_inv_id_seq', (SELECT MAX(inv_id) FROM inventory));
