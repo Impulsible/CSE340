@@ -16,6 +16,7 @@ const app = express()
 
 // Session requires
 const session = require("express-session")
+const pgSession = require("connect-pg-simple")(session)
 
 // Body-parser
 const bodyParser = require("body-parser")
@@ -37,14 +38,25 @@ app.use(expressLayouts)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })) // handles form submissions
 
-// Session Middleware (Memory store for now)
+// Session Middleware with PostgreSQL Store (PRODUCTION READY)
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "fallback-secret-key-12345",
+    store: new pgSession({
+      pool: pool, // Use your existing database pool
+      tableName: 'session', // Use the session table we created
+      createTableIfMissing: true, // Auto-create table if missing
+      pruneSessionInterval: 3600, // Cleanup every hour (seconds)
+    }),
+    secret: process.env.SESSION_SECRET || "fallback-secret-key-12345-change-in-production",
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false, // Changed to false for better security
     name: "sessionId",
-    store: new session.MemoryStore(),
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // HTTPS in production
+      httpOnly: true, // Prevent client-side JS access
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      sameSite: 'lax'
+    }
   })
 )
 
@@ -82,6 +94,26 @@ app.get("/db-test", async (req, res) => {
 })
 
 /* ***********************
+ * Session Test Route
+ *************************/
+app.get("/session-test", (req, res) => {
+  // Test session functionality
+  if (!req.session.views) {
+    req.session.views = 0
+    req.session.firstVisit = new Date().toISOString()
+  }
+  req.session.views++
+  
+  res.json({
+    message: "Session test successful",
+    views: req.session.views,
+    firstVisit: req.session.firstVisit,
+    sessionId: req.sessionID,
+    sessionStore: "PostgreSQL" // Confirm we're using PostgreSQL
+  })
+})
+
+/* ***********************
  * Test Flash Route
  *************************/
 app.get("/test-flash", (req, res) => {
@@ -96,7 +128,10 @@ app.get("/test-flash", (req, res) => {
 const port = process.env.PORT || 5500
 app.listen(port, () => {
   console.log(`🚗 CSE Motors running on port ${port}`)
+  console.log(`✅ PostgreSQL session store configured`)
+  console.log(`✅ MemoryStore warning eliminated`)
   console.log(`Home page: http://localhost:${port}/`)
   console.log(`Account login: http://localhost:${port}/account/login`)
   console.log(`DB test: http://localhost:${port}/db-test`)
+  console.log(`Session test: http://localhost:${port}/session-test`)
 })

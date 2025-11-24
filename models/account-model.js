@@ -17,14 +17,18 @@ async function registerAccount(
         ($1, $2, $3, $4, 'Client') 
       RETURNING *
     `
-    return await pool.query(sql, [
+    
+    const result = await pool.query(sql, [
       account_firstname,
       account_lastname,
       account_email,
       account_password,
     ])
+
+    return result   // <-- correct
   } catch (error) {
-    return error.message
+    console.error("Database Insert Error:", error)
+    throw error     // <-- important fix
   }
 }
 

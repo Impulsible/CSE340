@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const utilities = require("../utilities/")
 const accountController = require("../controllers/accountController")
+const accountValidate = require("../utilities/account-validation")
 
 // GET login view
 router.get(
@@ -26,9 +27,12 @@ router.get(
 
 /* *****************************
  *  POST route to process registration
+ *  WITH SERVER-SIDE VALIDATION
  * ***************************** */
 router.post(
   "/register",
+  accountValidate.registationRules(),   // 🔥 MUST MATCH THE MISSPELLED NAME
+  accountValidate.checkRegData,         // 🔥 checks data BEFORE controller
   utilities.handleErrors(accountController.registerAccount)
 )
 

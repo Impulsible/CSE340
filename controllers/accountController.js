@@ -1,5 +1,6 @@
 const utilities = require("../utilities/")
 const accountModel = require("../models/account-model")
+const bcrypt = require("bcryptjs")
 
 /* ***************************
  *  Deliver login view
@@ -30,7 +31,7 @@ async function buildRegister(req, res, next) {
 }
 
 /* ****************************************
- *  Process Registration
+ *  Process Registration (fixed!)
  * *************************************** */
 async function registerAccount(req, res) {
   let nav = await utilities.getNav()
@@ -42,46 +43,64 @@ async function registerAccount(req, res) {
     account_password
   } = req.body
 
-  // Helpful debug logs in your terminal
   console.log("REG BODY:", req.body)
 
-  const regResult = await accountModel.registerAccount(
-    account_firstname,
-    account_lastname,
-    account_email,
-    account_password
-  )
+  try {
+    // 🔒 Hash password BEFORE saving to DB
+    const hashedPassword = await bcrypt.hash(account_password, 10)
 
-  console.log("REG RESULT:", regResult)
+    // Insert into DB
+    const regResult = await accountModel.registerAccount(
+      account_firstname,
+      account_lastname,
+      account_email,
+      hashedPassword
+    )
 
-  // SUCCESS: regResult should be a query result with rows
-  if (regResult && regResult.rows && regResult.rows.length > 0) {
-    const msg = `Congratulations, you're registered ${account_firstname}. Please log in.`
-    req.flash("notice", msg)
-    // make flash available immediately on this render
-    res.locals.flashMessages = { notice: [msg] }
+    console.log("REG RESULT:", regResult)
 
-    return res.status(201).render("account/login", {
-      title: "Login",
+    // Check if insert succeeded
+    if (regResult && regResult.rows && regResult.rows.length > 0) {
+      const msg = `Congratulations, you're registered ${account_firstname}. Please log in.`
+      req.flash("notice", msg)
+      res.locals.flashMessages = { notice: [msg] }
+
+      return res.status(201).render("account/login", {
+        title: "Login",
+        nav,
+        errors: null,
+        account_email
+      })
+    }
+
+    // If insert failed
+    const failMsg = "Sorry, the registration failed."
+    req.flash("notice", failMsg)
+    res.locals.flashMessages = { notice: [failMsg] }
+
+    return res.status(501).render("account/register", {
+      title: "Register",
       nav,
       errors: null,
+      account_firstname,
+      account_lastname,
+      account_email
+    })
+  } catch (err) {
+    console.error("Registration error:", err)
+
+    req.flash("notice", "A system error occurred. Try again.")
+    res.locals.flashMessages = { notice: ["A system error occurred. Try again."] }
+
+    return res.status(500).render("account/register", {
+      title: "Register",
+      nav,
+      errors: null,
+      account_firstname,
+      account_lastname,
       account_email
     })
   }
-
-  // FAILURE: keep values in the form and show error message
-  const failMsg = "Sorry, the registration failed."
-  req.flash("notice", failMsg)
-  res.locals.flashMessages = { notice: [failMsg] }
-
-  return res.status(501).render("account/register", {
-    title: "Register",
-    nav,
-    errors: null,
-    account_firstname,
-    account_lastname,
-    account_email
-  })
 }
 
 module.exports = {

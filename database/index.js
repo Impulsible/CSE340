@@ -9,9 +9,17 @@ const pool = new Pool({
   }
 })
 
-// Test connection
-pool.on("connect", () => {
-  console.log("Database connected successfully")
+// Only log once when pool is created, not on every connection
+console.log("✅ Database connection pool created")
+
+// Test connection once on startup
+pool.query('SELECT NOW()', (err, res) => {
+  if (err) {
+    console.error('❌ Database connection failed:', err)
+  } else {
+    console.log('✅ Database connection test successful')
+    console.log('📍 Connected at:', res.rows[0].now)
+  }
 })
 
 pool.on("error", (err) => {
