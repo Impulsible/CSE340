@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Classification - CSE 340</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <%- include('../partials/header') %>
+    </header>
+    <main>
+        <h1>Add New Classification</h1>
+        
+        <% if (message) { %>
+            <div class="flash-message <%= message.type %>">
+                <%= message.message %>
+            </div>
+        <% } %>
+        
+        <% if (errors) { %>
+            <div class="errors">
+                <ul>
+                    <% errors.forEach(error => { %>
+                        <li><%= error %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+        
+        <form action="/inv/add-classification" method="post">
+            <div class="form-group">
+                <label for="classification_name">Classification Name:</label>
+                <input type="text" name="classification_name" id="classification_name" 
+                       required pattern="^[a-zA-Z0-9]+$" 
+                       title="No spaces or special characters allowed">
+                <small>Note: Classification name cannot contain spaces or special characters</small>
+            </div>
+            <button type="submit" class="btn">Add Classification</button>
+        </form>
+    </main>
+    <footer>
+        <%- include('../partials/footer') %>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management - CSE 340</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <%- include('../partials/header') %>
+    </header>
+    <main>
+        <h1>Inventory Management</h1>
+        
+        <% if (message) { %>
+            <div class="flash-message <%= message.type %>">
+                <%= message.message %>
+            </div>
+        <% } %>
+        
+        <div class="management-links">
+            <a href="/inv/add-classification" class="btn">Add New Classification</a>
+            <a href="/inv/add-inventory" class="btn">Add New Inventory Item</a>
+        </div>
+    </main>
+    <footer>
+        <%- include('../partials/footer') %>
+    </footer>
+</body>
+</html>

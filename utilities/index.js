@@ -1,3 +1,5 @@
+const invModel = require("../models/inventory-model");
+
 /* ***************************
  *  Simple Navigation - No Database Calls
  * ************************** */
@@ -44,6 +46,31 @@ function buildClassificationGrid(vehicles) {
 }
 
 /* ***************************
+ *  Build Classification List (for forms)
+ * ************************** */
+async function buildClassificationList(classification_id = null) {
+  try {
+    const data = await invModel.getClassifications();
+    let classificationList = '<select name="classification_id" id="classificationList" required>';
+    classificationList += "<option value=''>Choose a Classification</option>";
+    
+    data.rows.forEach((row) => {
+      classificationList += '<option value="' + row.classification_id + '"';
+      if (classification_id != null && row.classification_id == classification_id) {
+        classificationList += " selected ";
+      }
+      classificationList += ">" + row.classification_name + "</option>";
+    });
+
+    classificationList += "</select>";
+    return classificationList;
+  } catch (error) {
+    console.error("Error building classification list:", error);
+    return '<select name="classification_id" id="classificationList" required><option value="">Error loading classifications</option></select>';
+  }
+}
+
+/* ***************************
  *  Error Handler Middleware
  * ************************** */
 function handleErrors(fn) {
@@ -55,5 +82,6 @@ function handleErrors(fn) {
 module.exports = {
   getNav,
   buildClassificationGrid,
+  buildClassificationList,
   handleErrors
 };
