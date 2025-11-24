@@ -1,10 +1,10 @@
 const invModel = require("../models/inventory-model");
 const utilities = require("../utilities");
 
-const invCont = {}; // ← THIS LINE WAS MISSING!
+const invCont = {};
 
 /**
- * Build inventory by classification view - SIMPLIFIED
+ * Build inventory by classification view - UPDATED WITH DYNAMIC NAV
  */
 invCont.buildByClassificationId = async function (req, res, next) {
   try {
@@ -14,30 +14,16 @@ invCont.buildByClassificationId = async function (req, res, next) {
     const vehicles = await invModel.getInventoryByClassificationId(classification_id);
     console.log(`📊 Found ${vehicles ? vehicles.length : 0} vehicles`);
     
-    // Simple navigation fallback
-    const nav = `
-      <nav class="main-nav">
-        <ul class="nav-list">
-          <li><a href="/">Home</a></li>
-          <li><a href="/inv/type/1">Custom</a></li>
-          <li><a href="/inv/type/2">Sport</a></li>
-          <li><a href="/inv/type/3">SUV</a></li>
-          <li><a href="/inv/type/4">Truck</a></li>
-          <li><a href="/inv/type/5">Sedan</a></li>
-        </ul>
-      </nav>
-    `;
+    // Use dynamic navigation
+    const nav = await utilities.getNav();
     
-    const titles = {
-      1: "Custom Vehicles",
-      2: "Sport Cars", 
-      3: "SUVs",
-      4: "Trucks",
-      5: "Sedans"
-    };
+    // Get classification name for the title
+    const classifications = await invModel.getClassifications();
+    const currentClassification = classifications.rows.find(c => c.classification_id == classification_id);
+    const title = currentClassification ? `${currentClassification.classification_name} Vehicles` : "Vehicles";
     
     res.render("./inventory/classification", {
-      title: titles[classification_id] || "Vehicles",
+      title: title,
       nav: nav,
       vehicles: vehicles || []
     });
@@ -49,7 +35,7 @@ invCont.buildByClassificationId = async function (req, res, next) {
 };
 
 /**
- * Build vehicle detail view - SIMPLIFIED
+ * Build vehicle detail view - UPDATED WITH DYNAMIC NAV
  */
 invCont.buildVehicleDetail = async function (req, res, next) {
   try {
@@ -60,18 +46,8 @@ invCont.buildVehicleDetail = async function (req, res, next) {
     
     if (!vehicle) return res.status(404).send("Vehicle not found");
 
-    const nav = `
-      <nav class="main-nav">
-        <ul class="nav-list">
-          <li><a href="/">Home</a></li>
-          <li><a href="/inv/type/1">Custom</a></li>
-          <li><a href="/inv/type/2">Sport</a></li>
-          <li><a href="/inv/type/3">SUV</a></li>
-          <li><a href="/inv/type/4">Truck</a></li>
-          <li><a href="/inv/type/5">Sedan</a></li>
-        </ul>
-      </nav>
-    `;
+    // Use dynamic navigation
+    const nav = await utilities.getNav();
     
     res.render("./inventory/detail", {
       title: `${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
@@ -86,15 +62,22 @@ invCont.buildVehicleDetail = async function (req, res, next) {
 };
 
 /**
- * Display management view
+ * Display management view - FIXED FLASH MESSAGES
  */
 invCont.buildManagement = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
+    
+    // Get flash message from res.locals (set by your middleware)
+    const message = res.locals.flashMessages?.message?.[0] || null;
+    
+    console.log("📢 Flash messages available:", res.locals.flashMessages);
+    console.log("📢 Message to display:", message);
+    
     res.render("inventory/management", {
       title: "Inventory Management",
       nav,
-      message: req.flash("message") || null
+      message: message
     });
   } catch (error) {
     console.error("❌ Management view error:", error);
@@ -103,16 +86,18 @@ invCont.buildManagement = async function (req, res, next) {
 };
 
 /**
- * Display add classification form
+ * Display add classification form - FIXED FLASH
  */
 invCont.addClassificationView = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
+    const message = res.locals.flashMessages?.message?.[0] || null;
+    
     res.render("inventory/add-classification", {
       title: "Add Classification",
       nav,
       errors: null,
-      message: req.flash("message") || null
+      message: message
     });
   } catch (error) {
     next(error);
@@ -154,19 +139,20 @@ invCont.addClassification = async function (req, res, next) {
 };
 
 /**
- * Display add inventory form
+ * Display add inventory form - FIXED FLASH
  */
 invCont.addInventoryView = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
     const classificationList = await utilities.buildClassificationList();
+    const message = res.locals.flashMessages?.message?.[0] || null;
     
     res.render("inventory/add-inventory", {
       title: "Add Inventory",
       nav,
       classificationList,
       errors: null,
-      message: req.flash("message") || null
+      message: message
     });
   } catch (error) {
     next(error);
@@ -200,6 +186,33 @@ invCont.addInventory = async function (req, res, next) {
       ...req.body
     });
   }
+};
+
+/**
+ * Test flash message route
+ */
+invCont.testFlash = async function (req, res, next) {
+  req.flash("message", "🎉 Test flash message is working!");
+  res.redirect("/inv/");
+};
+
+/**
+ * Debug flash messages
+ */
+invCont.debugFlash = async function (req, res, next) {
+  const nav = await utilities.getNav();
+  
+  console.log("🔍 Session ID:", req.sessionID);
+  console.log("🔍 Flash messages:", req.flash());
+  console.log("🔍 res.locals.flashMessages:", res.locals.flashMessages);
+  
+  res.render("inventory/debug", {
+    title: "Flash Debug",
+    nav,
+    sessionId: req.sessionID,
+    flashMessages: res.locals.flashMessages,
+    reqFlash: req.flash()
+  });
 };
 
 module.exports = invCont;

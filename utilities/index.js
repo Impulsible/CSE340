@@ -1,22 +1,61 @@
 const invModel = require("../models/inventory-model");
 
 /* ***************************
- *  Simple Navigation - No Database Calls
+ *  Build Navigation Dynamically from Database
  * ************************** */
-function getNav() {
-  return `
-    <nav class="main-nav" aria-label="Main navigation">
+async function getNav() {
+  try {
+    const data = await invModel.getClassifications();
+    let nav = '<ul class="nav-list">';
+    nav += '<li><a href="/">Home</a></li>';
+    
+    data.rows.forEach((row) => {
+      nav += `<li><a href="/inv/type/${row.classification_id}" title="View our ${row.classification_name} lineup">${row.classification_name}</a></li>`;
+    });
+    
+    nav += '<li><a href="/account/login">Account</a></li>';
+    nav += '</ul>';
+    return nav;
+  } catch (error) {
+    console.error('Error building navigation:', error);
+    // Fallback to basic navigation if database fails
+    return `
       <ul class="nav-list">
         <li><a href="/">Home</a></li>
-        <li><a href="/inv/type/1">Custom Shop</a></li>
-        <li><a href="/inv/type/2">Sport Cars</a></li>
-        <li><a href="/inv/type/3">SUVs</a></li>
-        <li><a href="/inv/type/4">Trucks</a></li>
-        <li><a href="/inv/type/5">Sedans</a></li>
+        <li><a href="/inv/type/1">Custom</a></li>
+        <li><a href="/inv/type/2">Sport</a></li>
+        <li><a href="/inv/type/3">SUV</a></li>
+        <li><a href="/inv/type/4">Truck</a></li>
+        <li><a href="/inv/type/5">Sedan</a></li>
         <li><a href="/account/login">Account</a></li>
       </ul>
-    </nav>
-  `;
+    `;
+  }
+}
+
+/* ***************************
+ *  Build Classification List (for forms)
+ * ************************** */
+async function buildClassificationList(classification_id = null) {
+  try {
+    const data = await invModel.getClassifications();
+    let classificationList = '<select name="classification_id" id="classificationList" required>';
+    classificationList += "<option value=''>Choose a Classification</option>";
+    
+    data.rows.forEach((row) => {
+      classificationList += '<option value="' + row.classification_id + '"';
+      if (classification_id != null && row.classification_id == classification_id) {
+        classificationList += " selected ";
+      }
+      classificationList += ">" + row.classification_name + "</option>";
+    });
+
+    classificationList += "</select>";
+    return classificationList;
+  } catch (error) {
+    console.error("Error building classification list:", error);
+    return '<select name="classification_id" id="classificationList" required><option value="">Error loading classifications</option></select>';
+  }
 }
 
 /* ***************************
@@ -43,31 +82,6 @@ function buildClassificationGrid(vehicles) {
   
   grid += '</div>';
   return grid;
-}
-
-/* ***************************
- *  Build Classification List (for forms)
- * ************************** */
-async function buildClassificationList(classification_id = null) {
-  try {
-    const data = await invModel.getClassifications();
-    let classificationList = '<select name="classification_id" id="classificationList" required>';
-    classificationList += "<option value=''>Choose a Classification</option>";
-    
-    data.rows.forEach((row) => {
-      classificationList += '<option value="' + row.classification_id + '"';
-      if (classification_id != null && row.classification_id == classification_id) {
-        classificationList += " selected ";
-      }
-      classificationList += ">" + row.classification_name + "</option>";
-    });
-
-    classificationList += "</select>";
-    return classificationList;
-  } catch (error) {
-    console.error("Error building classification list:", error);
-    return '<select name="classification_id" id="classificationList" required><option value="">Error loading classifications</option></select>';
-  }
 }
 
 /* ***************************

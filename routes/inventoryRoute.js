@@ -50,6 +50,12 @@ router.post(
 );
 
 // ---------------------
+// Debug routes for flash message testing
+// ---------------------
+router.get("/debug-flash", utilities.handleErrors(invController.debugFlash));
+router.get("/test-flash", utilities.handleErrors(invController.testFlash));
+
+// ---------------------
 // Inventory classification view
 // ---------------------
 router.get(
@@ -66,4 +72,3 @@ router.get(
 );
 
 module.exports = router;
-// REMOVE THE BACKSLASH THAT WAS HERE
