@@ -197,22 +197,28 @@ invCont.testFlash = async function (req, res, next) {
 };
 
 /**
- * Debug flash messages
+ * Debug flash messages - FIXED VERSION
  */
 invCont.debugFlash = async function (req, res, next) {
-  const nav = await utilities.getNav();
-  
-  console.log("🔍 Session ID:", req.sessionID);
-  console.log("🔍 Flash messages:", req.flash());
-  console.log("🔍 res.locals.flashMessages:", res.locals.flashMessages);
-  
-  res.render("inventory/debug", {
-    title: "Flash Debug",
-    nav,
-    sessionId: req.sessionID,
-    flashMessages: res.locals.flashMessages,
-    reqFlash: req.flash()
-  });
+  try {
+    const nav = await utilities.getNav();
+    
+    console.log("🔍 Session ID:", req.sessionID);
+    console.log("🔍 Session:", req.session);
+    console.log("🔍 res.locals.flashMessages:", res.locals.flashMessages);
+    console.log("🔍 req.flash():", req.flash());
+    
+    res.render("inventory/debug", {
+      title: "Flash Debug",
+      nav,
+      sessionId: req.sessionID || 'No session ID',
+      sessionData: req.session || {},
+      flashMessages: res.locals.flashMessages || {}
+    });
+  } catch (error) {
+    console.error("❌ Debug route error:", error);
+    res.status(500).send(`Debug error: ${error.message}`);
+  }
 };
 
 module.exports = invCont;

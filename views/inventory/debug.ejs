@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - CSE Motors</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    
+    <main>
+        <h1>Flash Message Debug</h1>
+        
+        <div class="debug-info">
+            <h2>Session Information:</h2>
+            <p><strong>Session ID:</strong> <%= sessionId %></p>
+            
+            <h2>Session Data:</h2>
+            <pre><%= JSON.stringify(sessionData, null, 2) %></pre>
+            
+            <h2>Flash Messages:</h2>
+            <pre><%= JSON.stringify(flashMessages, null, 2) %></pre>
+        </div>
+        
+        <div class="test-links">
+            <a href="/inv/test-flash" class="btn">Test Flash Message</a>
+            <a href="/inv/" class="btn">Back to Management</a>
+        </div>
+    </main>
+    
+    <%- include('../partials/footer') %>
+</body>
+</html>
