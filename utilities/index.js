@@ -1,36 +1,76 @@
 const invModel = require("../models/inventory-model");
 
+// Cache variables for navigation
+let navCache = null;
+let cacheTimestamp = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes cache
+
 /* ***************************
  *  Build Navigation Dynamically from Database
  * ************************** */
 async function getNav() {
   try {
+    // Check if cache is valid
+    const now = Date.now();
+    if (navCache && cacheTimestamp && (now - cacheTimestamp) < CACHE_DURATION) {
+      console.log("📦 Using cached navigation");
+      return navCache;
+    }
+    
+    console.log("🔄 Building fresh navigation from database");
     const data = await invModel.getClassifications();
-    let nav = '<ul class="nav-list">';
+    console.log(`📊 Found ${data.rows.length} classifications in database`);
+    
+    let nav = '';
+    
+    // Add Home link first (matches your hardcoded structure)
     nav += '<li><a href="/">Home</a></li>';
     
     data.rows.forEach((row) => {
-      nav += `<li><a href="/inv/type/${row.classification_id}" title="View our ${row.classification_name} lineup">${row.classification_name}</a></li>`;
+      console.log(`   - ${row.classification_name} (ID: ${row.classification_id})`);
+      
+      // Map classification names to your existing URL structure
+      const urlMap = {
+        'custom': '/custom',
+        'sport': '/sport',
+        'suv': '/suv', 
+        'truck': '/truck',
+        'sedan': '/sedan'
+      };
+      
+      const url = urlMap[row.classification_name.toLowerCase()] || `/inv/type/${row.classification_id}`;
+      
+      // Generate the exact same HTML structure as your hardcoded links
+      nav += `
+        <li>
+          <a href="${url}" title="View our ${row.classification_name} lineup">${row.classification_name}</a>
+        </li>
+      `;
     });
     
+    // Add Account link last (matches your hardcoded structure)
     nav += '<li><a href="/account/login">Account</a></li>';
-    nav += '</ul>';
+    
+    // Update cache
+    navCache = nav;
+    cacheTimestamp = now;
+    console.log("✅ Navigation cache updated");
+    
     return nav;
   } catch (error) {
-    console.error('Error building navigation:', error);
-    // Fallback to basic navigation if database fails
-    return `
-      <ul class="nav-list">
-        <li><a href="/">Home</a></li>
-        <li><a href="/inv/type/1">Custom</a></li>
-        <li><a href="/inv/type/2">Sport</a></li>
-        <li><a href="/inv/type/3">SUV</a></li>
-        <li><a href="/inv/type/4">Truck</a></li>
-        <li><a href="/inv/type/5">Sedan</a></li>
-        <li><a href="/account/login">Account</a></li>
-      </ul>
-    `;
+    console.error('❌ Error building navigation:', error);
+    return null; // Return null to use fallback in header
   }
+}
+
+/* ***************************
+ *  Clear Navigation Cache (call this when classifications change)
+ * ************************** */
+function clearNavCache() {
+  const hadCache = navCache !== null;
+  navCache = null;
+  cacheTimestamp = null;
+  console.log(`🗑️ Navigation cache cleared (had cache: ${hadCache})`);
 }
 
 /* ***************************
@@ -95,6 +135,7 @@ function handleErrors(fn) {
 
 module.exports = {
   getNav,
+  clearNavCache,
   buildClassificationGrid,
   buildClassificationList,
   handleErrors

@@ -3,45 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Classification - CSE 340</title>
+    <title>Add Classification - CSE Motors</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Premium Classification Form Styling */
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        main {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0c1022;
+            font-family: Raleway, system-ui, sans-serif;
+            font-weight: 800;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #059669, #047857);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        /* Form Group Styling */
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 700;
+            color: #0c1022;
+            font-size: 1.1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #059669;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-group input:valid {
+            border-color: #bbf7d0;
+            background: #f0fdf4;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        /* Premium Button Styling */
+        .btn-premium {
+            width: 100%;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            font-family: Raleway, system-ui, sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(5, 150, 105, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(5, 150, 105, 0.4);
+            background: linear-gradient(135deg, #047857, #065f46);
+        }
+
+        .btn-premium:hover::before {
+            left: 100%;
+        }
+
+        .btn-premium:active {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.4);
+        }
+
+        .btn-premium:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.3), 0 10px 30px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-premium i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        /* Flash Messages */
+        .flash-message {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            border: 2px solid;
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .flash-message::before {
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.3rem;
+        }
+
+        .flash-message.success {
+            background: #f0fdf4;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .flash-message.success::before {
+            content: '\f00c';
+        }
+
+        .flash-message.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .flash-message.error::before {
+            content: '\f06a';
+        }
+
+        /* Errors Styling */
+        .errors {
+            background: #fef2f2;
+            border: 2px solid #fecaca;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .errors ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #991b1b;
+        }
+
+        .errors li {
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .errors li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Back Link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 30px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #059669;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            main {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            .form-container {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .btn-premium {
+                padding: 16px 20px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Loading State */
+        .btn-premium.loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .btn-premium.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <%- include('../partials/header') %>
-    </header>
     <main>
-        <h1>Add New Classification</h1>
-        
-        <% if (message) { %>
-            <div class="flash-message <%= message.type %>">
-                <%= message.message %>
-            </div>
-        <% } %>
-        
-        <% if (errors) { %>
-            <div class="errors">
-                <ul>
-                    <% errors.forEach(error => { %>
-                        <li><%= error %></li>
-                    <% }) %>
-                </ul>
-            </div>
-        <% } %>
-        
-        <form action="/inv/add-classification" method="post">
-            <div class="form-group">
-                <label for="classification_name">Classification Name:</label>
-                <input type="text" name="classification_name" id="classification_name" 
-                       required pattern="^[a-zA-Z0-9]+$" 
-                       title="No spaces or special characters allowed">
-                <small>Note: Classification name cannot contain spaces or special characters</small>
-            </div>
-            <button type="submit" class="btn">Add Classification</button>
-        </form>
+        <div class="form-container">
+            <h1>Add Classification</h1>
+            <p class="form-subtitle">Create a new vehicle category</p>
+            
+            <!-- Flash Messages -->
+            <% if (typeof flashMessages !== 'undefined') { %>
+                <% if (flashMessages.success && flashMessages.success.length > 0) { %>
+                    <div class="flash-message success">
+                        <%= flashMessages.success[0] %>
+                    </div>
+                <% } %>
+                <% if (flashMessages.error && flashMessages.error.length > 0) { %>
+                    <div class="flash-message error">
+                        <%= flashMessages.error[0] %>
+                    </div>
+                <% } %>
+            <% } %>
+            
+            <!-- Backward Compatibility -->
+            <% if (message) { %>
+                <div class="flash-message <%= message.type || 'success' %>">
+                    <%= message.message || message %>
+                </div>
+            <% } %>
+            
+            <!-- Errors -->
+            <% if (errors) { %>
+                <div class="errors">
+                    <ul>
+                        <% errors.forEach(error => { %>
+                            <li><%= error %></li>
+                        <% }) %>
+                    </ul>
+                </div>
+            <% } %>
+            
+            <form action="/inv/add-classification" method="post" id="classificationForm">
+                <div class="form-group">
+                    <label for="classification_name">
+                        <i class="fas fa-tag"></i>
+                        Classification Name
+                    </label>
+                    <input type="text" 
+                           name="classification_name" 
+                           id="classification_name" 
+                           required 
+                           pattern="^[a-zA-Z0-9]+$" 
+                           title="No spaces or special characters allowed"
+                           placeholder="Enter classification name (e.g., Electric, Hybrid)"
+                           autocomplete="off">
+                    <small>
+                        <i class="fas fa-info-circle"></i>
+                        Classification name cannot contain spaces or special characters. Use letters and numbers only.
+                    </small>
+                </div>
+                
+                <button type="submit" class="btn-premium" id="submitBtn">
+                    <i class="fas fa-plus-circle"></i>
+                    Add Classification
+                </button>
+            </form>
+            
+            <a href="/inv/" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Management
+            </a>
+        </div>
     </main>
-    <footer>
-        <%- include('../partials/footer') %>
-    </footer>
+   
+
+    <script>
+        // Add loading state to button
+        document.getElementById('classificationForm').addEventListener('submit', function() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<i class="fas fa-spinner"></i> Adding Classification...';
+        });
+
+        // Real-time validation feedback
+        const input = document.getElementById('classification_name');
+        input.addEventListener('input', function() {
+            const isValid = this.validity.valid;
+            if (this.value.length > 0) {
+                if (isValid) {
+                    this.style.borderColor = '#059669';
+                    this.style.background = '#f0fdf4';
+                } else {
+                    this.style.borderColor = '#dc2626';
+                    this.style.background = '#fef2f2';
+                }
+            }
+        });
+    </script>
 </body>
 </html>

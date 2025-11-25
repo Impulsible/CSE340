@@ -105,7 +105,7 @@ invCont.addClassificationView = async function (req, res, next) {
 };
 
 /**
- * Process add classification form - FIXED VERSION
+ * Process add classification form - UPDATED WITH CACHE CLEARING
  */
 invCont.addClassification = async function (req, res, next) {
   try {
@@ -118,6 +118,12 @@ invCont.addClassification = async function (req, res, next) {
     // FIXED: Check for rowCount OR if rows array exists and has data
     if (result.rowCount > 0 || (result.rows && result.rows.length > 0)) {
       console.log("✅ Controller: Classification added successfully!");
+      
+      // CLEAR NAVIGATION CACHE SO NEW CLASSIFICATION APPEARS IMMEDIATELY
+      console.log("🗑️ Clearing navigation cache...");
+      utilities.clearNavCache();
+      console.log("🗑️ Navigation cache cleared");
+      
       req.flash("message", "Classification added successfully!");
       return res.redirect("/inv/");
     } else {

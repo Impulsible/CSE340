@@ -998,3 +998,107 @@ main {
     margin: 0;
     padding-left: 20px;
 }
+
+/* Brand Row Styling */
+.brand-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #0c1022 0%, #1e293b 100%);
+}
+
+.brand {
+  font-family: Raleway, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: white;
+  margin: 0;
+}
+
+.brand span {
+  color: #059669;
+}
+
+/* Account Menu Styling */
+.account-menu {
+  position: relative;
+}
+
+.account-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.account-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.account-link i:first-child {
+  font-size: 1.3rem;
+  color: #059669;
+}
+
+.caret {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.account-link[aria-expanded="true"] .caret {
+  transform: rotate(180deg);
+}
+
+/* Account Dropdown */
+.account-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e2e8f0;
+  padding: 8px 0;
+  min-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.account-menu.open .account-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.account-dropdown li {
+  margin: 0;
+}
+
+.account-dropdown a {
+  display: block;
+  padding: 12px 20px;
+  color: #0c1022;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.account-dropdown a:hover {
+  background: #f0fdf4;
+  color: #059669;
+}

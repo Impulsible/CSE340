@@ -32,6 +32,24 @@ router.post(
 );
 
 // ---------------------
+// AJAX: Add Classification (POST)
+// ---------------------
+router.post(
+  "/add-classification-ajax",
+  classValidate.classificationValidationRules(),
+  classValidate.checkClassificationData,
+  utilities.handleErrors(invController.addClassificationAJAX)
+);
+
+// ---------------------
+// AJAX: Get Classifications (GET)
+// ---------------------
+router.get(
+  "/api/classifications",
+  utilities.handleErrors(invController.getClassificationsAJAX)
+);
+
+// ---------------------
 // Add Inventory Form (GET)
 // ---------------------
 router.get(
@@ -47,6 +65,16 @@ router.post(
   invValidate.inventoryValidationRules(),
   invValidate.checkInventoryData,
   utilities.handleErrors(invController.addInventory)
+);
+
+// ---------------------
+// AJAX: Add Inventory (POST)
+// ---------------------
+router.post(
+  "/add-inventory-ajax",
+  invValidate.inventoryValidationRules(),
+  invValidate.checkInventoryData,
+  utilities.handleErrors(invController.addInventoryAJAX)
 );
 
 // ---------------------

@@ -24,6 +24,14 @@ const bodyParser = require("body-parser")
 // Database pool (for DB test and general use)
 const pool = require("./database")
 
+// Utilities (for navigation)
+const utilities = require("./utilities")
+
+// Route imports
+const staticRoutes = require("./routes/static")
+const inventoryRoutes = require("./routes/inventoryRoute")
+const accountRoutes = require("./routes/accountRoute")
+
 /* ***********************
  * Middleware
  *************************/
@@ -34,36 +42,59 @@ app.use(express.static("public"))
 // Layout system
 app.use(expressLayouts)
 
-// Body parsing using body-parser (REPLACES express.json/express.urlencoded)
+// Body parsing using body-parser
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true })) // handles form submissions
+app.use(bodyParser.urlencoded({ extended: true }))
 
-// Session Middleware with PostgreSQL Store (PRODUCTION READY)
-app.use(
-  session({
-    store: new pgSession({
-      pool: pool, // Use your existing database pool
-      tableName: 'session', // Use the session table we created
-      createTableIfMissing: true, // Auto-create table if missing
-      pruneSessionInterval: 3600, // Cleanup every hour (seconds)
-    }),
-    secret: process.env.SESSION_SECRET || "fallback-secret-key-12345-change-in-production",
-    resave: false,
-    saveUninitialized: false, // Changed to false for better security
-    name: "sessionId",
-    cookie: {
-      secure: process.env.NODE_ENV === 'production', // HTTPS in production
-      httpOnly: true, // Prevent client-side JS access
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      sameSite: 'lax'
-    }
-  })
-)
+// Session Middleware with PostgreSQL Store
+const sessionConfig = {
+  store: new pgSession({
+    pool: pool,
+    tableName: 'session',
+    createTableIfMissing: true,
+    pruneSessionInterval: 3600,
+  }),
+  secret: process.env.SESSION_SECRET || "fallback-secret-key-12345-change-in-production",
+  resave: false,
+  saveUninitialized: false,
+  name: "sessionId",
+  cookie: {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: 'lax'
+  }
+}
 
-// Flash Messages
+// Environment-specific cookie settings
+if (process.env.NODE_ENV === 'production') {
+  sessionConfig.cookie.secure = true
+  console.log('🔒 Production mode: Secure cookies enabled')
+} else {
+  sessionConfig.cookie.secure = false
+  console.log('🔓 Development mode: Secure cookies disabled')
+}
+
+app.use(session(sessionConfig))
+
+// Enhanced Flash Messages
 app.use(require("connect-flash")())
 app.use((req, res, next) => {
-  res.locals.flashMessages = req.flash()
+  res.locals.flashMessages = {
+    success: req.flash('success'),
+    error: req.flash('error'), 
+    warning: req.flash('warning'),
+    info: req.flash('info'),
+    message: req.flash('message')
+  }
+  
+  // Debug logging in development
+  if (process.env.NODE_ENV !== 'production') {
+    const hasMessages = Object.values(res.locals.flashMessages).some(messages => messages.length > 0)
+    if (hasMessages) {
+      console.log('📢 Flash messages:', res.locals.flashMessages)
+    }
+  }
+  
   next()
 })
 
@@ -73,14 +104,12 @@ app.set("layout", "./layouts/layout")
 /* ***********************
  * Routes
  *************************/
-app.use("/", require("./routes/static"))
-app.use("/inv", require("./routes/inventoryRoute"))
-
-// Account routes
-app.use("/account", require("./routes/accountRoute"))
+app.use("/", staticRoutes)
+app.use("/inv", inventoryRoutes)
+app.use("/account", accountRoutes)
 
 /* ***********************
- * DB Test Route
+ * Test Routes
  *************************/
 app.get("/db-test", async (req, res) => {
   try {
@@ -93,11 +122,7 @@ app.get("/db-test", async (req, res) => {
   }
 })
 
-/* ***********************
- * Session Test Route
- *************************/
 app.get("/session-test", (req, res) => {
-  // Test session functionality
   if (!req.session.views) {
     req.session.views = 0
     req.session.firstVisit = new Date().toISOString()
@@ -109,17 +134,38 @@ app.get("/session-test", (req, res) => {
     views: req.session.views,
     firstVisit: req.session.firstVisit,
     sessionId: req.sessionID,
-    sessionStore: "PostgreSQL" // Confirm we're using PostgreSQL
+    sessionStore: "PostgreSQL"
   })
 })
 
-/* ***********************
- * Test Flash Route
- *************************/
 app.get("/test-flash", (req, res) => {
   req.flash("success", "Flash messages are working!")
-  req.flash("notice", "This is a test notice message.")
+  req.flash("error", "This is a test error message.")
+  req.flash("info", "This is a test info message.")
   res.redirect("/")
+})
+
+/* ***********************
+ * Error Handling
+ *************************/
+app.use(async (req, res) => {
+  const nav = await utilities.getNav()
+  res.status(404).render('errors/404', {
+    title: '404 - Page Not Found',
+    nav
+  })
+})
+
+app.use(async (err, req, res, next) => {
+  console.error('❌ Server Error:', err)
+  const nav = await utilities.getNav()
+  res.status(500).render('errors/500', {
+    title: '500 - Server Error',
+    nav,
+    message: process.env.NODE_ENV === 'production' 
+      ? 'Something went wrong!' 
+      : err.message
+  })
 })
 
 /* ***********************
@@ -129,9 +175,7 @@ const port = process.env.PORT || 5500
 app.listen(port, () => {
   console.log(`🚗 CSE Motors running on port ${port}`)
   console.log(`✅ PostgreSQL session store configured`)
-  console.log(`✅ MemoryStore warning eliminated`)
+  console.log(`✅ Enhanced flash messages enabled`)
   console.log(`Home page: http://localhost:${port}/`)
-  console.log(`Account login: http://localhost:${port}/account/login`)
-  console.log(`DB test: http://localhost:${port}/db-test`)
-  console.log(`Session test: http://localhost:${port}/session-test`)
+  console.log(`Flash test: http://localhost:${port}/test-flash`)
 })
