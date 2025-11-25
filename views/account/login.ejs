@@ -413,7 +413,9 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Password visibility toggle
   const passwordToggle = document.querySelector('.password-toggle');
-  const passwordInput = document.querySelector('.password-input');
+  const passwordInput = document.getElementById('account_password');
+  const strengthProgress = document.querySelector('.strength-progress');
+  const strengthText = document.querySelector('.strength-text');
   
   if (passwordToggle && passwordInput) {
     passwordToggle.addEventListener('click', function() {
@@ -424,9 +426,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Enhanced password strength indicator
-  const passwordInput = document.getElementById('account_password');
-  const strengthProgress = document.querySelector('.strength-progress');
-  const strengthText = document.querySelector('.strength-text');
 
   if (passwordInput && strengthProgress) {
     passwordInput.addEventListener('input', function() {
