@@ -7,6 +7,7 @@
     <% Object.keys(flashMessages).forEach(type => { %>
       <% flashMessages[type].forEach(message => { %>
         <div class="alert alert-<%= type %>">
+          <i class="fas fa-<%= type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle' %>"></i>
           <%= message %>
         </div>
       <% }) %>
@@ -14,63 +15,104 @@
   <% } %>
 
   <!-- LOGIN FORM WITH HTML5 CLIENT-SIDE VALIDATION -->
-  <form action="/account/login" method="post" novalidate>
+  <form action="/account/login" method="post" novalidate class="login-form">
     
     <!-- Email -->
     <div class="form-group">
-      <label for="account_email">Email Address</label>
+      <label for="account_email" class="form-label">
+        <i class="fas fa-envelope"></i>
+        Email Address
+      </label>
       <input 
         type="email" 
         id="account_email" 
         name="account_email" 
+        class="form-input"
         required
-        placeholder="Enter a valid email address"
+        placeholder="your.email@example.com"
         value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
       >
+      <div class="input-focus-border"></div>
     </div>
 
     <!-- Password -->
     <div class="form-group">
-      <label for="account_password">Password</label>
+      <label for="account_password" class="form-label">
+        <i class="fas fa-lock"></i>
+        Password
+      </label>
 
       <!-- Requirement reminder (CSE 340 required) -->
       <div class="password-requirements">
-        <strong>Password Requirements:</strong>
-        <ul>
-          <li>At least 12 characters</li>
-          <li>At least 1 uppercase letter</li>
-          <li>At least 1 number</li>
-          <li>At least 1 special character</li>
+        <div class="requirements-header">
+          <i class="fas fa-info-circle"></i>
+          <strong>Password Requirements</strong>
+        </div>
+        <ul class="requirements-list">
+          <li class="requirement-item">
+            <i class="fas fa-check-circle"></i>
+            At least 12 characters
+          </li>
+          <li class="requirement-item">
+            <i class="fas fa-check-circle"></i>
+            At least 1 uppercase letter
+          </li>
+          <li class="requirement-item">
+            <i class="fas fa-check-circle"></i>
+            At least 1 number
+          </li>
+          <li class="requirement-item">
+            <i class="fas fa-check-circle"></i>
+            At least 1 special character
+          </li>
         </ul>
       </div>
 
-      <input 
-        type="password" 
-        id="account_password" 
-        name="account_password" 
-        required
-        minlength="12"
-        pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{12,}$"
-        placeholder="Enter your password"
-        title="At least 12 characters, including 1 uppercase letter, 1 number, and 1 special character."
-      >
+      <div class="password-input-container">
+        <input 
+          type="password" 
+          id="account_password" 
+          name="account_password" 
+          class="form-input password-input"
+          required
+          minlength="12"
+          pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{12,}$"
+          placeholder="Enter your password"
+          title="At least 12 characters, including 1 uppercase letter, 1 number, and 1 special character."
+        >
+        <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+          <i class="fas fa-eye"></i>
+        </button>
+        <div class="input-focus-border"></div>
+      </div>
       
       <!-- Password strength indicator -->
-      <div class="password-strength"></div>
+      <div class="password-strength">
+        <div class="strength-label">Password Strength: <span class="strength-text">Enter password</span></div>
+        <div class="strength-bar">
+          <div class="strength-progress" data-strength="0"></div>
+        </div>
+      </div>
     </div>
 
-    <button type="submit" class="btn-primary">Sign In</button>
+    <button type="submit" class="btn-login">
+      <i class="fas fa-sign-in-alt"></i>
+      Sign In
+    </button>
   </form>
 
   <div class="register-link">
-    <p>Don't have an account? <a href="/account/register">Register here</a></p>
+    <p>Don't have an account? <a href="/account/register" class="register-cta">Register here</a></p>
   </div>
 
-  <p><a class="btn-secondary" href="/">Back to Home</a></p>
+  <p><a class="back-home" href="/">
+    <i class="fas fa-arrow-left"></i>
+    Back to Home
+  </a></p>
 </div>
 
-<!-- ==================== CSS (CLIENT-SIDE VALIDATION SUPPORT) ==================== -->
 <style>
+  /* Keep original container styles */
   .login-container {
     max-width: 400px;
     margin: 0 auto;
@@ -82,129 +124,330 @@
     text-align: center;
     color: #333;
     margin-bottom: 10px;
+    font-family: Raleway, system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    color: #0c1022;
+  }
+
+  .welcome::after {
+    content: "";
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, #059669, #047857);
+    margin: 8px auto 0;
+    border-radius: 2px;
   }
 
   .login-container > p {
     text-align: center;
-    color: #666;
+    color: #64748b;
     margin-bottom: 25px;
+    line-height: 1.5;
   }
 
+  /* Enhanced Form Styles */
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    position: relative;
   }
 
-  .form-group label {
+  .form-label {
     display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #0c1022;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
-  .form-group input {
+  .form-input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
     font-size: 16px;
     box-sizing: border-box;
-    transition: border-color 0.3s, box-shadow 0.3s;
+    transition: all 0.3s ease;
+    background: #f8fafc;
+    font-family: inherit;
   }
 
-  /* INVALID INPUT */
-  input:required:invalid, input:focus:invalid {
-    border-color: #ff4757;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ff4757' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'%3E%3C/circle%3E%3Cline x1='15' y1='9' x2='9' y2='15'%3E%3C/line%3E%3Cline x1='9' y1='9' x2='15' y2='15'%3E%3C/line%3E%3C/svg%3E");
-    background-position: right 10px center;
-    background-repeat: no-repeat;
-    background-size: 16px;
-    padding-right: 35px;
+  .input-focus-border {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #059669;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
   }
 
-  /* VALID INPUT */
-  input:required:valid {
-    border-color: #2ed573;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%232ed573' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 11.08V12a10 10 0 1 1-5.93-9.14'%3E%3C/path%3E%3Cpolyline points='22 4 12 14.01 9 11.01'%3E%3C/polyline%3E%3C/svg%3E");
-    background-position: right 10px center;
-    background-repeat: no-repeat;
-    background-size: 16px;
-    padding-right: 35px;
-  }
-
-  /* INPUT FOCUS */
-  input:focus {
+  .form-input:focus {
     outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+    border-color: #059669;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
   }
 
-  /* Password Requirements Box */
+  .form-input:focus ~ .input-focus-border {
+    width: 100%;
+  }
+
+  /* Enhanced Password Requirements */
   .password-requirements {
-    background-color: #f8f9fa;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-size: 14px;
+    background: #f0fdf4;
+    border: 2px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 12px 16px;
     margin-top: 8px;
-    border-left: 3px solid #007bff;
+    margin-bottom: 12px;
   }
 
+  .requirements-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: #166534;
+    font-weight: 600;
+  }
+
+  .requirements-header i {
+    color: #059669;
+  }
+
+  .requirements-list {
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+  }
+
+  .requirement-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    color: #166534;
+    font-size: 0.9rem;
+  }
+
+  .requirement-item i {
+    font-size: 0.8rem;
+    color: #059669;
+  }
+
+  /* Password Input Container */
+  .password-input-container {
+    position: relative;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  .password-toggle:hover {
+    color: #059669;
+  }
+
+  /* Enhanced Password Strength */
   .password-strength {
-    height: 5px;
-    border-radius: 2px;
-    margin-top: 5px;
-    transition: all 0.3s;
+    margin-top: 10px;
   }
 
-  .strength-weak { background-color: #ff4757; width: 25%; }
-  .strength-medium { background-color: #ffa502; width: 50%; }
-  .strength-strong { background-color: #2ed573; width: 75%; }
-  .strength-very-strong { background-color: #2ed573; width: 100%; }
+  .strength-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 6px;
+  }
 
-  .alert { padding: 15px; border-radius: 5px; margin: 10px 0; }
-  .alert-success { background: #d4edda; color: #155724; }
-  .alert-error { background: #f8d7da; color: #721c24; }
-  .alert-notice { background: #d1ecf1; color: #0c5460; }
+  .strength-text {
+    font-weight: 600;
+  }
 
-  .btn-primary {
-    background: #007bff;
+  .strength-bar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .strength-progress {
+    height: 100%;
+    width: 0%;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+  }
+
+  .strength-progress[data-strength="0"] { width: 0%; background: #e2e8f0; }
+  .strength-progress[data-strength="1"] { width: 25%; background: #dc2626; }
+  .strength-progress[data-strength="2"] { width: 50%; background: #f59e0b; }
+  .strength-progress[data-strength="3"] { width: 75%; background: #3b82f6; }
+  .strength-progress[data-strength="4"] { width: 100%; background: #059669; }
+
+  /* Enhanced Alerts */
+  .alert {
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid;
+  }
+
+  .alert-success {
+    background: #f0fdf4;
+    color: #166534;
+    border-color: #bbf7d0;
+  }
+
+  .alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fecaca;
+  }
+
+  .alert-notice {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #bfdbfe;
+  }
+
+  /* Enhanced Buttons */
+  .btn-login {
+    background: linear-gradient(135deg, #059669, #047857);
     color: #fff;
-    padding: 12px;
+    padding: 14px;
     border: none;
     width: 100%;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+    background: linear-gradient(135deg, #047857, #065f46);
+  }
+
+  /* Enhanced Links */
+  .register-link {
+    text-align: center;
+    margin-top: 20px;
     margin-bottom: 15px;
   }
 
-  .register-link {
-    text-align: center;
-    margin-top: 15px;
+  .register-link p {
+    color: #64748b;
+    margin: 0;
+  }
+
+  .register-cta {
+    color: #059669;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .register-cta:hover {
+    color: #047857;
+  }
+
+  .back-home {
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.3s ease;
+  }
+
+  .back-home:hover {
+    color: #059669;
+  }
+
+  /* Remove old validation icons since we have better focus states */
+  input:required:invalid, input:focus:invalid,
+  input:required:valid, input:focus:valid {
+    background-image: none;
+    padding-right: 16px;
+  }
+
+  /* Enhanced validation states */
+  .form-input:invalid:not(:focus):not(:placeholder-shown) {
+    border-color: #fecaca;
+    background: #fef2f2;
+  }
+
+  .form-input:valid:not(:focus):not(:placeholder-shown) {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
   }
 </style>
 
 <!-- ==================== JAVASCRIPT (REAL-TIME FEEDBACK) ==================== -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // Password visibility toggle
+  const passwordToggle = document.querySelector('.password-toggle');
+  const passwordInput = document.querySelector('.password-input');
+  
+  if (passwordToggle && passwordInput) {
+    passwordToggle.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+  }
+
+  // Enhanced password strength indicator
   const passwordInput = document.getElementById('account_password');
-  const strengthBar = document.querySelector('.password-strength');
+  const strengthProgress = document.querySelector('.strength-progress');
+  const strengthText = document.querySelector('.strength-text');
 
-  passwordInput.addEventListener('input', () => {
-    const value = passwordInput.value;
-    let strength = 0;
+  if (passwordInput && strengthProgress) {
+    passwordInput.addEventListener('input', function() {
+      const value = this.value;
+      let strength = 0;
 
-    if (value.length >= 12) strength++;
-    if (/[A-Z]/.test(value)) strength++;
-    if (/[0-9]/.test(value)) strength++;
-    if (/[^a-zA-Z0-9]/.test(value)) strength++;
+      if (value.length >= 12) strength++;
+      if (/[A-Z]/.test(value)) strength++;
+      if (/[0-9]/.test(value)) strength++;
+      if (/[^a-zA-Z0-9]/.test(value)) strength++;
 
-    strengthBar.className = 'password-strength';
-
-    if (value.length > 0) {
-      if (strength <= 1) strengthBar.classList.add('strength-weak');
-      else if (strength == 2) strengthBar.classList.add('strength-medium');
-      else if (strength == 3) strengthBar.classList.add('strength-strong');
-      else strengthBar.classList.add('strength-very-strong');
-    }
-  });
+      // Update strength indicator
+      strengthProgress.setAttribute('data-strength', strength);
+      
+      // Update strength text
+      const strengthLabels = ['Weak', 'Fair', 'Good', 'Strong'];
+      strengthText.textContent = value.length > 0 ? strengthLabels[strength] || 'Weak' : 'Enter password';
+      strengthText.style.color = value.length > 0 ? 
+        ['#dc2626', '#f59e0b', '#3b82f6', '#059669'][strength] || '#dc2626' : 
+        '#64748b';
+    });
+  }
 });
 </script>

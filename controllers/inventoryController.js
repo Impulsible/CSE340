@@ -62,22 +62,21 @@ invCont.buildVehicleDetail = async function (req, res, next) {
 };
 
 /**
- * Display management view - FIXED FLASH MESSAGES
+ * Display management view - UPDATED FOR RENDER FLASH MESSAGES
  */
 invCont.buildManagement = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
     
-    // Get flash message from res.locals (set by your middleware)
-    const message = res.locals.flashMessages?.message?.[0] || null;
-    
-    console.log("📢 Flash messages available:", res.locals.flashMessages);
-    console.log("📢 Message to display:", message);
+    // Get ALL flash messages (updated for Render compatibility)
+    const flashMessages = res.locals.flashMessages || {};
+    console.log("📢 Flash messages available:", flashMessages);
     
     res.render("inventory/management", {
       title: "Inventory Management",
       nav,
-      message: message
+      messages: flashMessages,
+      message: flashMessages.message ? flashMessages.message[0] : null // Backward compatibility
     });
   } catch (error) {
     console.error("❌ Management view error:", error);
@@ -86,18 +85,19 @@ invCont.buildManagement = async function (req, res, next) {
 };
 
 /**
- * Display add classification form - FIXED FLASH
+ * Display add classification form - UPDATED FOR RENDER FLASH
  */
 invCont.addClassificationView = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
-    const message = res.locals.flashMessages?.message?.[0] || null;
+    const flashMessages = res.locals.flashMessages || {};
     
     res.render("inventory/add-classification", {
       title: "Add Classification",
       nav,
       errors: null,
-      message: message
+      messages: flashMessages,
+      message: flashMessages.message ? flashMessages.message[0] : null
     });
   } catch (error) {
     next(error);
@@ -105,7 +105,7 @@ invCont.addClassificationView = async function (req, res, next) {
 };
 
 /**
- * Process add classification form - UPDATED WITH CACHE CLEARING
+ * Process add classification form - UPDATED FOR RENDER COMPATIBILITY
  */
 invCont.addClassification = async function (req, res, next) {
   try {
@@ -115,50 +115,70 @@ invCont.addClassification = async function (req, res, next) {
     const result = await invModel.addClassification(classification_name);
     console.log("📊 Controller: Result from model:", result);
     
-    // FIXED: Check for rowCount OR if rows array exists and has data
     if (result.rowCount > 0 || (result.rows && result.rows.length > 0)) {
       console.log("✅ Controller: Classification added successfully!");
       
-      // CLEAR NAVIGATION CACHE SO NEW CLASSIFICATION APPEARS IMMEDIATELY
-      console.log("🗑️ Clearing navigation cache...");
+      // CLEAR NAVIGATION CACHE
       utilities.clearNavCache();
       console.log("🗑️ Navigation cache cleared");
       
-      req.flash("message", "Classification added successfully!");
-      return res.redirect("/inv/");
+      // Use consistent flash message types
+      req.flash("success", `Classification "${classification_name}" added successfully!`);
+      
+      // Use session.save for Render compatibility
+      req.session.save((err) => {
+        if (err) {
+          console.error('❌ Session save error:', err);
+          return res.redirect("/inv/");
+        }
+        console.log('✅ Session saved with flash message');
+        return res.redirect("/inv/");
+      });
+      
     } else {
       console.log("❌ Controller: No rows affected or empty result");
       throw new Error("Failed to add classification - no data returned");
     }
   } catch (error) {
     console.log("🔴 Controller: Error occurred:", error.message);
-    req.flash("message", "Sorry, the classification could not be added.");
-    const nav = await utilities.getNav();
+    req.flash("error", "Sorry, the classification could not be added.");
     
-    res.render("inventory/add-classification", {
-      title: "Add Classification",
-      nav,
-      errors: [error.message],
-      message: { type: "error", message: "Sorry, the classification could not be added." }
+    // Move nav retrieval outside the callback
+    const nav = await utilities.getNav();
+    const flashMessages = res.locals.flashMessages || {};
+    
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save error:', err);
+      }
+      
+      res.render("inventory/add-classification", {
+        title: "Add Classification",
+        nav,
+        errors: [error.message],
+        messages: flashMessages,
+        message: { type: "error", message: "Sorry, the classification could not be added." }
+      });
     });
   }
 };
 
 /**
- * Display add inventory form - FIXED FLASH
+ * Display add inventory form - UPDATED FOR RENDER FLASH
  */
 invCont.addInventoryView = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
     const classificationList = await utilities.buildClassificationList();
-    const message = res.locals.flashMessages?.message?.[0] || null;
+    const flashMessages = res.locals.flashMessages || {};
     
     res.render("inventory/add-inventory", {
       title: "Add Inventory",
       nav,
       classificationList,
       errors: null,
-      message: message
+      messages: flashMessages,
+      message: flashMessages.message ? flashMessages.message[0] : null
     });
   } catch (error) {
     next(error);
@@ -166,44 +186,127 @@ invCont.addInventoryView = async function (req, res, next) {
 };
 
 /**
- * Process add inventory form
+ * Process add inventory form - UPDATED FOR RENDER COMPATIBILITY
  */
 invCont.addInventory = async function (req, res, next) {
   try {
     const result = await invModel.addInventory(req.body);
     
     if (result.rowCount > 0) {
-      req.flash("message", "Inventory item added successfully!");
-      return res.redirect("/inv/");
+      req.flash("success", "Inventory item added successfully!");
+      
+      // Use session.save for Render compatibility
+      req.session.save((err) => {
+        if (err) {
+          console.error('❌ Session save error:', err);
+        }
+        console.log('✅ Session saved with inventory flash message');
+        return res.redirect("/inv/");
+      });
     } else {
       throw new Error("Failed to add inventory item");
     }
   } catch (error) {
+    req.flash("error", "Sorry, the inventory item could not be added.");
+    
+    // Move nav and classificationList retrieval outside the callback
     const nav = await utilities.getNav();
     const classificationList = await utilities.buildClassificationList(req.body.classification_id);
+    const flashMessages = res.locals.flashMessages || {};
     
-    req.flash("message", "Sorry, the inventory item could not be added.");
-    res.render("inventory/add-inventory", {
-      title: "Add Inventory",
-      nav,
-      classificationList,
-      errors: [error.message],
-      message: { type: "error", message: "Sorry, the inventory item could not be added." },
-      ...req.body
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save error:', err);
+      }
+      
+      res.render("inventory/add-inventory", {
+        title: "Add Inventory",
+        nav,
+        classificationList,
+        errors: [error.message],
+        messages: flashMessages,
+        message: { type: "error", message: "Sorry, the inventory item could not be added." },
+        ...req.body
+      });
     });
   }
 };
 
 /**
- * Test flash message route
+ * Delete classification - NEW FUNCTION FOR RENDER COMPATIBILITY
  */
-invCont.testFlash = async function (req, res, next) {
-  req.flash("message", "🎉 Test flash message is working!");
-  res.redirect("/inv/");
+invCont.deleteClassification = async function (req, res, next) {
+  try {
+    const { classification_id } = req.body;
+    console.log("🗑️ Controller: Starting classification deletion for ID:", classification_id);
+    
+    // First check if there are any vehicles in this classification
+    const vehicles = await invModel.getInventoryByClassificationId(classification_id);
+    
+    if (vehicles && vehicles.length > 0) {
+      req.flash("error", "Cannot delete classification - there are vehicles assigned to it. Please remove or reassign the vehicles first.");
+      
+      req.session.save((err) => {
+        if (err) {
+          console.error('❌ Session save error:', err);
+        }
+        return res.redirect("/inv/");
+      });
+      return;
+    }
+    
+    const result = await invModel.deleteClassification(classification_id);
+    console.log("📊 Controller: Delete result from model:", result);
+    
+    if (result.rowCount > 0) {
+      console.log("✅ Controller: Classification deleted successfully!");
+      
+      // CLEAR NAVIGATION CACHE
+      utilities.clearNavCache();
+      console.log("🗑️ Navigation cache cleared");
+      
+      req.flash("success", "Classification deleted successfully!");
+    } else {
+      req.flash("error", "Classification not found or could not be deleted.");
+    }
+    
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save error:', err);
+      }
+      return res.redirect("/inv/");
+    });
+  } catch (error) {
+    console.log("🔴 Controller: Error occurred:", error.message);
+    req.flash("error", "Sorry, the classification could not be deleted.");
+    
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save error:', err);
+      }
+      return res.redirect("/inv/");
+    });
+  }
 };
 
 /**
- * Debug flash messages - FIXED VERSION
+ * Test flash message route - UPDATED FOR RENDER
+ */
+invCont.testFlash = async function (req, res, next) {
+  req.flash("success", "🎉 Test flash message is working!");
+  req.flash("error", "⚠️ This is a test error message.");
+  req.flash("info", "ℹ️ This is a test info message.");
+  
+  req.session.save((err) => {
+    if (err) {
+      console.error('❌ Session save error:', err);
+    }
+    res.redirect("/inv/");
+  });
+};
+
+/**
+ * Debug flash messages - UPDATED FOR RENDER
  */
 invCont.debugFlash = async function (req, res, next) {
   try {

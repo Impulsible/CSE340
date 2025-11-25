@@ -36,6 +36,9 @@ const accountRoutes = require("./routes/accountRoute")
  * Middleware
  *************************/
 
+// Trust Render proxy (CRITICAL FOR RENDER)
+app.set('trust proxy', 1);
+
 // Make public files available
 app.use(express.static("public"))
 
@@ -46,7 +49,7 @@ app.use(expressLayouts)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-// Session Middleware with PostgreSQL Store
+// Render-compatible Session Configuration
 const sessionConfig = {
   store: new pgSession({
     pool: pool,
@@ -54,48 +57,60 @@ const sessionConfig = {
     createTableIfMissing: true,
     pruneSessionInterval: 3600,
   }),
-  secret: process.env.SESSION_SECRET || "fallback-secret-key-12345-change-in-production",
+  secret: process.env.SESSION_SECRET || "cse340-motors-render-secret-2024",
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true, // Changed to true for Render compatibility
   name: "sessionId",
+  proxy: true, // Add this for Render
   cookie: {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000,
-    sameSite: 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-origin on Render
+    secure: process.env.NODE_ENV === 'production' // Force HTTPS on Render
   }
-}
-
-// Environment-specific cookie settings
-if (process.env.NODE_ENV === 'production') {
-  sessionConfig.cookie.secure = true
-  console.log('🔒 Production mode: Secure cookies enabled')
-} else {
-  sessionConfig.cookie.secure = false
-  console.log('🔓 Development mode: Secure cookies disabled')
 }
 
 app.use(session(sessionConfig))
 
-// Enhanced Flash Messages
+// Enhanced Flash Messages for Render
 app.use(require("connect-flash")())
 app.use((req, res, next) => {
-  res.locals.flashMessages = {
-    success: req.flash('success'),
-    error: req.flash('error'), 
-    warning: req.flash('warning'),
-    info: req.flash('info'),
-    message: req.flash('message')
-  }
-  
-  // Debug logging in development
-  if (process.env.NODE_ENV !== 'production') {
-    const hasMessages = Object.values(res.locals.flashMessages).some(messages => messages.length > 0)
-    if (hasMessages) {
-      console.log('📢 Flash messages:', res.locals.flashMessages)
+  // Store original redirect function to preserve flash
+  const originalRedirect = res.redirect;
+  res.redirect = function(url) {
+    if (req.session) {
+      req.session.save((err) => {
+        if (err) {
+          console.error('❌ Session save error during redirect:', err);
+        }
+        originalRedirect.call(this, url);
+      });
+    } else {
+      originalRedirect.call(this, url);
     }
+  };
+
+  // Enhanced flash handling with fallbacks
+  res.locals.flashMessages = {
+    success: req.flash('success') || [],
+    error: req.flash('error') || [],
+    warning: req.flash('warning') || [],
+    info: req.flash('info') || [],
+    message: req.flash('message') || []
+  };
+
+  // Debug logging for both environments
+  const hasMessages = Object.values(res.locals.flashMessages).some(messages => messages.length > 0);
+  if (hasMessages) {
+    console.log('📢 Flash messages detected:', {
+      success: res.locals.flashMessages.success,
+      error: res.locals.flashMessages.error,
+      info: res.locals.flashMessages.info,
+      environment: process.env.NODE_ENV
+    });
   }
   
-  next()
+  next();
 })
 
 app.set("view engine", "ejs")
@@ -134,16 +149,63 @@ app.get("/session-test", (req, res) => {
     views: req.session.views,
     firstVisit: req.session.firstVisit,
     sessionId: req.sessionID,
-    sessionStore: "PostgreSQL"
+    sessionStore: "PostgreSQL",
+    environment: process.env.NODE_ENV,
+    secureCookie: process.env.NODE_ENV === 'production'
   })
 })
 
 app.get("/test-flash", (req, res) => {
-  req.flash("success", "Flash messages are working!")
-  req.flash("error", "This is a test error message.")
-  req.flash("info", "This is a test info message.")
-  res.redirect("/")
+  console.log('🧪 Testing flash messages...');
+  req.flash("success", "🎉 SUCCESS: Flash messages are working!")
+  req.flash("error", "⚠️ ERROR: This is a test error message.")
+  req.flash("info", "ℹ️ INFO: This is a test info message.")
+  
+  // Use session.save to ensure flash is preserved
+  req.session.save((err) => {
+    if (err) {
+      console.error('❌ Session save error:', err);
+    } else {
+      console.log('✅ Session saved with flash messages');
+    }
+    res.redirect("/");
+  });
 })
+
+/* ***********************
+ * Render-Specific Test Routes
+ *************************/
+app.get("/render-flash-test", (req, res) => {
+  console.log('🚀 RENDER FLASH TEST - Session ID:', req.sessionID);
+  
+  req.flash('success', '🎉 SUCCESS: Flash messages are working on Render!');
+  req.flash('error', '⚠️ ERROR: This is a test error message on Render.');
+  req.flash('info', 'ℹ️ INFO: This is a test info message on Render.');
+  
+  req.session.save((err) => {
+    if (err) {
+      console.log('❌ Render session save error:', err);
+      res.redirect('/?flash_error=session_save_failed');
+    } else {
+      console.log('✅ Render session saved successfully');
+      res.redirect('/');
+    }
+  });
+});
+
+app.get("/debug-session", (req, res) => {
+  res.json({
+    sessionId: req.sessionID,
+    sessionExists: !!req.session,
+    sessionData: req.session,
+    cookies: req.headers.cookie,
+    flashMessages: res.locals.flashMessages,
+    environment: process.env.NODE_ENV,
+    renderExternalUrl: process.env.RENDER_EXTERNAL_URL,
+    nodeEnv: process.env.NODE_ENV,
+    secureCookie: process.env.NODE_ENV === 'production'
+  });
+});
 
 /* ***********************
  * Error Handling
@@ -174,8 +236,12 @@ app.use(async (err, req, res, next) => {
 const port = process.env.PORT || 5500
 app.listen(port, () => {
   console.log(`🚗 CSE Motors running on port ${port}`)
+  console.log(`✅ Environment: ${process.env.NODE_ENV || 'development'}`)
   console.log(`✅ PostgreSQL session store configured`)
-  console.log(`✅ Enhanced flash messages enabled`)
+  console.log(`✅ Render-compatible flash messages enabled`)
+  console.log(`✅ Trust proxy configured`)
   console.log(`Home page: http://localhost:${port}/`)
   console.log(`Flash test: http://localhost:${port}/test-flash`)
+  console.log(`Render test: http://localhost:${port}/render-flash-test`)
+  console.log(`Session debug: http://localhost:${port}/debug-session`)
 })
