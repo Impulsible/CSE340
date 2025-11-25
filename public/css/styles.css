@@ -1102,3 +1102,205 @@ main {
   background: #f0fdf4;
   color: #059669;
 }
+
+/* Global Account Menu Styles - Applies to ALL pages */
+.brand-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #0c1022 0%, #1e293b 100%);
+  border-bottom: 1px solid #334155;
+}
+
+.brand {
+  font-family: Raleway, system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 1.8rem;
+  color: white;
+  margin: 0;
+}
+
+.brand span {
+  color: #059669;
+}
+
+/* Account Menu - Global Styles */
+.account-menu {
+  position: relative;
+}
+
+.account-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.account-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.account-link[aria-expanded="true"] {
+  background: rgba(5, 150, 105, 0.3);
+  border-color: #059669;
+}
+
+.account-link i:first-child {
+  font-size: 1.3rem;
+  color: #059669;
+}
+
+.account-text {
+  font-size: 0.95rem;
+}
+
+.caret {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.account-link[aria-expanded="true"] .caret {
+  transform: rotate(180deg);
+}
+
+/* Account Dropdown - Global Styles */
+.account-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid #e2e8f0;
+  padding: 8px 0;
+  min-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  list-style: none;
+  margin: 0;
+}
+
+.account-menu.open .account-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.account-dropdown li {
+  margin: 0;
+}
+
+.account-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  color: #0c1022;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  font-size: 0.9rem;
+}
+
+.account-dropdown a:hover {
+  background: #f0fdf4;
+  color: #059669;
+}
+
+.account-dropdown a i {
+  width: 16px;
+  text-align: center;
+  color: #059669;
+}
+
+/* Ensure consistent behavior across all pages */
+.site-header {
+  width: 100%;
+}
+
+/* Make sure no other styles override these */
+header .brand-row,
+header .account-menu,
+header .account-link,
+header .account-dropdown {
+  /* Reset any potential conflicting styles */
+  box-sizing: border-box;
+}
+
+/* Responsive adjustments that maintain visibility */
+@media (max-width: 768px) {
+  .brand-row {
+    padding: 12px 15px;
+  }
+  
+  .brand {
+    font-size: 1.6rem;
+  }
+  
+  .account-link {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .account-text {
+    font-size: 0.9rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .brand-row {
+    padding: 20px 30px;
+  }
+  
+  .brand {
+    font-size: 2rem;
+  }
+  
+  .account-link {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+}
+
+/* Dark theme dropdown to match header */
+.account-dropdown {
+  background: #1e293b !important; /* Dark background */
+  border: 1px solid #334155 !important;
+}
+
+.account-dropdown a {
+  color: white !important;
+  background: #1e293b !important;
+}
+
+.account-dropdown a:hover {
+  background: #059669 !important; /* Green on hover */
+  color: white !important;
+}
+
+.account-dropdown a i {
+  color: #059669 !important;
+}
+
+.account-dropdown a:hover i {
+  color: white !important;
+}
+

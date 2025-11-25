@@ -78,3 +78,32 @@ app.listen(PORT, () => {
       }
     });
   });
+
+
+  // Global Account Dropdown Script - Works on ALL pages
+document.addEventListener("DOMContentLoaded", () => {
+  const accountMenu = document.querySelector(".account-menu");
+  const accountToggle = document.querySelector(".account-toggle");
+
+  if (accountMenu && accountToggle) {
+    accountToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const expanded = accountToggle.getAttribute("aria-expanded") === "true";
+      const newState = !expanded;
+
+      accountToggle.setAttribute("aria-expanded", String(newState));
+      accountMenu.classList.toggle("open", newState);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", () => {
+      accountMenu.classList.remove("open");
+      accountToggle.setAttribute("aria-expanded", "false");
+    });
+
+    // Prevent dropdown from closing when clicking inside
+    accountMenu.addEventListener("click", (e) => {
+      e.stopPropagation();
+    });
+  }
+});
