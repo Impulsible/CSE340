@@ -1,4 +1,6 @@
 const invModel = require("../models/inventory-model");
+const JWTUtils = require('./jwtUtils');
+const { requireAuth, requireAdmin } = require('../middleware/jwtMiddleware'); // Fixed path
 
 // Cache variables for navigation
 let navCache = null;
@@ -138,5 +140,10 @@ module.exports = {
   clearNavCache,
   buildClassificationGrid,
   buildClassificationList,
-  handleErrors
+  handleErrors,
+  
+  // Add new JWT and auth utilities
+  JWTUtils,
+  requireAuth,
+  requireAdmin
 };

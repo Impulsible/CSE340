@@ -2,6 +2,21 @@
   <h1 class="welcome"><%= title %></h1>
   <p>Sign in to view orders, service history, and saved builds.</p>
 
+  <!-- JWT Authentication Status Indicator -->
+  <% if (user) { %>
+    <div class="alert alert-info">
+      <i class="fas fa-check-circle"></i>
+      You are already logged in as <strong><%= user.firstName %> <%= user.lastName %></strong>
+    </div>
+    <div class="already-logged-in">
+      <p>Continue to your <a href="/account/dashboard" class="dashboard-link">Dashboard</a> or 
+      <form action="/account/logout" method="POST" style="display: inline;">
+        <button type="submit" class="logout-link-btn">Logout</button>
+      </form>
+      to sign in with a different account.</p>
+    </div>
+  <% } %>
+
   <!-- Flash Messages -->
   <% if (flashMessages) { %>
     <% Object.keys(flashMessages).forEach(type => { %>
@@ -14,101 +29,121 @@
     <% }) %>
   <% } %>
 
-  <!-- LOGIN FORM WITH HTML5 CLIENT-SIDE VALIDATION -->
-  <form action="/account/login" method="post" novalidate class="login-form">
-    
-    <!-- Email -->
-    <div class="form-group">
-      <label for="account_email" class="form-label">
-        <i class="fas fa-envelope"></i>
-        Email Address
-      </label>
-      <input 
-        type="email" 
-        id="account_email" 
-        name="account_email" 
-        class="form-input"
-        required
-        placeholder="your.email@example.com"
-        value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
-      >
-      <div class="input-focus-border"></div>
-    </div>
-
-    <!-- Password -->
-    <div class="form-group">
-      <label for="account_password" class="form-label">
-        <i class="fas fa-lock"></i>
-        Password
-      </label>
-
-      <!-- Requirement reminder (CSE 340 required) -->
-      <div class="password-requirements">
-        <div class="requirements-header">
-          <i class="fas fa-info-circle"></i>
-          <strong>Password Requirements</strong>
-        </div>
-        <ul class="requirements-list">
-          <li class="requirement-item">
-            <i class="fas fa-check-circle"></i>
-            At least 12 characters
-          </li>
-          <li class="requirement-item">
-            <i class="fas fa-check-circle"></i>
-            At least 1 uppercase letter
-          </li>
-          <li class="requirement-item">
-            <i class="fas fa-check-circle"></i>
-            At least 1 number
-          </li>
-          <li class="requirement-item">
-            <i class="fas fa-check-circle"></i>
-            At least 1 special character
-          </li>
-        </ul>
-      </div>
-
-      <div class="password-input-container">
+  <!-- Only show login form if user is NOT already authenticated -->
+  <% if (!user) { %>
+    <!-- LOGIN FORM WITH HTML5 CLIENT-SIDE VALIDATION -->
+    <form action="/account/login" method="post" novalidate class="login-form">
+      
+      <!-- Email -->
+      <div class="form-group">
+        <label for="account_email" class="form-label">
+          <i class="fas fa-envelope"></i>
+          Email Address
+        </label>
         <input 
-          type="password" 
-          id="account_password" 
-          name="account_password" 
-          class="form-input password-input"
+          type="email" 
+          id="account_email" 
+          name="account_email" 
+          class="form-input"
           required
-          minlength="12"
-          pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{12,}$"
-          placeholder="Enter your password"
-          title="At least 12 characters, including 1 uppercase letter, 1 number, and 1 special character."
+          placeholder="your.email@example.com"
+          value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
         >
-        <button type="button" class="password-toggle" aria-label="Toggle password visibility">
-          <i class="fas fa-eye"></i>
-        </button>
         <div class="input-focus-border"></div>
       </div>
-      
-      <!-- Password strength indicator -->
-      <div class="password-strength">
-        <div class="strength-label">Password Strength: <span class="strength-text">Enter password</span></div>
-        <div class="strength-bar">
-          <div class="strength-progress" data-strength="0"></div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="account_password" class="form-label">
+          <i class="fas fa-lock"></i>
+          Password
+        </label>
+
+        <!-- Requirement reminder (CSE 340 required) -->
+        <div class="password-requirements">
+          <div class="requirements-header">
+            <i class="fas fa-info-circle"></i>
+            <strong>Password Requirements</strong>
+          </div>
+          <ul class="requirements-list">
+            <li class="requirement-item">
+              <i class="fas fa-check-circle"></i>
+              At least 12 characters
+            </li>
+            <li class="requirement-item">
+              <i class="fas fa-check-circle"></i>
+              At least 1 uppercase letter
+            </li>
+            <li class="requirement-item">
+              <i class="fas fa-check-circle"></i>
+              At least 1 number
+            </li>
+            <li class="requirement-item">
+              <i class="fas fa-check-circle"></i>
+              At least 1 special character
+            </li>
+          </ul>
+        </div>
+
+        <div class="password-input-container">
+          <input 
+            type="password" 
+            id="account_password" 
+            name="account_password" 
+            class="form-input password-input"
+            required
+            minlength="12"
+            pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{12,}$"
+            placeholder="Enter your password"
+            title="At least 12 characters, including 1 uppercase letter, 1 number, and 1 special character."
+          >
+          <button type="button" class="password-toggle" aria-label="Toggle password visibility">
+            <i class="fas fa-eye"></i>
+          </button>
+          <div class="input-focus-border"></div>
+        </div>
+        
+        <!-- Password strength indicator -->
+        <div class="password-strength">
+          <div class="strength-label">Password Strength: <span class="strength-text">Enter password</span></div>
+          <div class="strength-bar">
+            <div class="strength-progress" data-strength="0"></div>
+          </div>
         </div>
       </div>
+
+      <!-- JWT Token Field (Hidden) -->
+      <input type="hidden" name="jwt_auth" value="true">
+
+      <button type="submit" class="btn-login">
+        <i class="fas fa-sign-in-alt"></i>
+        Sign In
+      </button>
+    </form>
+
+    <div class="register-link">
+      <p>Don't have an account? <a href="/account/register" class="register-cta">Register here</a></p>
     </div>
 
-    <button type="submit" class="btn-login">
-      <i class="fas fa-sign-in-alt"></i>
-      Sign In
-    </button>
-  </form>
+    <!-- Back to Home (Debug Removed) -->
+    <p><a class="back-home" href="/">
+      <i class="fas fa-arrow-left"></i>
+      Back to Home
+    </a></p>
 
-  <div class="register-link">
-    <p>Don't have an account? <a href="/account/register" class="register-cta">Register here</a></p>
-  </div>
-
-  <p><a class="back-home" href="/">
-    <i class="fas fa-arrow-left"></i>
-    Back to Home
-  </a></p>
+  <% } else { %>
+    <!-- Show dashboard redirect options when already logged in -->
+    <div class="redirect-options">
+      <a href="/account/dashboard" class="btn-dashboard">
+        <i class="fas fa-tachometer-alt"></i>
+        Go to Dashboard
+      </a>
+      <a href="/" class="btn-home">
+        <i class="fas fa-home"></i>
+        Return to Home
+      </a>
+    </div>
+  <% } %>
 </div>
 
 <style>
@@ -145,6 +180,79 @@
     color: #64748b;
     margin-bottom: 25px;
     line-height: 1.5;
+  }
+
+  /* Already Logged In Styles */
+  .already-logged-in {
+    background: #f0f9ff;
+    border: 2px solid #bae6fd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+  }
+
+  .dashboard-link {
+    color: #059669;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .logout-link-btn {
+    background: none;
+    border: none;
+    color: #dc2626;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .logout-link-btn:hover {
+    color: #b91c1c;
+  }
+
+  /* Redirect Options */
+  .redirect-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px 0;
+  }
+
+  .btn-dashboard, .btn-home {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .btn-dashboard {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+  }
+
+  .btn-home {
+    background: #f8fafc;
+    color: #64748b;
+    border: 2px solid #e2e8f0;
+  }
+
+  .btn-dashboard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+  }
+
+  .btn-home:hover {
+    background: #e2e8f0;
+    transform: translateY(-1px);
   }
 
   /* Enhanced Form Styles */
@@ -320,10 +428,16 @@
     border-color: #fecaca;
   }
 
-  .alert-notice {
+  .alert-info {
     background: #dbeafe;
     color: #1e40af;
     border-color: #bfdbfe;
+  }
+
+  .alert-notice {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #fcd34d;
   }
 
   /* Enhanced Buttons */
@@ -411,7 +525,7 @@
 <!-- ==================== JAVASCRIPT (REAL-TIME FEEDBACK) ==================== -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Password visibility toggle
+
   const passwordToggle = document.querySelector('.password-toggle');
   const passwordInput = document.getElementById('account_password');
   const strengthProgress = document.querySelector('.strength-progress');
@@ -425,8 +539,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Enhanced password strength indicator
-
   if (passwordInput && strengthProgress) {
     passwordInput.addEventListener('input', function() {
       const value = this.value;
@@ -437,10 +549,8 @@ document.addEventListener('DOMContentLoaded', function() {
       if (/[0-9]/.test(value)) strength++;
       if (/[^a-zA-Z0-9]/.test(value)) strength++;
 
-      // Update strength indicator
       strengthProgress.setAttribute('data-strength', strength);
-      
-      // Update strength text
+
       const strengthLabels = ['Weak', 'Fair', 'Good', 'Strong'];
       strengthText.textContent = value.length > 0 ? strengthLabels[strength] || 'Weak' : 'Enter password';
       strengthText.style.color = value.length > 0 ? 
@@ -448,5 +558,18 @@ document.addEventListener('DOMContentLoaded', function() {
         '#64748b';
     });
   }
+
+  const alerts = document.querySelectorAll('.alert');
+  alerts.forEach(alert => {
+    setTimeout(() => {
+      alert.style.transition = 'opacity 0.5s ease';
+      alert.style.opacity = '0';
+      setTimeout(() => {
+        if (alert.parentNode) {
+          alert.parentNode.removeChild(alert);
+        }
+      }, 500);
+    }, 5000);
+  });
 });
 </script>
