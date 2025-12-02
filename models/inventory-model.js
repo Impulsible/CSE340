@@ -104,6 +104,112 @@ const invModel = {
       console.error("Error getting vehicle detail:", error);
       throw error;
     }
+  },
+
+  /* ***************************
+   * Get inventory item by ID - ADDED FOR EDIT FUNCTIONALITY
+   * ************************** */
+  getInventoryById: async (inv_id) => {
+    try {
+      console.log(`🔍 Database: Getting inventory item for editing ID ${inv_id}`);
+      
+      const sql = `SELECT * FROM inventory WHERE inv_id = $1`;
+      const result = await pool.query(sql, [inv_id]);
+      
+      if (result.rows.length > 0) {
+        console.log(`✅ Database: Found inventory item ${result.rows[0].inv_make} ${result.rows[0].inv_model} for editing`);
+        return result.rows[0];
+      } else {
+        console.log(`❌ Database: No inventory item found with ID ${inv_id}`);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error getting inventory by ID:", error);
+      throw error;
+    }
+  },
+
+  /* ***************************
+   *  Update Inventory Data
+   * ************************** */
+  updateInventory: async (
+    inv_id,
+    inv_make,
+    inv_model,
+    inv_description,
+    inv_image,
+    inv_thumbnail,
+    inv_price,
+    inv_year,
+    inv_miles,
+    inv_color,
+    classification_id
+  ) => {
+    try {
+      console.log(`📝 Database: Updating inventory item ID ${inv_id} - ${inv_make} ${inv_model}`);
+      
+      const sql = `UPDATE inventory 
+        SET inv_make = $1, 
+            inv_model = $2, 
+            inv_description = $3, 
+            inv_image = $4, 
+            inv_thumbnail = $5, 
+            inv_price = $6, 
+            inv_year = $7, 
+            inv_miles = $8, 
+            inv_color = $9, 
+            classification_id = $10 
+        WHERE inv_id = $11 
+        RETURNING *`;
+        
+      const data = await pool.query(sql, [
+        inv_make,
+        inv_model,
+        inv_description,
+        inv_image,
+        inv_thumbnail,
+        inv_price,
+        inv_year,
+        inv_miles,
+        inv_color,
+        classification_id,
+        inv_id
+      ]);
+      
+      if (data.rows.length > 0) {
+        console.log(`✅ Database: Successfully updated inventory item ID ${inv_id} - ${inv_make} ${inv_model}`);
+        return data.rows[0];
+      } else {
+        console.log(`❌ Database: No inventory item found with ID ${inv_id} to update`);
+        return null;
+      }
+    } catch (error) {
+      console.error("model error: " + error);
+      throw error;
+    }
+  },
+
+  /* ***************************
+   *  Delete Inventory Item
+   * ************************** */
+  deleteInventoryItem: async (inv_id) => {
+    try {
+      console.log(`🗑️ Database: Deleting inventory item ID ${inv_id}`);
+      
+      const sql = "DELETE FROM inventory WHERE inv_id = $1 RETURNING *";
+      const result = await pool.query(sql, [inv_id]);
+      
+      if (result.rowCount > 0) {
+        console.log(`✅ Database: Successfully deleted inventory item ID ${inv_id}`);
+        return true;
+      } else {
+        console.log(`❌ Database: No inventory item found with ID ${inv_id}`);
+        return false;
+      }
+    } catch (error) {
+      console.error("Error deleting inventory item:", error);
+      throw error;
+    }
   }
 };
 

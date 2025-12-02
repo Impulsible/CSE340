@@ -5,21 +5,516 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Management - CSE 340</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Management Page Styling */
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0c1022;
+            font-family: Raleway, system-ui, sans-serif;
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #2c63ff, #1d4ed8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .management-links {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #2c63ff, #1d4ed8);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(44, 99, 255, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(44, 99, 255, 0.3);
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        }
+
+        /* Flash Messages */
+        .flash-message {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            border: 2px solid;
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .flash-message::before {
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.3rem;
+        }
+
+        .flash-message.success {
+            background: #f0fdf4;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .flash-message.success::before {
+            content: '\f00c';
+        }
+
+        .flash-message.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .flash-message.error::before {
+            content: '\f06a';
+        }
+
+        .flash-message.info {
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #bfdbfe;
+        }
+
+        .flash-message.info::before {
+            content: '\f05a';
+        }
+
+        /* Classification Select Styling */
+        #classificationList {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        #classificationList:focus {
+            outline: none;
+            border-color: #2c63ff;
+            box-shadow: 0 0 0 4px rgba(44, 99, 255, 0.1);
+        }
+
+        /* Inventory Table Styling - Updated for your JS */
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .inventory-table th {
+            background: linear-gradient(135deg, #2c63ff, #1d4ed8);
+            color: white;
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .inventory-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        .inventory-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .inventory-table tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Action Buttons - Updated for your JS */
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modify-btn, .delete-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .modify-btn {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .modify-btn:hover {
+            background: #bfdbfe;
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .delete-btn:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+        }
+
+        /* Loading and error messages */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .error {
+            color: #dc2626;
+            text-align: center;
+            padding: 20px;
+            background: #fef2f2;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        /* Refresh Notification */
+        .refresh-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            main {
+                margin: 20px auto;
+                padding: 0 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .management-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .inventory-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .modify-btn, .delete-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <main>
         <h1>Inventory Management</h1>
         
-        <% if (message) { %>
-            <div class="flash-message <%= message.type %>">
-                <%= message.message %>
+        <!-- Flash Messages - SINGLE SOURCE -->
+        <% 
+            // Determine which message to show (prefer messages object over message)
+            let displayMessage = null;
+            let displayType = 'info';
+            
+            if (messages) {
+                if (messages.success && messages.success.length > 0) {
+                    displayMessage = messages.success[0];
+                    displayType = 'success';
+                } else if (messages.error && messages.error.length > 0) {
+                    displayMessage = messages.error[0];
+                    displayType = 'error';
+                } else if (messages.info && messages.info.length > 0) {
+                    displayMessage = messages.info[0];
+                    displayType = 'info';
+                }
+            } else if (message) {
+                // Fallback to old message format
+                displayMessage = typeof message.message !== 'undefined' ? message.message : message;
+                displayType = message.type || 'info';
+            }
+        %>
+        
+        <% if (displayMessage) { %>
+            <div class="flash-message <%= displayType %>">
+                <%= displayMessage %>
             </div>
         <% } %>
         
         <div class="management-links">
-            <a href="/inv/add-classification" class="btn">Add New Classification</a>
-            <a href="/inv/add-inventory" class="btn">Add New Inventory Item</a>
+            <a href="/inv/add-classification" class="btn">
+                <i class="fas fa-plus"></i>
+                Add New Classification
+            </a>
+            <a href="/inv/add-inventory" class="btn">
+                <i class="fas fa-car"></i>
+                Add New Inventory Item
+            </a>
         </div>
+
+        <!-- Manage Existing Inventory Section -->
+        <h2>Manage Existing Inventory</h2>
+        <p>Select a classification from the list to see the items belonging to the classification.</p>
+        
+        <!-- Display classification list -->
+        <% if (classificationSelect) { %>
+            <%- classificationSelect %>
+        <% } else { %>
+            <p>No classification list available.</p>
+        <% } %>
+        
+        <!-- Inventory Table Container -->
+        <div id="inventoryDisplay">
+            <!-- JavaScript will populate this with table -->
+            <p class="loading">Select a classification to view inventory</p>
+        </div>
+        
+        <!-- noscript element -->
+        <noscript>
+            <div class="error">
+                <i class="fas fa-exclamation-triangle"></i>
+                JavaScript must be enabled to use this page.
+            </div>
+        </noscript>
     </main>
+
+    <!-- JavaScript file reference -->
+    <script src="/js/inventory.js"></script>
+
+    <!-- Consolidated JavaScript for management page -->
+    <script>
+        // Function to check URL for refresh flag and auto-refresh inventory
+        function checkAndRefreshInventory() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shouldRefresh = urlParams.get('refresh') === 'true';
+            
+            if (shouldRefresh) {
+                console.log('Auto-refresh triggered after delete/edit');
+                
+                // Show a subtle notification
+                showRefreshNotification();
+                
+                // Get the currently selected classification
+                const classificationList = document.querySelector("#classificationList");
+                if (classificationList && classificationList.value) {
+                    // Wait a moment for the flash message to appear, then refresh
+                    setTimeout(() => {
+                        // Trigger the change event to refresh the inventory
+                        classificationList.dispatchEvent(new Event('change'));
+                        
+                        // Remove the refresh parameter from URL without reloading page
+                        const newUrl = window.location.pathname;
+                        window.history.replaceState({}, document.title, newUrl);
+                    }, 1000); // 1 second delay to show flash message first
+                } else {
+                    // If no classification selected, just remove the parameter
+                    const newUrl = window.location.pathname;
+                    window.history.replaceState({}, document.title, newUrl);
+                }
+            }
+        }
+        
+        // Function to show a refresh notification
+        function showRefreshNotification() {
+            // Create a subtle notification
+            const notification = document.createElement('div');
+            notification.className = 'refresh-notification';
+            notification.innerHTML = `
+                <i class="fas fa-sync-alt"></i>
+                Refreshing inventory...
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 2 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 2000);
+        }
+        
+        // Function to refresh inventory (can be called from elsewhere)
+        function refreshInventory() {
+            const classificationList = document.querySelector("#classificationList");
+            if (classificationList && classificationList.value) {
+                console.log('Manually refreshing inventory...');
+                showRefreshNotification();
+                classificationList.dispatchEvent(new Event('change'));
+            } else {
+                console.log('No classification selected to refresh');
+            }
+        }
+        
+        // Function to handle delete button clicks with confirmation
+        function handleDeleteConfirmation(event) {
+            // Check if the clicked element is a delete button
+            const deleteBtn = event.target.closest('.delete-btn');
+            if (deleteBtn) {
+                const confirmDelete = confirm('Are you sure you want to delete this vehicle? This action cannot be undone.');
+                
+                if (!confirmDelete) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+            }
+            return true;
+        }
+        
+        // Check for refresh on page load and set up event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Management page loaded - setting up auto-refresh');
+            
+            // Check for refresh flag immediately
+            checkAndRefreshInventory();
+            
+            // Also check after a short delay (in case DOM isn't fully ready)
+            setTimeout(checkAndRefreshInventory, 500);
+            
+            // Add click event listener to the document for delete confirmation
+            document.addEventListener('click', handleDeleteConfirmation);
+            
+            // Make refreshInventory available globally
+            window.refreshInventory = refreshInventory;
+            
+            // Monitor for dynamically added delete buttons
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList') {
+                        // New delete buttons might have been added
+                        const newDeleteButtons = document.querySelectorAll('.delete-btn');
+                        newDeleteButtons.forEach(btn => {
+                            if (!btn.hasAttribute('data-listener-added')) {
+                                btn.addEventListener('click', handleDeleteConfirmation);
+                                btn.setAttribute('data-listener-added', 'true');
+                            }
+                        });
+                    }
+                });
+            });
+            
+            // Start observing the inventory display container
+            const inventoryDisplay = document.getElementById('inventoryDisplay');
+            if (inventoryDisplay) {
+                observer.observe(inventoryDisplay, { childList: true, subtree: true });
+            }
+        });
+    </script>
 </body>
 </html>

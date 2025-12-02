@@ -1418,3 +1418,568 @@ header .account-dropdown {
 .btn-primary:hover {
     background: #5a6fd8;
 }
+
+/* =========================================
+   INVENTORY MANAGEMENT AJAX STYLES
+   ========================================= */
+
+/* Classification Select Dropdown */
+#classificationList {
+    width: 100%;
+    max-width: 400px;
+    padding: 10px 12px;
+    margin: 15px 0 20px 0;
+    border: 2px solid #2c63ff;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background-color: #f8fafc;
+    color: #0c1022;
+    transition: all 0.3s ease;
+    display: block;
+}
+
+#classificationList:focus {
+    outline: none;
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+    background-color: white;
+}
+
+#classificationList:hover {
+    border-color: #059669;
+}
+
+/* Inventory Display Table */
+#inventoryDisplay {
+    margin: 25px 0;
+    width: 100%;
+    overflow-x: auto;
+}
+
+#inventoryDisplay table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+/* Table Header */
+#inventoryDisplay thead {
+    background: linear-gradient(135deg, #2c63ff 0%, #059669 100%);
+}
+
+#inventoryDisplay th {
+    padding: 16px 20px;
+    text-align: left;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #059669;
+}
+
+#inventoryDisplay th:first-child {
+    border-top-left-radius: 10px;
+}
+
+#inventoryDisplay th:last-child {
+    border-top-right-radius: 10px;
+}
+
+/* Table Cells */
+#inventoryDisplay td {
+    padding: 14px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #374151;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+#inventoryDisplay tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Table Row Hover Effect */
+#inventoryDisplay tbody tr {
+    transition: all 0.2s ease;
+}
+
+#inventoryDisplay tbody tr:hover {
+    background-color: #f0fdf4;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.1);
+}
+
+/* Action Links */
+#inventoryDisplay td a {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+/* Modify Button */
+#inventoryDisplay td a[href*="/inv/edit/"] {
+    background-color: #2c63ff;
+    color: white;
+    margin-right: 8px;
+}
+
+#inventoryDisplay td a[href*="/inv/edit/"]:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 99, 255, 0.3);
+}
+
+/* Delete Button */
+#inventoryDisplay td a[href*="/inv/delete/"] {
+    background-color: #ef4444;
+    color: white;
+}
+
+#inventoryDisplay td a[href*="/inv/delete/"]:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* No Data Message */
+#inventoryDisplay p {
+    padding: 30px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 16px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 2px dashed #d1d5db;
+    margin: 20px 0;
+}
+
+/* Noscript Warning */
+noscript {
+    display: block;
+    padding: 20px;
+    margin: 25px 0;
+    background-color: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 8px;
+    color: #991b1b;
+    font-weight: 600;
+    text-align: center;
+}
+
+noscript .error {
+    color: #dc2626;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Responsive Design for Inventory Table */
+@media (max-width: 768px) {
+    #classificationList {
+        max-width: 100%;
+        font-size: 15px;
+        padding: 12px;
+    }
+    
+    #inventoryDisplay th,
+    #inventoryDisplay td {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+    
+    #inventoryDisplay td a {
+        padding: 6px 12px;
+        font-size: 13px;
+        display: block;
+        margin-bottom: 5px;
+        text-align: center;
+    }
+    
+    /* Stack buttons on mobile */
+    #inventoryDisplay td {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 15px;
+    }
+    
+    #inventoryDisplay td:first-child {
+        font-weight: 600;
+        color: #0c1022;
+    }
+    
+    /* Hide table headers on mobile and use flex layout */
+    #inventoryDisplay thead {
+        display: none;
+    }
+    
+    #inventoryDisplay tbody tr {
+        display: block;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px;
+        background-color: white;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    #inventoryDisplay tbody tr:hover {
+        transform: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    #inventoryDisplay td {
+        border: none;
+        padding: 10px 0;
+        display: block;
+    }
+    
+    #inventoryDisplay td:before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #2c63ff;
+        display: block;
+        margin-bottom: 5px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    #inventoryDisplay {
+        margin: 15px -10px;
+        width: calc(100% + 20px);
+    }
+    
+    #inventoryDisplay tbody tr {
+        margin-bottom: 15px;
+        padding: 12px;
+    }
+    
+    #inventoryDisplay td a {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
+
+/* Desktop enhancements */
+@media (min-width: 769px) {
+    #inventoryDisplay table {
+        margin: 0 auto;
+    }
+    
+    #inventoryDisplay th {
+        font-size: 15px;
+    }
+    
+    #inventoryDisplay td {
+        font-size: 15px;
+    }
+}
+
+/* Loading State Animation */
+#inventoryDisplay.loading {
+    position: relative;
+    min-height: 100px;
+}
+
+#inventoryDisplay.loading:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #2c63ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Print Styles */
+@media print {
+    #classificationList {
+        display: none;
+    }
+    
+    #inventoryDisplay td a {
+        display: none;
+    }
+    
+    #inventoryDisplay table {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    #inventoryDisplay th {
+        background: #f8f9fa !important;
+        color: #000 !important;
+        border-bottom: 2px solid #000;
+    }
+}
+
+/* Classification Select Dropdown - Enhanced Styling */
+select#classificationList {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px 16px;
+    margin: 15px 0 25px 0;
+    border: 2px solid #2c63ff;
+    border-radius: 10px;
+    font-size: 16px;
+    font-family: inherit;
+    background-color: #f8fafc;
+    color: #0c1022;
+    transition: all 0.3s ease;
+    display: block;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232c63ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+select#classificationList:focus {
+    outline: none;
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+    background-color: white;
+}
+
+select#classificationList:hover {
+    border-color: #059669;
+    background-color: white;
+}
+
+select#classificationList option {
+    padding: 10px;
+    font-size: 15px;
+    background-color: white;
+    color: #0c1022;
+}
+
+select#classificationList option:checked {
+    background-color: #2c63ff;
+    color: white;
+}
+
+select#classificationList option:hover {
+    background-color: #f0fdf4;
+}
+
+/* For Firefox */
+@-moz-document url-prefix() {
+    select#classificationList {
+        padding-right: 40px;
+    }
+}
+
+/* For Internet Explorer */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    select#classificationList {
+        padding-right: 40px;
+        background-image: none;
+    }
+}
+
+/* Ensure the table is properly displayed */
+#inventoryDisplay {
+    margin-top: 20px;
+    min-height: 50px;
+}
+
+/* Optional: Add some margin to the heading and paragraph */
+h2 {
+    margin-top: 30px;
+    color: #0c1022;
+}
+
+p {
+    margin: 10px 0 15px 0;
+    color: #4b5563;
+}
+
+/* Fix for classification dropdown */
+select#classificationList {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    padding: 10px;
+    margin: 15px 0;
+    border: 2px solid #2c63ff;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* Basic table styling */
+#inventoryDisplay {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+#inventoryDisplay th {
+    background-color: #2c63ff;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+#inventoryDisplay td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+#inventoryDisplay tr:hover {
+    background-color: #f5f5f5;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+/* Inventory Table Styles */
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.inventory-table th {
+    background: linear-gradient(135deg, #2c63ff 0%, #059669 100%);
+    padding: 16px 20px;
+    text-align: left;
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #059669;
+}
+
+.inventory-table td {
+    padding: 14px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #374151;
+    font-size: 15px;
+    vertical-align: middle;
+}
+
+.inventory-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.inventory-table tbody tr:hover {
+    background-color: #f0fdf4;
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    text-align: center;
+    min-width: 80px;
+}
+
+.modify-btn {
+    background-color: #2c63ff;
+    color: white;
+}
+
+.modify-btn:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(44, 99, 255, 0.3);
+}
+
+.delete-btn {
+    background-color: #ef4444;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #dc2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.no-data {
+    padding: 30px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 16px;
+    background-color: #f9fafb;
+    border-radius: 8px;
+    border: 2px dashed #d1d5db;
+    margin: 20px 0;
+}
+
+.error {
+    color: #dc2626;
+    font-weight: 700;
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .inventory-table {
+        font-size: 14px;
+    }
+    
+    .inventory-table th,
+    .inventory-table td {
+        padding: 12px 15px;
+    }
+    
+    .actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn {
+        width: 100%;
+        padding: 10px;
+    }
+}

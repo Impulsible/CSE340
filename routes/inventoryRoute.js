@@ -14,6 +14,14 @@ router.get(
 );
 
 // ---------------------
+// AJAX: Get Inventory by Classification (GET) - ADDED AS PER INSTRUCTIONS
+// ---------------------
+router.get(
+  "/getInventory/:classification_id",
+  utilities.handleErrors(invController.getInventoryJSON)
+);
+
+// ---------------------
 // Add Classification Form (GET)
 // ---------------------
 router.get(
@@ -97,6 +105,40 @@ router.get(
 router.get(
   "/detail/:inv_id",
   utilities.handleErrors(invController.buildVehicleDetail)
+);
+
+// ---------------------
+// Edit Inventory Form (GET) - ADDED AS PER INSTRUCTIONS
+// ---------------------
+router.get(
+  "/edit/:inv_id",
+  utilities.handleErrors(invController.editInventoryView)
+);
+
+// ---------------------
+// Process Update Inventory (POST) - ADDED AS PER INSTRUCTIONS
+// ---------------------
+router.post(
+  "/update",
+  invValidate.inventoryValidationRules(),
+  invValidate.checkUpdateData,
+  utilities.handleErrors(invController.updateInventory)
+);
+
+// ---------------------
+// DELETE ROUTES - ADDED FOR TEAM ACTIVITY
+// ---------------------
+
+// GET route to show delete confirmation view
+router.get(
+  "/delete/:inv_id",
+  utilities.handleErrors(invController.buildDeleteConfirmation)
+);
+
+// POST route to handle the actual deletion
+router.post(
+  "/delete",
+  utilities.handleErrors(invController.deleteInventoryItem)
 );
 
 module.exports = router;

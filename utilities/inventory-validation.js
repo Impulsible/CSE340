@@ -1,5 +1,5 @@
 const { body, validationResult } = require('express-validator');
-const utilities = require('./index'); // ← ADD THIS IMPORT
+const utilities = require('./index');
 
 // Validation rules for inventory
 const inventoryValidationRules = () => {
@@ -35,11 +35,11 @@ const inventoryValidationRules = () => {
     ];
 }
 
-// Check validation result
+// Check validation result for adding inventory
 const checkInventoryData = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        const nav = await utilities.getNav(); // ← NOW THIS WILL WORK
+        const nav = await utilities.getNav();
         const classificationList = await utilities.buildClassificationList(req.body.classification_id);
         
         req.flash('message', 'Please correct the errors below.');
@@ -57,4 +57,41 @@ const checkInventoryData = async (req, res, next) => {
     next();
 }
 
-module.exports = { inventoryValidationRules, checkInventoryData };
+/* *****************************
+ * Check Update Data
+ * ***************************** */
+const checkUpdateData = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const nav = await utilities.getNav();
+        const classificationSelect = await utilities.buildClassificationList(req.body.classification_id);
+        
+        const itemName = `${req.body.inv_make} ${req.body.inv_model}`;
+        
+        res.render("inventory/edit-inventory", {
+            title: "Edit " + itemName,
+            nav,
+            classificationSelect: classificationSelect,
+            errors: errors.array().map(error => error.msg),
+            inv_id: req.body.inv_id,
+            inv_make: req.body.inv_make,
+            inv_model: req.body.inv_model,
+            inv_year: req.body.inv_year,
+            inv_description: req.body.inv_description,
+            inv_image: req.body.inv_image,
+            inv_thumbnail: req.body.inv_thumbnail,
+            inv_price: req.body.inv_price,
+            inv_miles: req.body.inv_miles,
+            inv_color: req.body.inv_color,
+            classification_id: req.body.classification_id
+        });
+        return;
+    }
+    next();
+}
+
+module.exports = { 
+    inventoryValidationRules, 
+    checkInventoryData,
+    checkUpdateData 
+};

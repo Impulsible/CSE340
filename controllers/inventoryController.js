@@ -68,6 +68,9 @@ invCont.buildManagement = async function (req, res, next) {
   try {
     const nav = await utilities.getNav();
     
+    // Get classification select list - ADDED AS PER INSTRUCTIONS
+    const classificationSelect = await utilities.buildClassificationList();
+    
     // Get ALL flash messages (updated for Render compatibility)
     const flashMessages = res.locals.flashMessages || {};
     console.log("📢 Flash messages available:", flashMessages);
@@ -75,6 +78,7 @@ invCont.buildManagement = async function (req, res, next) {
     res.render("inventory/management", {
       title: "Inventory Management",
       nav,
+      classificationSelect, // ADDED TO RENDER DATA OBJECT
       messages: flashMessages,
       message: flashMessages.message ? flashMessages.message[0] : null // Backward compatibility
     });
@@ -129,10 +133,10 @@ invCont.addClassification = async function (req, res, next) {
       req.session.save((err) => {
         if (err) {
           console.error('❌ Session save error:', err);
-          return res.redirect("/inv/");
+          return res.redirect("/inv/?refresh=true");
         }
         console.log('✅ Session saved with flash message');
-        return res.redirect("/inv/");
+        return res.redirect("/inv/?refresh=true");
       });
       
     } else {
@@ -201,7 +205,7 @@ invCont.addInventory = async function (req, res, next) {
           console.error('❌ Session save error:', err);
         }
         console.log('✅ Session saved with inventory flash message');
-        return res.redirect("/inv/");
+        return res.redirect("/inv/?refresh=true");
       });
     } else {
       throw new Error("Failed to add inventory item");
@@ -266,16 +270,23 @@ invCont.deleteClassification = async function (req, res, next) {
       console.log("🗑️ Navigation cache cleared");
       
       req.flash("success", "Classification deleted successfully!");
+      
+      req.session.save((err) => {
+        if (err) {
+          console.error('❌ Session save error:', err);
+        }
+        return res.redirect("/inv/?refresh=true");
+      });
     } else {
       req.flash("error", "Classification not found or could not be deleted.");
+      
+      req.session.save((err) => {
+        if (err) {
+          console.error('❌ Session save error:', err);
+        }
+        return res.redirect("/inv/");
+      });
     }
-    
-    req.session.save((err) => {
-      if (err) {
-        console.error('❌ Session save error:', err);
-      }
-      return res.redirect("/inv/");
-    });
   } catch (error) {
     console.log("🔴 Controller: Error occurred:", error.message);
     req.flash("error", "Sorry, the classification could not be deleted.");
@@ -327,6 +338,218 @@ invCont.debugFlash = async function (req, res, next) {
   } catch (error) {
     console.error("❌ Debug route error:", error);
     res.status(500).send(`Debug error: ${error.message}`);
+  }
+};
+
+/* ***************************
+ *  Return Inventory by Classification As JSON
+ * ************************** */
+invCont.getInventoryJSON = async (req, res, next) => {
+  const classification_id = parseInt(req.params.classification_id)
+  const invData = await invModel.getInventoryByClassificationId(classification_id)
+  if (invData[0].inv_id) {
+    return res.json(invData)
+  } else {
+    next(new Error("No data returned"))
+  }
+}
+
+/* ***************************
+ *  Build edit inventory view
+ * ************************** */
+invCont.editInventoryView = async function (req, res, next) {
+  try {
+    const inv_id = parseInt(req.params.inv_id)
+    let nav = await utilities.getNav()
+    const itemData = await invModel.getInventoryById(inv_id)
+    
+    if (!itemData) {
+      req.flash("error", "Inventory item not found.")
+      return res.redirect("/inv/")
+    }
+    
+    const classificationSelect = await utilities.buildClassificationList(itemData.classification_id)
+    const itemName = `${itemData.inv_make} ${itemData.inv_model}`
+    
+    // Get flash messages (for consistency with other views)
+    const flashMessages = res.locals.flashMessages || {};
+    
+    res.render("./inventory/edit-inventory", {
+      title: "Edit " + itemName,
+      nav,
+      classificationSelect: classificationSelect,
+      errors: null,
+      // Add flash messages for the view
+      messages: flashMessages,
+      message: flashMessages.message ? flashMessages.message[0] : null, // For backward compatibility
+      // Inventory data
+      inv_id: itemData.inv_id,
+      inv_make: itemData.inv_make,
+      inv_model: itemData.inv_model,
+      inv_year: itemData.inv_year,
+      inv_description: itemData.inv_description,
+      inv_image: itemData.inv_image,
+      inv_thumbnail: itemData.inv_thumbnail,
+      inv_price: itemData.inv_price,
+      inv_miles: itemData.inv_miles,
+      inv_color: itemData.inv_color,
+      classification_id: itemData.classification_id
+    })
+  } catch (error) {
+    console.error("❌ Edit inventory view error:", error)
+    req.flash("error", "Error loading inventory item for editing.")
+    res.redirect("/inv/")
+  }
+}
+
+/* ***************************
+ *  Update Inventory Data
+ * ************************** */
+invCont.updateInventory = async function (req, res, next) {
+  try {
+    let nav = await utilities.getNav()
+    const {
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+      classification_id,
+    } = req.body
+    
+    const updateResult = await invModel.updateInventory(
+      inv_id,  
+      inv_make,
+      inv_model,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_year,
+      inv_miles,
+      inv_color,
+      classification_id
+    )
+
+    if (updateResult) {
+      const itemName = updateResult.inv_make + " " + updateResult.inv_model
+      req.flash("success", `The ${itemName} was successfully updated.`)
+      
+      req.session.save((err) => {
+        if (err) {
+          console.error('❌ Session save error:', err)
+        }
+        // ADDED: Redirect with refresh flag
+        res.redirect("/inv/?refresh=true")
+      })
+    } else {
+      const classificationSelect = await utilities.buildClassificationList(classification_id)
+      const itemName = `${inv_make} ${inv_model}`
+      req.flash("error", "Sorry, the update failed.")
+      
+      req.session.save((err) => {
+        if (err) {
+          console.error('❌ Session save error:', err)
+        }
+        
+        res.status(501).render("inventory/edit-inventory", {
+          title: "Edit " + itemName,
+          nav,
+          classificationSelect: classificationSelect,
+          errors: null,
+          inv_id,
+          inv_make,
+          inv_model,
+          inv_year,
+          inv_description,
+          inv_image,
+          inv_thumbnail,
+          inv_price,
+          inv_miles,
+          inv_color,
+          classification_id
+        })
+      })
+    }
+  } catch (error) {
+    console.error("❌ Update inventory error:", error)
+    req.flash("error", "Sorry, the inventory item could not be updated.")
+    res.redirect("/inv/")
+  }
+}
+
+/* ***************************
+ *  Build Delete Confirmation View
+ * ************************** */
+invCont.buildDeleteConfirmation = async function (req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+    const inv_id = parseInt(req.params.inv_id);
+    
+    // Get vehicle details for confirmation
+    const vehicleData = await invModel.getVehicleDetailById(inv_id);
+    
+    if (!vehicleData) {
+      req.flash("error", "Sorry, the vehicle was not found.");
+      return res.redirect("/inv/");
+    }
+    
+    res.render("./inventory/delete-confirm", {
+      title: "Delete Vehicle",
+      nav,
+      invData: vehicleData,
+      errors: null,
+    });
+  } catch (error) {
+    console.error("Error building delete confirmation:", error);
+    next(error);
+  }
+};
+
+/* ***************************
+ *  Delete Inventory Item
+ * ************************** */
+invCont.deleteInventoryItem = async function (req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+    const inv_id = parseInt(req.body.inv_id);
+    
+    // Get vehicle info before deleting (for success message)
+    const vehicleData = await invModel.getInventoryById(inv_id);
+    
+    if (!vehicleData) {
+      req.flash("error", "Sorry, the vehicle was not found.");
+      return res.redirect("/inv/");
+    }
+    
+    // Attempt to delete the vehicle
+    const deleteResult = await invModel.deleteInventoryItem(inv_id);
+    
+    if (deleteResult) {
+      const itemName = `${vehicleData.inv_make} ${vehicleData.inv_model}`;
+      req.flash("success", `The ${itemName} was successfully deleted.`);
+      // ADDED: Redirect with refresh flag
+      res.redirect("/inv/?refresh=true");
+    } else {
+      req.flash("error", "Sorry, the deletion failed. Please try again.");
+      res.redirect(`/inv/delete/${inv_id}`);
+    }
+  } catch (error) {
+    console.error("Error deleting inventory item:", error);
+    
+    // Handle foreign key constraint errors (e.g., if vehicle has reviews)
+    if (error.code === '23503') { // PostgreSQL foreign key violation
+      req.flash("error", "Cannot delete this vehicle because it has associated records (reviews, etc.).");
+    } else {
+      req.flash("error", "An error occurred while deleting the vehicle.");
+    }
+    
+    res.redirect(`/inv/delete/${req.body.inv_id}`);
   }
 };
 
