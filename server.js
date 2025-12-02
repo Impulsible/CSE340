@@ -81,7 +81,7 @@ app.use(session(sessionConfig))
  * Enhanced JWT Authentication Middleware
  *************************/
 const JWTUtils = require('./utilities/jwtUtils');
-const { AccountModel } = require('./models/account-model'); // ✅ FIXED: Use destructuring
+const { AccountModel } = require('./models/account-model');
 
 /* ***********************
  * Debug Routes
@@ -220,12 +220,15 @@ app.get("/debug-account-manager", (req, res) => {
   `);
 });
 
+// UPDATED: Enhanced JWT Authentication Middleware
 const authenticateToken = async (req, res, next) => {
   try {
     const token = JWTUtils.extractToken(req);
     
     if (!token) {
       req.user = null;
+      res.locals.user = null;
+      res.locals.loggedIn = false;
       return next();
     }
 
@@ -238,12 +241,30 @@ const authenticateToken = async (req, res, next) => {
       if (!currentUser) {
         JWTUtils.clearAuthCookie(res);
         req.user = null;
+        res.locals.user = null;
+        res.locals.loggedIn = false;
         return next();
       }
+      
+      // Merge database data with JWT data
+      req.user = {
+        ...decoded,
+        account_id: currentUser.account_id,
+        account_firstname: currentUser.account_firstname,
+        account_lastname: currentUser.account_lastname,
+        account_email: currentUser.account_email,
+        account_type: currentUser.account_type
+      };
+    } else {
+      // Test user
+      req.user = decoded;
     }
 
-    req.user = decoded;
-    console.log(`✅ JWT Authenticated user: ${decoded.email}`);
+    // Set template variables (Task 1 & 3 compatibility)
+    res.locals.user = req.user;
+    res.locals.loggedIn = true;
+    
+    console.log(`✅ JWT Authenticated user: ${req.user.account_email || req.user.email}`);
     next();
     
   } catch (error) {
@@ -252,6 +273,8 @@ const authenticateToken = async (req, res, next) => {
     // Clear invalid token
     JWTUtils.clearAuthCookie(res);
     req.user = null;
+    res.locals.user = null;
+    res.locals.loggedIn = false;
     
     if (req.path.startsWith('/api') || req.xhr) {
       return res.status(401).json({ error: 'Invalid or expired token' });
@@ -293,8 +316,8 @@ app.use((req, res, next) => {
     message: req.flash('message') || []
   };
 
-  // Make user data available to all EJS templates
-  res.locals.user = req.user || null;
+  // Make user data available to all EJS templates (already set by authenticateToken)
+  // res.locals.user is already set above
 
   // Debug logging for both environments
   const hasMessages = Object.values(res.locals.flashMessages).some(messages => messages.length > 0);
@@ -314,11 +337,60 @@ app.set("view engine", "ejs")
 app.set("layout", "./layouts/layout")
 
 /* ***********************
- * Routes
+ * Routes - WITH DEBUGGING
  *************************/
-app.use("/", staticRoutes)
-app.use("/inv", inventoryRoutes)
-app.use("/account", accountRoutes)
+console.log('🔧 DEBUG: Checking route imports before use...');
+console.log('staticRoutes type:', typeof staticRoutes);
+console.log('inventoryRoutes type:', typeof inventoryRoutes);
+console.log('accountRoutes type:', typeof accountRoutes);
+
+// If any is an object instead of a function, we need to fix it
+if (typeof staticRoutes !== 'function') {
+  console.error('❌ ERROR: staticRoutes is not a function! It is:', staticRoutes);
+  console.error('Check routes/static.js - should export router with: module.exports = router');
+  // Try to extract router if it's an object
+  if (staticRoutes.router && typeof staticRoutes.router === 'function') {
+    console.log('⚠️  Found router property, using it instead...');
+    const staticRouter = staticRoutes.router;
+    app.use("/", staticRouter);
+  } else {
+    process.exit(1);
+  }
+} else {
+  app.use("/", staticRoutes);
+}
+
+if (typeof inventoryRoutes !== 'function') {
+  console.error('❌ ERROR: inventoryRoutes is not a function! It is:', inventoryRoutes);
+  console.error('Check routes/inventoryRoute.js - should export router with: module.exports = router');
+  // Try to extract router if it's an object
+  if (inventoryRoutes.router && typeof inventoryRoutes.router === 'function') {
+    console.log('⚠️  Found router property, using it instead...');
+    const inventoryRouter = inventoryRoutes.router;
+    app.use("/inv", inventoryRouter);
+  } else {
+    process.exit(1);
+  }
+} else {
+  app.use("/inv", inventoryRoutes);
+}
+
+if (typeof accountRoutes !== 'function') {
+  console.error('❌ ERROR: accountRoutes is not a function! It is:', accountRoutes);
+  console.error('Check routes/accountRoute.js - should export router with: module.exports = router');
+  // Try to extract router if it's an object
+  if (accountRoutes.router && typeof accountRoutes.router === 'function') {
+    console.log('⚠️  Found router property, using it instead...');
+    const accountRouter = accountRoutes.router;
+    app.use("/account", accountRouter);
+  } else {
+    process.exit(1);
+  }
+} else {
+  app.use("/account", accountRoutes);
+}
+
+console.log('✅ Routes mounted successfully');
 
 /* ***********************
  * JWT Test Routes
@@ -454,22 +526,8 @@ app.get("/debug-session", (req, res) => {
   });
 });
 
-/* ***********************
- * Protected Route Example
- *************************/
-app.get("/dashboard", (req, res) => {
-  if (!req.user) {
-    req.flash('error', 'Please log in to access the dashboard');
-    return res.redirect('/account/login');
-  }
-
-  // User is authenticated via JWT
-  res.render('account/dashboard', {
-    title: 'Dashboard',
-    user: req.user,
-    messages: res.locals.flashMessages
-  });
-});
+// REMOVED: Duplicate dashboard route (it's in accountRoute.js)
+// app.get("/dashboard", (req, res) => { ... });
 
 /* ***********************
  * API Routes with JWT Protection

@@ -1,3 +1,4 @@
+// routes/accountRoute.js
 const express = require("express")
 const router = express.Router()
 const utilities = require("../utilities/")
@@ -33,8 +34,8 @@ router.get(
  * ***************************** */
 router.post(
   "/register",
-  accountValidate.registationRules(),   // 🔥 MUST MATCH THE MISSPELLED NAME
-  accountValidate.checkRegData,         // 🔥 checks data BEFORE controller
+  accountValidate.registationRules(),
+  accountValidate.checkRegData,
   utilities.handleErrors(AccountController.registerAccount)
 )
 
@@ -43,16 +44,16 @@ router.post(
  * ***************************** */
 router.get(
   "/dashboard",
-  requireAuth, // Protect this route - requires login
+  requireAuth,
   utilities.handleErrors(AccountController.buildDashboard)
 )
 
 /* *****************************
- *  GET route for account update view
+ *  GET route for account update view WITH account_id parameter
  * ***************************** */
 router.get(
-  "/update",
-  requireAuth, // Protect this route - requires login
+  "/update/:account_id",
+  requireAuth,
   utilities.handleErrors(AccountController.buildUpdateView)
 )
 
@@ -61,18 +62,30 @@ router.get(
  * ***************************** */
 router.post(
   "/update",
-  requireAuth, // Protect this route - requires login
+  requireAuth,
   accountValidate.updateRules(),
   accountValidate.checkUpdateData,
   utilities.handleErrors(AccountController.updateAccount)
 )
 
 /* *****************************
- *  GET route for logout
+ *  POST route to process password change (TASK 5)
+ * ***************************** */
+router.post(
+  "/update-password",
+  requireAuth,
+  accountValidate.passwordChangeRules(),
+  accountValidate.checkPasswordChangeData,
+  utilities.handleErrors(AccountController.updatePassword)
+)
+
+/* *****************************
+ *  GET route for logout (TASK 6)
  * ***************************** */
 router.get(
   "/logout",
   utilities.handleErrors(AccountController.logout)
 )
 
+// CRITICAL: Export the router, not an object
 module.exports = router

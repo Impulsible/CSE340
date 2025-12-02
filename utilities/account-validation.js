@@ -33,7 +33,7 @@ validate.registationRules = () => {
       .normalizeEmail()
       .withMessage("A valid email is required."),
 
-    // password is required and must be strong password
+    // password is required and must be strong password (Task 5)
     body("account_password")
       .trim()
       .notEmpty()
@@ -71,7 +71,7 @@ validate.loginRules = () => {
 }
 
 /*  **********************************
- *  Update Account Data Validation Rules
+ *  Update Account Data Validation Rules (Task 5)
  * ********************************* */
 validate.updateRules = () => {
   return [
@@ -99,6 +99,51 @@ validate.updateRules = () => {
       .isEmail()
       .normalizeEmail()
       .withMessage("A valid email is required."),
+    
+    // account_id is required (hidden field)
+    body("account_id")
+      .notEmpty()
+      .isInt()
+      .withMessage("Account ID is required."),
+  ]
+}
+
+/*  **********************************
+ *  Change Password Validation Rules (NEW - Task 5)
+ *  Updated to match HTML form field names: new_password
+ * ********************************* */
+validate.passwordChangeRules = () => {
+  return [
+    // account_id is required (hidden field)
+    body("account_id")
+      .notEmpty()
+      .isInt()
+      .withMessage("Account ID is required."),
+
+    // NEW PASSWORD - field name matches HTML: new_password
+    body("new_password")
+      .trim()
+      .notEmpty()
+      .isStrongPassword({
+        minLength: 12,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1,
+      })
+      .withMessage("Password must be at least 12 characters with uppercase, lowercase, number, and special character."),
+
+    // CONFIRM PASSWORD - field name matches HTML: confirm_password
+    body("confirm_password")
+      .trim()
+      .notEmpty()
+      .custom((value, { req }) => {
+        if (value !== req.body.new_password) {
+          throw new Error('Passwords do not match');
+        }
+        return true;
+      })
+      .withMessage("Passwords do not match."),
   ]
 }
 
@@ -107,17 +152,17 @@ validate.updateRules = () => {
  * ***************************** */
 validate.checkRegData = async (req, res, next) => {
   const { account_firstname, account_lastname, account_email } = req.body
-  let errors = []
-  errors = validationResult(req)
+  let errors = validationResult(req)
   if (!errors.isEmpty()) {
     let nav = await utilities.getNav()
     return res.render("account/register", {
-      errors,
+      errors: errors.array(),
       title: "Register",
       nav,
       account_firstname,
       account_lastname,
       account_email,
+      messages: req.flash()
     })
   }
   next()
@@ -132,34 +177,100 @@ validate.checkLoginData = async (req, res, next) => {
   if (!errors.isEmpty()) {
     let nav = await utilities.getNav()
     return res.render("account/login", {
-      errors,
+      errors: errors.array(),
       title: "Login",
       nav,
       account_email,
+      messages: req.flash()
     })
   }
   next()
 }
 
 /* ******************************
- * Check update data and return errors or continue to update
+ * Check update data and return errors or continue to update (Task 5)
  * ***************************** */
 validate.checkUpdateData = async (req, res, next) => {
   let errors = validationResult(req)
   if (!errors.isEmpty()) {
     let nav = await utilities.getNav()
-    const { account_firstname, account_lastname, account_email } = req.body
+    const { account_firstname, account_lastname, account_email, account_id } = req.body
     
-    return res.render("account/update", {
-      errors,
-      title: "Update Account",
-      nav,
-      user: {
+    // Get fresh account data for the view (TASK 5 requirement)
+    const { AccountModel } = require("../models/account-model")
+    let accountData = null
+    
+    if (account_id) {
+      try {
+        accountData = await AccountModel.findById(account_id)
+      } catch (error) {
+        console.error('Error fetching account data:', error)
+      }
+    }
+    
+    // If no account data from DB, use submitted data
+    if (!accountData) {
+      accountData = {
+        account_id,
         account_firstname,
         account_lastname,
-        account_email,
-        account_id: req.user?.userId // Use optional chaining in case user isn't set
-      },
+        account_email
+      }
+    }
+    
+    // Add user data from JWT if available
+    let user = req.user || {}
+    
+    return res.render("account/update", {
+      errors: errors.array(),
+      title: "Update Account",
+      nav,
+      user: { ...user, ...accountData }, // Merge JWT and database data
+      accountData, // Also pass as separate for compatibility
+      messages: req.flash()
+    })
+  }
+  next()
+}
+
+/* ******************************
+ * Check password data and return errors or continue (NEW - Task 5)
+ * Updated function name to match route usage
+ * ***************************** */
+validate.checkPasswordChangeData = async (req, res, next) => {
+  let errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    let nav = await utilities.getNav()
+    const { account_id } = req.body
+    
+    // Get account data for the view (TASK 5 requirement)
+    const { AccountModel } = require("../models/account-model")
+    let accountData = null
+    
+    if (account_id) {
+      try {
+        accountData = await AccountModel.findById(account_id)
+      } catch (error) {
+        console.error('Error fetching account data:', error)
+      }
+    }
+    
+    // If no account data from DB, create minimal data
+    if (!accountData) {
+      accountData = { account_id }
+    }
+    
+    // Add user data from JWT if available
+    let user = req.user || {}
+    
+    return res.render("account/update", {
+      errors: errors.array(),
+      title: "Update Account",
+      nav,
+      user: { ...user, ...accountData },
+      accountData,
+      messages: req.flash(),
+      passwordErrors: true // Flag to show password form had errors
     })
   }
   next()

@@ -14,7 +14,19 @@
         <section class="premium-header">
             <div class="header-content">
                 <div class="welcome-section">
-                    <h1 class="luxury-title"><span id="dynamic-greeting">Good Morning</span>, <span class="accent-name"><%= user.firstName %></span></h1>
+                    <!-- TASK 3: H2 greeting based on account type -->
+                    <h2 class="account-greeting">
+                        <% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
+                            Welcome <%= user.firstName %>, <span class="role-badge"><%= user.account_type %></span>
+                        <% } else { %>
+                            Welcome <%= user.firstName %>
+                        <% } %>
+                    </h2>
+                    
+                    <h1 class="luxury-title">
+                        <span id="dynamic-greeting">Good Morning</span>, 
+                        <span class="accent-name"><%= user.firstName %></span>
+                    </h1>
                     <p class="luxury-subtitle">Your premium automotive experience awaits</p>
                 </div>
                 <div class="luxury-time-display">
@@ -24,6 +36,57 @@
                         <i class="fas fa-sync fa-spin"></i>
                         <span>Loading weather...</span>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Account Management Section (TASK 3) -->
+        <section class="account-management-section">
+            <div class="management-card">
+                <div class="management-header">
+                    <h3><i class="fas fa-user-cog"></i> Account Management</h3>
+                </div>
+                
+                <div class="management-content">
+                    <!-- TASK 3: User Info Display -->
+                    <div class="user-info-display">
+                        <div class="info-row">
+                            <span class="info-label">Full Name:</span>
+                            <span class="info-value"><%= user.firstName %> <%= user.lastName %></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Email:</span>
+                            <span class="info-value"><%= user.email %></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Account Type:</span>
+                            <span class="info-value account-type <%= user.account_type.toLowerCase() %>">
+                                <%= user.account_type %>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- TASK 3: Update Account Link -->
+                    <div class="update-account-link">
+                        <a href="/account/update/<%= user.userId || user.account_id %>" class="update-btn">
+                            <i class="fas fa-user-edit"></i>
+                            Update Account Information
+                        </a>
+                    </div>
+                    
+                    <!-- TASK 3: Inventory Management (Only for Employee/Admin) -->
+                    <% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
+                        <div class="inventory-management-section">
+                            <h3><i class="fas fa-cog"></i> Inventory Management</h3>
+                            <p class="management-description">
+                                As an <%= user.account_type %>, you have access to inventory management features.
+                            </p>
+                            <a href="/inv/manage" class="inventory-btn">
+                                <i class="fas fa-car"></i>
+                                Manage Inventory
+                            </a>
+                        </div>
+                    <% } %>
                 </div>
             </div>
         </section>
@@ -465,6 +528,198 @@
             padding: 30px;
         }
 
+        /* TASK 3: Account Greeting Styles */
+        .account-greeting {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .role-badge {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* TASK 3: Account Management Section */
+        .account-management-section {
+            margin-bottom: 30px;
+        }
+
+        .management-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(71, 85, 105, 0.5);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .management-header {
+            border-bottom: 1px solid rgba(71, 85, 105, 0.5);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .management-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #60a5fa;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .management-header h3 i {
+            color: #60a5fa;
+        }
+
+        .user-info-display {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(71, 85, 105, 0.3);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.2);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .info-value {
+            color: #e2e8f0;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .account-type {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .account-type.client {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .account-type.employee {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .account-type.admin {
+            background: rgba(168, 85, 247, 0.1);
+            color: #a855f7;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .update-account-link {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .update-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .update-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+        }
+
+        .update-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* TASK 3: Inventory Management Section */
+        .inventory-management-section {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            margin-top: 20px;
+        }
+
+        .inventory-management-section h3 {
+            font-size: 1.2rem;
+            color: #22c55e;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 0 10px 0;
+        }
+
+        .management-description {
+            color: #94a3b8;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .inventory-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .inventory-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.3);
+            background: linear-gradient(135deg, #047857 0%, #0d9488 100%);
+        }
+
+        .inventory-btn i {
+            font-size: 1.1rem;
+        }
+
         /* Premium Header */
         .premium-header {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
@@ -875,6 +1130,12 @@
             .luxury-time-display {
                 text-align: center;
             }
+            
+            .account-greeting {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
         }
 
         @media (max-width: 960px) {
@@ -892,6 +1153,20 @@
             
             .luxury-title {
                 font-size: 2rem;
+            }
+            
+            .account-greeting {
+                font-size: 1.3rem;
+            }
+            
+            .management-card {
+                padding: 20px;
+            }
+            
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
             }
         }
     </style>

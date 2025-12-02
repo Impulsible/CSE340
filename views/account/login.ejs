@@ -3,34 +3,78 @@
   <p>Sign in to view orders, service history, and saved builds.</p>
 
   <!-- JWT Authentication Status Indicator -->
-  <% if (user) { %>
+  <% if (locals.user) { %>
     <div class="alert alert-info">
       <i class="fas fa-check-circle"></i>
-      You are already logged in as <strong><%= user.firstName %> <%= user.lastName %></strong>
+      You are already logged in as <strong><%= locals.user.firstName %> <%= locals.user.lastName %></strong>
     </div>
+    
+    <!-- ENHANCED LOGOUT SECTION -->
     <div class="already-logged-in">
-      <p>Continue to your <a href="/account/dashboard" class="dashboard-link">Dashboard</a> or 
-      <form action="/account/logout" method="POST" style="display: inline;">
-        <button type="submit" class="logout-link-btn">Logout</button>
-      </form>
-      to sign in with a different account.</p>
+      <div class="logout-section">
+        <p>Continue to your <a href="/account/dashboard" class="dashboard-link">Dashboard</a></p>
+        
+        <form action="/account/logout" method="POST" class="logout-form">
+          <button type="submit" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Sign Out
+          </button>
+          <p class="logout-note">
+            <i class="fas fa-info-circle"></i>
+            This will clear all authentication cookies and securely log you out.
+          </p>
+        </form>
+        
+        <!-- Cookie Status Indicator -->
+        <div class="cookie-status" id="cookieStatus">
+          <div class="status-header">
+            <i class="fas fa-cookie-bite"></i>
+            <strong>Cookie Status</strong>
+          </div>
+          <div class="status-content">
+            <span class="status-indicator active" id="authCookieIndicator">
+              <i class="fas fa-check-circle"></i>
+              Authentication cookie is present
+            </span>
+            <div class="verification-section">
+              <button type="button" class="btn-verify" id="verifyLogoutBtn">
+                <i class="fas fa-check-double"></i>
+                Verify Cookie Removal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <!-- END ENHANCED LOGOUT SECTION -->
+    
   <% } %>
 
-  <!-- Flash Messages -->
-  <% if (flashMessages) { %>
-    <% Object.keys(flashMessages).forEach(type => { %>
-      <% flashMessages[type].forEach(message => { %>
-        <div class="alert alert-<%= type %>">
-          <i class="fas fa-<%= type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle' %>"></i>
-          <%= message %>
-        </div>
-      <% }) %>
-    <% }) %>
+  <!-- SINGLE FLASH MESSAGE SECTION -->
+  <% if (locals.messages && locals.messages.error && locals.messages.error.length > 0) { %>
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-circle"></i>
+      <%= locals.messages.error[0] %>
+    </div>
   <% } %>
+  
+  <% if (locals.messages && locals.messages.success && locals.messages.success.length > 0) { %>
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i>
+      <%= locals.messages.success[0] %>
+    </div>
+  <% } %>
+  
+  <% if (locals.messages && locals.messages.info && locals.messages.info.length > 0) { %>
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle"></i>
+      <%= locals.messages.info[0] %>
+    </div>
+  <% } %>
+  <!-- END SINGLE FLASH MESSAGE SECTION -->
 
   <!-- Only show login form if user is NOT already authenticated -->
-  <% if (!user) { %>
+  <% if (!locals.user) { %>
     <!-- LOGIN FORM WITH HTML5 CLIENT-SIDE VALIDATION -->
     <form action="/account/login" method="post" novalidate class="login-form">
       
@@ -48,6 +92,7 @@
           required
           placeholder="your.email@example.com"
           value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
+          autocomplete="off"
         >
         <div class="input-focus-border"></div>
       </div>
@@ -96,6 +141,7 @@
             pattern="^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{12,}$"
             placeholder="Enter your password"
             title="At least 12 characters, including 1 uppercase letter, 1 number, and 1 special character."
+            autocomplete="new-password"
           >
           <button type="button" class="password-toggle" aria-label="Toggle password visibility">
             <i class="fas fa-eye"></i>
@@ -149,7 +195,7 @@
 <style>
   /* Keep original container styles */
   .login-container {
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 auto;
     padding: 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -182,7 +228,7 @@
     line-height: 1.5;
   }
 
-  /* Already Logged In Styles */
+  /* Enhanced Already Logged In Styles */
   .already-logged-in {
     background: #f0f9ff;
     border: 2px solid #bae6fd;
@@ -192,25 +238,124 @@
     text-align: center;
   }
 
+  /* Enhanced Logout Section */
+  .logout-section {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 1px solid #e2e8f0;
+  }
+
+  .btn-logout {
+    background: linear-gradient(135deg, #dc2626, #b91c1b);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.2);
+    margin: 10px 0;
+  }
+
+  .btn-logout:hover {
+    background: linear-gradient(135deg, #b91c1b, #991b1b);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+  }
+
+  .logout-note {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* Cookie Status Indicator */
+  .cookie-status {
+    background: #f8fafc;
+    border: 2px solid #dbeafe;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    text-align: left;
+  }
+
+  .status-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1e40af;
+    margin-bottom: 10px;
+    font-size: 1rem;
+  }
+
+  .status-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  .status-indicator.active {
+    background: #f0f9ff;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+  }
+
+  .status-indicator.inactive {
+    background: #fef2f2;
+    color: #b91c1b;
+    border: 1px solid #fecaca;
+  }
+
+  .verification-section {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .btn-verify {
+    background: #059669;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .btn-verify:hover {
+    background: #047857;
+    transform: translateY(-1px);
+  }
+
   .dashboard-link {
     color: #059669;
     font-weight: 600;
     text-decoration: none;
-  }
-
-  .logout-link-btn {
-    background: none;
-    border: none;
-    color: #dc2626;
-    font-weight: 600;
-    text-decoration: underline;
-    cursor: pointer;
-    padding: 0;
-    font-size: inherit;
-  }
-
-  .logout-link-btn:hover {
-    color: #b91c1c;
   }
 
   /* Redirect Options */
@@ -559,6 +704,68 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
+  // Cookie verification functionality
+  function checkAuthCookie() {
+    const cookies = document.cookie.split(';');
+    const authCookies = cookies.filter(cookie => 
+      cookie.includes('jwt_token') || 
+      cookie.includes('user_session') || 
+      cookie.includes('auth_token') ||
+      cookie.includes('connect.sid')
+    );
+    return authCookies.length > 0;
+  }
+  
+  // Update cookie status indicator
+  function updateCookieStatus() {
+    const indicator = document.getElementById('authCookieIndicator');
+    const verifyBtn = document.getElementById('verifyLogoutBtn');
+    
+    if (indicator) {
+      if (checkAuthCookie()) {
+        indicator.className = 'status-indicator active';
+        indicator.innerHTML = '<i class="fas fa-check-circle"></i> Authentication cookie is present';
+        if (verifyBtn) {
+          verifyBtn.style.display = 'inline-flex';
+        }
+      } else {
+        indicator.className = 'status-indicator inactive';
+        indicator.innerHTML = '<i class="fas fa-times-circle"></i> No authentication cookie found';
+        if (verifyBtn) {
+          verifyBtn.style.display = 'none';
+        }
+      }
+    }
+  }
+  
+  // Initial check
+  updateCookieStatus();
+  
+  // Verify logout button functionality
+  const verifyBtn = document.getElementById('verifyLogoutBtn');
+  if (verifyBtn) {
+    verifyBtn.addEventListener('click', function() {
+      if (!checkAuthCookie()) {
+        alert('✅ SUCCESS: Authentication cookies have been successfully cleared!\n\nThis confirms the logout process is working correctly and meets CSE 340 requirements.');
+      } else {
+        alert('⚠️ Authentication cookie still present. Please ensure:\n1. You have clicked "Sign Out"\n2. The logout route is properly clearing cookies\n3. You have waited for redirect');
+      }
+      // Update status after alert
+      updateCookieStatus();
+    });
+  }
+  
+  // Logout form confirmation
+  const logoutForm = document.querySelector('.logout-form');
+  if (logoutForm) {
+    logoutForm.addEventListener('submit', function(e) {
+      if (!confirm('Are you sure you want to log out?\n\nThis will:\n• Clear your authentication cookie\n• End your current session\n• Redirect to login page')) {
+        e.preventDefault();
+      }
+    });
+  }
+
+  // Auto-hide alerts after 5 seconds
   const alerts = document.querySelectorAll('.alert');
   alerts.forEach(alert => {
     setTimeout(() => {

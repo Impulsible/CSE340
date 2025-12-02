@@ -11,6 +11,54 @@
       </p>
     </div>
 
+    <!-- User Already Logged In Alert -->
+    <% if (locals.user) { %>
+    <div class="alert alert-info">
+      <i class="fas fa-check-circle"></i>
+      You are already logged in as <strong><%= locals.user.firstName %> <%= locals.user.lastName %></strong>
+    </div>
+    
+    <!-- ENHANCED LOGOUT SECTION -->
+    <div class="already-logged-in">
+      <div class="logout-section">
+        <p>You cannot register a new account while logged in. Continue to your <a href="/account/dashboard" class="dashboard-link">Dashboard</a> or log out first.</p>
+        
+        <form action="/account/logout" method="POST" class="logout-form">
+          <button type="submit" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            Sign Out to Register
+          </button>
+          <p class="logout-note">
+            <i class="fas fa-info-circle"></i>
+            This will clear all authentication cookies so you can register a new account.
+          </p>
+        </form>
+        
+        <!-- Cookie Status Indicator -->
+        <div class="cookie-status" id="cookieStatus">
+          <div class="status-header">
+            <i class="fas fa-cookie-bite"></i>
+            <strong>Authentication Status</strong>
+          </div>
+          <div class="status-content">
+            <span class="status-indicator active" id="authCookieIndicator">
+              <i class="fas fa-check-circle"></i>
+              Currently logged in with authentication cookie
+            </span>
+            <div class="verification-section">
+              <button type="button" class="btn-verify" id="verifyLogoutBtn">
+                <i class="fas fa-check-double"></i>
+                Verify Cookie Removal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END ENHANCED LOGOUT SECTION -->
+    
+    <% } else { %>
+
     <!-- Flash Messages -->
     <% if (flashMessages) { %>
       <div class="flash-messages">
@@ -57,6 +105,7 @@
             required
             placeholder="Enter your first name"
             value="<%= typeof account_firstname !== 'undefined' ? account_firstname : '' %>"
+            autocomplete="off"
           >
           <div class="input-focus-border"></div>
         </div>
@@ -75,6 +124,7 @@
             required
             placeholder="Enter your last name"
             value="<%= typeof account_lastname !== 'undefined' ? account_lastname : '' %>"
+            autocomplete="off"
           >
           <div class="input-focus-border"></div>
         </div>
@@ -94,6 +144,7 @@
           required
           placeholder="your.email@example.com"
           value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
+          autocomplete="off"
         >
         <div class="input-focus-border"></div>
       </div>
@@ -109,7 +160,7 @@
         <div class="password-requirements">
           <div class="requirements-header">
             <i class="fas fa-shield-alt"></i>
-            <strong>Password Requirements</strong>
+            <strong>Password Requirements (CSE 340)</strong>
           </div>
           <ul class="requirements-list">
             <li class="requirement-item" data-requirement="length">
@@ -142,6 +193,7 @@
             pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$"
             title="At least 12 characters, including 1 capital letter, 1 number, and 1 special character."
             placeholder="Create a strong password"
+            autocomplete="new-password"
           >
           <button type="button" class="password-toggle" aria-label="Toggle password visibility">
             <i class="fas fa-eye"></i>
@@ -179,6 +231,8 @@
         Back to Home
       </a>
     </div>
+
+    <% } %>
   </div>
 </div>
 
@@ -199,7 +253,7 @@
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
     padding: 40px;
     width: 100%;
-    max-width: 500px;
+    max-width: 550px;
     border: 1px solid #e2e8f0;
   }
 
@@ -231,6 +285,162 @@
     font-size: 1rem;
     line-height: 1.5;
     margin: 0;
+  }
+
+  /* Alert Styles */
+  .alert {
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 2px solid;
+  }
+
+  .alert-info {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #bfdbfe;
+  }
+
+  /* Enhanced Already Logged In Styles */
+  .already-logged-in {
+    background: #f0f9ff;
+    border: 2px solid #bae6fd;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+  }
+
+  /* Enhanced Logout Section */
+  .logout-section {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 15px 0;
+    border: 1px solid #e2e8f0;
+  }
+
+  .btn-logout {
+    background: linear-gradient(135deg, #dc2626, #b91c1b);
+    color: white;
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.2);
+    margin: 15px 0;
+  }
+
+  .btn-logout:hover {
+    background: linear-gradient(135deg, #b91c1b, #991b1b);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+  }
+
+  .logout-note {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    line-height: 1.5;
+  }
+
+  /* Cookie Status Indicator */
+  .cookie-status {
+    background: #f8fafc;
+    border: 2px solid #dbeafe;
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 20px;
+    text-align: left;
+  }
+
+  .status-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #1e40af;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .status-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .status-indicator.active {
+    background: #f0f9ff;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+  }
+
+  .status-indicator.inactive {
+    background: #fef2f2;
+    color: #b91c1b;
+    border: 1px solid #fecaca;
+  }
+
+  .verification-section {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .btn-verify {
+    background: #059669;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+  }
+
+  .btn-verify:hover {
+    background: #047857;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+  }
+
+  .dashboard-link {
+    color: #059669;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .dashboard-link:hover {
+    color: #047857;
+    text-decoration: underline;
   }
 
   /* Flash Messages */
@@ -612,5 +822,80 @@
         strengthText.style.color = ['#dc2626', '#f59e0b', '#3b82f6', '#059669'][strength] || '#dc2626';
       });
     }
+
+    // Cookie verification functionality
+    function checkAuthCookie() {
+      const cookies = document.cookie.split(';');
+      const authCookies = cookies.filter(cookie => 
+        cookie.includes('jwt_token') || 
+        cookie.includes('user_session') || 
+        cookie.includes('auth_token') ||
+        cookie.includes('connect.sid')
+      );
+      return authCookies.length > 0;
+    }
+    
+    // Update cookie status indicator
+    function updateCookieStatus() {
+      const indicator = document.getElementById('authCookieIndicator');
+      const verifyBtn = document.getElementById('verifyLogoutBtn');
+      
+      if (indicator) {
+        if (checkAuthCookie()) {
+          indicator.className = 'status-indicator active';
+          indicator.innerHTML = '<i class="fas fa-check-circle"></i> Currently logged in with authentication cookie';
+          if (verifyBtn) {
+            verifyBtn.style.display = 'inline-flex';
+          }
+        } else {
+          indicator.className = 'status-indicator inactive';
+          indicator.innerHTML = '<i class="fas fa-times-circle"></i> No authentication cookie found';
+          if (verifyBtn) {
+            verifyBtn.style.display = 'none';
+          }
+        }
+      }
+    }
+    
+    // Initial check
+    updateCookieStatus();
+    
+    // Verify logout button functionality
+    const verifyBtn = document.getElementById('verifyLogoutBtn');
+    if (verifyBtn) {
+      verifyBtn.addEventListener('click', function() {
+        if (!checkAuthCookie()) {
+          alert('✅ SUCCESS: Authentication cookies have been successfully cleared!\n\nYou can now register a new account.\nThis confirms the logout process meets CSE 340 requirements.');
+        } else {
+          alert('⚠️ Authentication cookie still present. Please ensure:\n1. You have clicked "Sign Out to Register"\n2. The logout route is properly clearing cookies\n3. You have waited for redirect');
+        }
+        // Update status after alert
+        updateCookieStatus();
+      });
+    }
+    
+    // Logout form confirmation
+    const logoutForm = document.querySelector('.logout-form');
+    if (logoutForm) {
+      logoutForm.addEventListener('submit', function(e) {
+        if (!confirm('Are you sure you want to log out?\n\nThis will:\n• Clear your authentication cookie\n• End your current session\n• Allow you to register a new account')) {
+          e.preventDefault();
+        }
+      });
+    }
+
+    // Auto-hide flash messages after 5 seconds
+    const flashMessages = document.querySelectorAll('.flash-message');
+    flashMessages.forEach(message => {
+      setTimeout(() => {
+        message.style.transition = 'opacity 0.5s ease';
+        message.style.opacity = '0';
+        setTimeout(() => {
+          if (message.parentNode) {
+            message.parentNode.removeChild(message);
+          }
+        }, 500);
+      }, 5000);
+    });
   });
 </script>

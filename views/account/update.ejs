@@ -11,64 +11,335 @@
     <main class="update-container">
         <div class="update-header">
             <h1>Update Account Information</h1>
-            <p>Manage your profile details</p>
+            <p>Manage your profile details and password</p>
         </div>
 
         <!-- Flash Messages -->
-        <% if (messages && messages.success) { %>
-            <div class="flash-message success">
-                <%= messages.success %>
+        <% if (messages && (messages.success || messages.error || messages.info)) { %>
+            <div class="flash-messages">
+                <% if (messages.success && messages.success.length > 0) { %>
+                    <div class="flash-message success">
+                        <%= messages.success[0] %>
+                    </div>
+                <% } %>
+                <% if (messages.error && messages.error.length > 0) { %>
+                    <div class="flash-message error">
+                        <%= messages.error[0] %>
+                    </div>
+                <% } %>
+                <% if (messages.info && messages.info.length > 0) { %>
+                    <div class="flash-message info">
+                        <%= messages.info[0] %>
+                    </div>
+                <% } %>
             </div>
         <% } %>
-        <% if (messages && messages.error) { %>
-            <div class="flash-message error">
-                <%= messages.error %>
+
+        <!-- Validation Errors -->
+        <% if (errors && errors.length > 0) { %>
+            <div class="validation-errors">
+                <h3>Please correct the following errors:</h3>
+                <ul>
+                    <% errors.forEach(error => { %>
+                        <li><%= error.msg %></li>
+                    <% }) %>
+                </ul>
             </div>
         <% } %>
 
-        <form action="/account/update" method="POST" class="update-form">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="account_firstname">First Name</label>
-                    <input type="text" id="account_firstname" name="account_firstname" 
-                           value="<%= user.firstName || '' %>" required>
+        <!-- FORM 1: Account Update Form (TASK 4) -->
+        <div class="form-section">
+            <h2><i class="fas fa-user-edit"></i> Account Update</h2>
+            
+            <form action="/account/update" method="POST" class="update-form" id="accountUpdateForm">
+                <!-- Hidden field for account_id (TASK 4 requirement) -->
+                <input type="hidden" name="account_id" value="<%= user.userId || user.account_id %>">
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="account_firstname">First Name *</label>
+                        <input type="text" id="account_firstname" name="account_firstname" 
+                               value="<%= user.firstName || user.account_firstname || '' %>" 
+                               required
+                               minlength="1"
+                               <% if (locals.account_firstname) { %>data-sticky="<%= locals.account_firstname %>"<% } %>>
+                        <div class="input-help">Required, minimum 1 character</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="account_lastname">Last Name *</label>
+                        <input type="text" id="account_lastname" name="account_lastname" 
+                               value="<%= user.lastName || user.account_lastname || '' %>" 
+                               required
+                               minlength="1"
+                               <% if (locals.account_lastname) { %>data-sticky="<%= locals.account_lastname %>"<% } %>>
+                        <div class="input-help">Required, minimum 1 character</div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="account_email">Email Address *</label>
+                        <input type="email" id="account_email" name="account_email" 
+                               value="<%= user.email || user.account_email || '' %>" 
+                               required
+                               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                               <% if (locals.account_email) { %>data-sticky="<%= locals.account_email %>"<% } %>>
+                        <div class="input-help">Valid email format required (e.g., user@example.com)</div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="account_lastname">Last Name</label>
-                    <input type="text" id="account_lastname" name="account_lastname" 
-                           value="<%= user.lastName || '' %>" required>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Account Information
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- FORM 2: Change Password Form (TASK 4) -->
+        <div class="form-section">
+            <h2><i class="fas fa-key"></i> Change Password</h2>
+            
+            <form action="/account/update-password" method="POST" class="update-form" id="passwordUpdateForm">
+                <!-- Hidden field for account_id (TASK 4 requirement) -->
+                <input type="hidden" name="account_id" value="<%= user.userId || user.account_id %>">
+                
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="new_password">New Password *</label>
+                        <input type="password" id="new_password" name="new_password" 
+                               required
+                               minlength="12"
+                               pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$"
+                               oninput="checkPasswordStrength(this.value)">
+                        <div class="password-requirements">
+                            <p><strong>Password Requirements:</strong></p>
+                            <ul>
+                                <li id="req-length">✓ Minimum 12 characters</li>
+                                <li id="req-lowercase">✓ At least one lowercase letter</li>
+                                <li id="req-uppercase">✓ At least one uppercase letter</li>
+                                <li id="req-number">✓ At least one number</li>
+                                <li id="req-special">✓ At least one special character (@$!%*?&)</li>
+                            </ul>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div class="strength-bar" id="strengthBar"></div>
+                            </div>
+                            <span id="strengthText">Password strength: Very Weak</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="confirm_password">Confirm New Password *</label>
+                        <input type="password" id="confirm_password" name="confirm_password" 
+                               required
+                               oninput="checkPasswordMatch()">
+                        <div class="password-match" id="passwordMatch">
+                            <i class="fas fa-times"></i> Passwords do not match
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group full-width">
-                    <label for="account_email">Email Address</label>
-                    <input type="email" id="account_email" name="account_email" 
-                           value="<%= user.email || '' %>" required>
+                <div class="form-note">
+                    <p><i class="fas fa-info-circle"></i> By entering a new password, you will change your current password. 
+                    Make sure to follow all password requirements.</p>
                 </div>
-            </div>
 
-            <div class="form-actions">
-                <a href="/account/dashboard" class="btn btn-secondary">Cancel</a>
-                <button type="submit" class="btn btn-primary">Update Account</button>
-            </div>
-        </form>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-key"></i> Change Password
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="navigation-links">
+            <a href="/account/dashboard" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
     </main>
+
+    <script>
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            // Requirements check
+            const hasLength = password.length >= 12;
+            const hasLower = /[a-z]/.test(password);
+            const hasUpper = /[A-Z]/.test(password);
+            const hasNumber = /\d/.test(password);
+            const hasSpecial = /[@$!%*?&]/.test(password);
+            
+            // Update requirement indicators
+            document.getElementById('req-length').className = hasLength ? 'met' : 'unmet';
+            document.getElementById('req-lowercase').className = hasLower ? 'met' : 'unmet';
+            document.getElementById('req-uppercase').className = hasUpper ? 'met' : 'unmet';
+            document.getElementById('req-number').className = hasNumber ? 'met' : 'unmet';
+            document.getElementById('req-special').className = hasSpecial ? 'met' : 'unmet';
+            
+            // Calculate strength
+            let strength = 0;
+            if (hasLength) strength += 20;
+            if (hasLower) strength += 20;
+            if (hasUpper) strength += 20;
+            if (hasNumber) strength += 20;
+            if (hasSpecial) strength += 20;
+            
+            // Update strength meter
+            strengthBar.style.width = strength + '%';
+            
+            // Update strength text and color
+            if (strength <= 40) {
+                strengthBar.style.backgroundColor = '#ef4444';
+                strengthText.textContent = 'Password strength: Very Weak';
+            } else if (strength <= 60) {
+                strengthBar.style.backgroundColor = '#f59e0b';
+                strengthText.textContent = 'Password strength: Weak';
+            } else if (strength <= 80) {
+                strengthBar.style.backgroundColor = '#10b981';
+                strengthText.textContent = 'Password strength: Good';
+            } else {
+                strengthBar.style.backgroundColor = '#059669';
+                strengthText.textContent = 'Password strength: Strong';
+            }
+        }
+
+        // Password match checker
+        function checkPasswordMatch() {
+            const password = document.getElementById('new_password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const matchElement = document.getElementById('passwordMatch');
+            
+            if (!password || !confirmPassword) {
+                matchElement.style.display = 'none';
+                return;
+            }
+            
+            if (password === confirmPassword) {
+                matchElement.innerHTML = '<i class="fas fa-check"></i> Passwords match';
+                matchElement.className = 'password-match match';
+                matchElement.style.display = 'block';
+            } else {
+                matchElement.innerHTML = '<i class="fas fa-times"></i> Passwords do not match';
+                matchElement.className = 'password-match no-match';
+                matchElement.style.display = 'block';
+            }
+        }
+
+        // Form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const accountForm = document.getElementById('accountUpdateForm');
+            const passwordForm = document.getElementById('passwordUpdateForm');
+            
+            // Sticky form fields (TASK 4 requirement)
+            const stickyFields = document.querySelectorAll('[data-sticky]');
+            stickyFields.forEach(field => {
+                field.value = field.getAttribute('data-sticky');
+            });
+            
+            // Account form validation
+            accountForm.addEventListener('submit', function(e) {
+                const firstName = document.getElementById('account_firstname').value.trim();
+                const lastName = document.getElementById('account_lastname').value.trim();
+                const email = document.getElementById('account_email').value.trim();
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                
+                let isValid = true;
+                let errors = [];
+                
+                if (!firstName) {
+                    errors.push('First name is required');
+                    isValid = false;
+                }
+                
+                if (!lastName) {
+                    errors.push('Last name is required');
+                    isValid = false;
+                }
+                
+                if (!email) {
+                    errors.push('Email is required');
+                    isValid = false;
+                } else if (!emailPattern.test(email)) {
+                    errors.push('Please enter a valid email address');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Please fix the following errors:\n\n' + errors.join('\n'));
+                }
+            });
+            
+            // Password form validation
+            passwordForm.addEventListener('submit', function(e) {
+                const password = document.getElementById('new_password').value;
+                const confirmPassword = document.getElementById('confirm_password').value;
+                
+                let isValid = true;
+                let errors = [];
+                
+                if (password.length < 12) {
+                    errors.push('Password must be at least 12 characters long');
+                    isValid = false;
+                }
+                
+                if (!/[a-z]/.test(password)) {
+                    errors.push('Password must contain at least one lowercase letter');
+                    isValid = false;
+                }
+                
+                if (!/[A-Z]/.test(password)) {
+                    errors.push('Password must contain at least one uppercase letter');
+                    isValid = false;
+                }
+                
+                if (!/\d/.test(password)) {
+                    errors.push('Password must contain at least one number');
+                    isValid = false;
+                }
+                
+                if (!/[@$!%*?&]/.test(password)) {
+                    errors.push('Password must contain at least one special character (@$!%*?&)');
+                    isValid = false;
+                }
+                
+                if (password !== confirmPassword) {
+                    errors.push('Passwords do not match');
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Please fix the following errors:\n\n' + errors.join('\n'));
+                }
+            });
+        });
+    </script>
 
     <style>
         .update-container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
+            background: #f8fafc;
+            min-height: 100vh;
         }
 
         .update-header {
             text-align: center;
             margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         .update-header h1 {
             color: #1e293b;
             margin-bottom: 10px;
+            font-size: 2.2rem;
         }
 
         .update-header p {
@@ -76,18 +347,102 @@
             font-size: 1.1rem;
         }
 
-        .update-form {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 30px;
         }
 
+        .flash-message {
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .flash-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .flash-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .flash-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        .flash-message i {
+            font-size: 1.2rem;
+        }
+
+        /* Validation Errors */
+        .validation-errors {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .validation-errors h3 {
+            color: #991b1b;
+            margin: 0 0 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .validation-errors ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .validation-errors li {
+            color: #991b1b;
+            margin-bottom: 5px;
+        }
+
+        /* Form Sections */
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #1e293b;
+            margin: 0 0 25px 0;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-section h2 i {
+            color: #059669;
+        }
+
+        /* Form Grid */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            gap: 25px;
             margin-bottom: 30px;
         }
 
@@ -104,31 +459,170 @@
             font-weight: 600;
             color: #374151;
             margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group label::after {
+            content: ' *';
+            color: #ef4444;
         }
 
         .form-group input {
-            padding: 12px;
+            padding: 12px 15px;
             border: 2px solid #e2e8f0;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            background: #f8fafc;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #059669;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
         }
 
+        .form-group input:valid {
+            border-color: #10b981;
+        }
+
+        .form-group input:invalid:not(:focus):not(:placeholder-shown) {
+            border-color: #ef4444;
+        }
+
+        /* Input Help Text */
+        .input-help {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        /* Password Requirements */
+        .password-requirements {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .password-requirements p {
+            font-weight: 600;
+            color: #374151;
+            margin: 0 0 10px 0;
+        }
+
+        .password-requirements ul {
+            margin: 0;
+            padding-left: 20px;
+            list-style: none;
+        }
+
+        .password-requirements li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .password-requirements li::before {
+            content: '○';
+            font-size: 0.8rem;
+        }
+
+        .password-requirements li.met {
+            color: #059669;
+        }
+
+        .password-requirements li.met::before {
+            content: '✓';
+            color: #059669;
+        }
+
+        .password-requirements li.unmet {
+            color: #6b7280;
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 15px;
+        }
+
+        .strength-meter {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            background: #ef4444;
+            border-radius: 3px;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        #strengthText {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        /* Password Match */
+        .password-match {
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .password-match.match {
+            color: #059669;
+        }
+
+        .password-match.no-match {
+            color: #ef4444;
+        }
+
+        /* Form Note */
+        .form-note {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+
+        .form-note p {
+            margin: 0;
+            color: #0369a1;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .form-note i {
+            color: #0ea5e9;
+            margin-top: 2px;
+        }
+
+        /* Form Actions */
         .form-actions {
             display: flex;
-            gap: 15px;
             justify-content: flex-end;
+            gap: 15px;
         }
 
         .btn {
             padding: 12px 24px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-weight: 600;
             text-decoration: none;
             text-align: center;
@@ -137,6 +631,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            font-size: 1rem;
         }
 
         .btn-primary {
@@ -146,6 +642,8 @@
 
         .btn-primary:hover {
             background: #047857;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
         }
 
         .btn-secondary {
@@ -155,34 +653,49 @@
 
         .btn-secondary:hover {
             background: #4b5563;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.2);
         }
 
-        .flash-message {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            font-weight: 600;
+        /* Navigation Links */
+        .navigation-links {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
         }
 
-        .flash-message.success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
-
-        .flash-message.error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
-
+        /* Responsive Design */
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .update-header h1 {
+                font-size: 1.8rem;
             }
             
             .form-actions {
                 flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .update-container {
+                padding: 15px;
+            }
+            
+            .form-section {
+                padding: 15px;
             }
         }
     </style>

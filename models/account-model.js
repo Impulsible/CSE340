@@ -26,7 +26,7 @@ async function registerAccount(
       account_firstname,
       account_lastname,
       account_email,
-      hashedPassword,  // Now using hashed password
+      hashedPassword,
     ])
 
     return result
@@ -81,52 +81,129 @@ class AccountModel {
     return result.rows[0];
   }
 
+  /* ****************************************
+   * TASK 5: Function to get account by ID
+   * *************************************** */
   static async findById(accountId) {
-    const sql = `
-      SELECT account_id, account_firstname, account_lastname, 
-             account_email, account_type 
-      FROM account 
-      WHERE account_id = $1
-    `;
+    try {
+      const sql = `
+        SELECT account_id, account_firstname, account_lastname, 
+               account_email, account_type 
+        FROM account 
+        WHERE account_id = $1
+      `;
 
-    const result = await pool.query(sql, [accountId]);
-    return result.rows[0];
+      const result = await pool.query(sql, [accountId]);
+      
+      if (result.rows.length === 0) {
+        return null;
+      }
+      
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error in findById:', error);
+      throw error;
+    }
   }
 
   static async verifyPassword(candidatePassword, hashedPassword) {
     return await bcrypt.compare(candidatePassword, hashedPassword);
   }
 
-  static async updateAccount(accountId, updateData) {
-    const { account_firstname, account_lastname, account_email } = updateData;
-    
-    const sql = `
-      UPDATE account 
-      SET account_firstname = $1, account_lastname = $2, account_email = $3 
-      WHERE account_id = $4 
-      RETURNING account_id, account_firstname, account_lastname, account_email, account_type
-    `;
+  /* ****************************************
+   * TASK 5: Function to update account info - SIMPLIFIED
+   * *************************************** */
+  static async updateAccountInfo(accountId, account_firstname, account_lastname, account_email) {
+    try {
+      // SIMPLIFIED SQL - no account_updated column to avoid errors
+      const sql = `
+        UPDATE account 
+        SET account_firstname = $1, 
+            account_lastname = $2, 
+            account_email = $3
+        WHERE account_id = $4 
+        RETURNING account_id, account_firstname, account_lastname, account_email, account_type
+      `;
 
-    const result = await pool.query(sql, [
-      account_firstname, 
-      account_lastname, 
-      account_email, 
-      accountId
-    ]);
+      console.log('📊 Executing SQL:', sql);
+      console.log('📊 With values:', [account_firstname, account_lastname, account_email, accountId]);
 
-    return result.rows[0];
+      const result = await pool.query(sql, [
+        account_firstname, 
+        account_lastname, 
+        account_email, 
+        accountId
+      ]);
+
+      console.log('📊 Database result:', result.rows);
+
+      if (result.rows.length === 0) {
+        console.log('❌ No rows updated - account not found');
+        return null;
+      }
+
+      console.log('✅ Database update successful:', result.rows[0]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('❌ Error in updateAccountInfo:', error.message);
+      console.error('Error details:', error);
+      throw error;
+    }
   }
 
-  static async changePassword(accountId, newPassword) {
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-    
-    const sql = `
-      UPDATE account 
-      SET account_password = $1 
-      WHERE account_id = $2
-    `;
+  /* ****************************************
+   * TASK 5: Function to update password - SIMPLIFIED
+   * *************************************** */
+  static async updatePassword(accountId, newPassword) {
+    try {
+      const hashedPassword = await bcrypt.hash(newPassword, 12);
+      
+      const sql = `
+        UPDATE account 
+        SET account_password = $1
+        WHERE account_id = $2
+        RETURNING account_id
+      `;
 
-    await pool.query(sql, [hashedPassword, accountId]);
+      const result = await pool.query(sql, [hashedPassword, accountId]);
+      
+      if (result.rows.length === 0) {
+        console.log('❌ No rows updated for password - account not found');
+        return false;
+      }
+      
+      console.log('✅ Password update successful');
+      return true;
+    } catch (error) {
+      console.error('❌ Error in updatePassword:', error.message);
+      throw error;
+    }
+  }
+
+  /* ****************************************
+   * Function to check if email exists (for validation)
+   * *************************************** */
+  static async emailExists(email, excludeAccountId = null) {
+    try {
+      let sql = `
+        SELECT account_id, account_email 
+        FROM account 
+        WHERE account_email = $1
+      `;
+      
+      let params = [email];
+      
+      if (excludeAccountId) {
+        sql += ` AND account_id != $2`;
+        params.push(excludeAccountId);
+      }
+      
+      const result = await pool.query(sql, params);
+      return result.rows.length > 0;
+    } catch (error) {
+      console.error('Error in emailExists:', error);
+      return false;
+    }
   }
 }
 

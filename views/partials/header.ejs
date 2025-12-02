@@ -31,25 +31,31 @@
             <div class="user-info">
               <strong><%= user.firstName %> <%= user.lastName %></strong>
               <span class="user-email"><%= user.email %></span>
-              <% if (user.role === 'Employee' || user.role === 'Admin') { %>
-                <span class="user-role"><%= user.role %></span>
+              <% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
+                <span class="user-role"><%= user.account_type %></span>
               <% } %>
             </div>
           </li>
           <li class="dropdown-divider"></li>
-          <li><a href="/account/dashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a></li>
-          <li><a href="/account/update"><i class="fas fa-user-edit"></i>Update Profile</a></li>
+          
+          <!-- TASK 1: Welcome link to dashboard/management -->
+          <li><a href="/account/dashboard"><i class="fas fa-user-circle"></i>Account Management</a></li>
+          
+          <!-- TASK 4: Update account information link -->
+          <li><a href="/account/update/<%= user.userId || user.account_id %>"><i class="fas fa-user-edit"></i>Update Account Info</a></li>
+          
           <li><a href="/account/orders"><i class="fas fa-receipt"></i>My Orders</a></li>
           <li><a href="/account/saved"><i class="fas fa-heart"></i>Saved Vehicles</a></li>
           
           <!-- ADMIN/EMPLOYEE LINKS -->
-          <% if (user.role === 'Employee' || user.role === 'Admin') { %>
+          <% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
             <li class="dropdown-divider"></li>
             <li><a href="/inv/manage"><i class="fas fa-cog"></i>Manage Inventory</a></li>
             <li><a href="/account/admin"><i class="fas fa-shield-alt"></i>Admin Panel</a></li>
           <% } %>
           
           <li class="dropdown-divider"></li>
+          <!-- TASK 1 & 6: Logout link (only shown when logged in) -->
           <li>
             <a href="/account/logout" class="logout-link">
               <i class="fas fa-sign-out-alt"></i>Logout
@@ -57,6 +63,7 @@
           </li>
         <% } else { %>
           <!-- USER IS NOT LOGGED IN -->
+          <!-- TASK 1: My Account link (only shown when NOT logged in) -->
           <li><a href="/account/login"><i class="fas fa-sign-in-alt"></i>Login</a></li>
           <li><a href="/account/register"><i class="fas fa-user-plus"></i>Sign Up</a></li>
           <li class="dropdown-divider"></li>
@@ -101,13 +108,23 @@
       
       <!-- DYNAMIC NAVIGATION BASED ON JWT AUTHENTICATION -->
       <% if (user) { %>
+        <!-- TASK 1: Welcome link in main nav (visible on desktop) -->
         <li class="auth-nav-item">
           <a href="/account/dashboard" class="nav-dashboard-link">
-            <i class="fas fa-tachometer-alt"></i>
-            Dashboard
+            <i class="fas fa-user-circle"></i>
+            Welcome <%= user.firstName %>
           </a>
         </li>
-        <% if (user.role === 'Employee' || user.role === 'Admin') { %>
+        
+        <!-- TASK 4: Update account link -->
+        <li class="auth-nav-item">
+          <a href="/account/update/<%= user.userId || user.account_id %>" class="nav-update-link">
+            <i class="fas fa-user-edit"></i>
+            Update Account
+          </a>
+        </li>
+        
+        <% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
           <li class="auth-nav-item">
             <a href="/inv/manage" class="nav-admin-link">
               <i class="fas fa-cog"></i>
@@ -121,7 +138,16 @@
             </a>
           </li>
         <% } %>
+        
+        <!-- TASK 1 & 6: Logout link in main nav -->
+        <li class="auth-nav-item">
+          <a href="/account/logout" class="nav-logout-link">
+            <i class="fas fa-sign-out-alt"></i>
+            Logout
+          </a>
+        </li>
       <% } else { %>
+        <!-- TASK 1: My Account link (only shown when NOT logged in) -->
         <li class="auth-nav-item">
           <a href="/account/login" class="nav-login-link">
             <i class="fas fa-sign-in-alt"></i>
@@ -211,16 +237,16 @@
     color: #059669;
   }
 
-  .logout-link {
+  .logout-link, .nav-logout-link {
     color: #dc2626 !important;
   }
 
-  .logout-link:hover {
+  .logout-link:hover, .nav-logout-link:hover {
     color: #b91c1c !important;
     background: #fef2f2 !important;
   }
 
-  .logout-link i {
+  .logout-link i, .nav-logout-link i {
     color: #dc2626 !important;
   }
 
@@ -261,6 +287,22 @@
     transition: transform 0.3s ease;
   }
 
+  /* Update account link specific styling */
+  .nav-update-link {
+    color: #059669;
+    font-weight: 500;
+  }
+
+  .nav-update-link:hover {
+    color: #047857;
+  }
+
+  /* Welcome link styling */
+  .nav-dashboard-link {
+    font-weight: 600;
+    color: #1e40af;
+  }
+
   /* Responsive: Show auth items in main nav on mobile */
   @media (max-width: 768px) {
     .auth-nav-item {
@@ -268,9 +310,11 @@
     }
     
     .nav-dashboard-link,
+    .nav-update-link,
     .nav-admin-link,
     .nav-login-link,
-    .nav-register-link {
+    .nav-register-link,
+    .nav-logout-link {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -278,9 +322,11 @@
     }
     
     .nav-dashboard-link i,
+    .nav-update-link i,
     .nav-admin-link i,
     .nav-login-link i,
-    .nav-register-link i {
+    .nav-register-link i,
+    .nav-logout-link i {
       width: 16px;
       text-align: center;
     }
@@ -325,7 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* ===== Handle logout confirmation ===== */
-  const logoutLinks = document.querySelectorAll('.logout-link');
+  const logoutLinks = document.querySelectorAll('.logout-link, .nav-logout-link');
   logoutLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       // Optional: Add confirmation dialog
