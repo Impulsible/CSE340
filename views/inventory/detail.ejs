@@ -537,6 +537,324 @@
         text-align: left;
       }
     }
+
+    /* =======================================
+   MOBILE ONLY STYLES (max-width: 768px)
+   ======================================= */
+
+@media (max-width: 768px) {
+  /* Premium mobile container */
+  .premium-page {
+    padding: 0 !important;
+    background: linear-gradient(145deg, #f5f9ff, #ffffff) !important;
+  }
+
+  /* Main wrapper - premium fitted design */
+  .vehicle-detail-wrapper {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 16px 14px 20px !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+  }
+
+  .vehicle-detail-wrapper::before {
+    display: none !important; /* Remove double border for cleaner mobile look */
+  }
+
+  /* Header section - premium compact design */
+  .vehicle-detail-header {
+    padding: 18px 16px 16px !important;
+    margin: 0 0 16px !important;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #eef5ff, #dbeafe) !important;
+    border: 1px solid #c4ddff !important;
+    box-shadow: 0 8px 24px rgba(44, 99, 255, 0.12) !important;
+  }
+
+  .vehicle-detail-badge {
+    padding: 6px 16px !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 10px !important;
+  }
+
+  .vehicle-detail-title {
+    font-size: 1.8rem !important;
+    line-height: 1.2 !important;
+    margin: 0 0 8px !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+  }
+
+  .vehicle-detail-subtitle {
+    font-size: 0.95rem !important;
+    line-height: 1.4 !important;
+    max-width: 100% !important;
+    padding: 0 4px !important;
+  }
+
+  /* Grid layout - single column for mobile */
+  .vehicle-detail-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    margin-top: 0 !important;
+  }
+
+  /* Image card - premium fitted design */
+  .vehicle-image-card {
+    padding: 16px 14px 18px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(145deg, #f9fbff, #eef3ff) !important;
+    border: 1px solid rgba(148, 163, 184, 0.4) !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1) !important;
+  }
+
+  .vehicle-image-header {
+    gap: 10px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .stock-tag,
+  .image-chip {
+    padding: 6px 12px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Image container - fitted, no cutting */
+  .vehicle-image-container {
+    aspect-ratio: 4 / 3 !important;
+    max-height: 280px !important;
+    min-height: 220px !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    background: radial-gradient(circle at top, #e0f2fe, #eef2ff) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .vehicle-main-image {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    object-position: center !important;
+    padding: 8px !important; /* Prevents cutting */
+    max-width: 100% !important;
+    max-height: 100% !important;
+  }
+
+  /* Category highlights - fitted layout */
+  .vehicle-category-highlights {
+    margin-top: 16px !important;
+    gap: 10px !important;
+  }
+
+  .highlight-pill {
+    flex: 1 1 100% !important;
+    padding: 10px 14px !important;
+    font-size: 0.9rem !important;
+    text-align: left !important;
+    justify-content: flex-start !important;
+    min-width: 0 !important;
+    word-break: break-word !important;
+    line-height: 1.4 !important;
+  }
+
+  .vehicle-image-footer {
+    margin-top: 12px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    font-size: 0.85rem !important;
+    padding: 0 4px !important;
+  }
+
+  .vehicle-image-footer span {
+    justify-content: center !important;
+  }
+
+  /* Info card - premium fitted design */
+  .vehicle-info-card {
+    padding: 18px 16px 20px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(145deg, #ffffff, #f4f7ff) !important;
+    border: 1px solid rgba(148, 163, 184, 0.4) !important;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1) !important;
+  }
+
+  .price-row {
+    flex-direction: column !important;
+    gap: 8px !important;
+    align-items: flex-start !important;
+  }
+
+  .vehicle-price-large {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .vehicle-price-note {
+    text-align: left !important;
+    max-width: 100% !important;
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    padding-left: 0 !important;
+  }
+
+  .vehicle-meta-row {
+    gap: 10px !important;
+    justify-content: center !important;
+  }
+
+  .vehicle-meta-row span {
+    flex: 1 1 calc(50% - 10px) !important;
+    min-width: 0 !important;
+    padding: 8px 12px !important;
+    font-size: 0.88rem !important;
+    justify-content: center !important;
+    text-align: center !important;
+    word-break: break-word !important;
+  }
+
+  /* Details grid - responsive 2-column */
+  .vehicle-details-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .detail-card {
+    padding: 12px 10px !important;
+    min-height: 70px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+  }
+
+  .detail-label {
+    font-size: 0.82rem !important;
+    margin-bottom: 4px !important;
+    word-break: break-word !important;
+  }
+
+  .detail-value {
+    font-size: 1rem !important;
+    word-break: break-word !important;
+  }
+
+  /* Description - fitted with proper spacing */
+  .vehicle-description {
+    padding: 16px 16px 16px 20px !important;
+    margin-top: 8px !important;
+    border-radius: 12px !important;
+  }
+
+  .vehicle-description h3 {
+    font-size: 1.1rem !important;
+    margin: 0 0 10px 6px !important;
+  }
+
+  .vehicle-description p {
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    text-align: left !important;
+    word-break: break-word !important;
+    hyphens: auto !important;
+    margin: 0 !important;
+  }
+
+  /* Action buttons - full width mobile friendly */
+  .vehicle-actions {
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-top: 12px !important;
+  }
+
+  .vehicle-actions .btn-primary,
+  .vehicle-actions .btn-secondary {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    padding: 14px 16px !important;
+    font-size: 1rem !important;
+    border-radius: 12px !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* Ensure all text is visible and properly spaced */
+  * {
+    box-sizing: border-box !important;
+    max-width: 100% !important;
+  }
+
+  /* Remove any potential overflow issues */
+  body, .page, .premium-page, .vehicle-detail-wrapper {
+    overflow-x: hidden !important;
+  }
+}
+
+/* =======================================
+   SMALL MOBILE ENHANCEMENTS (max-width: 480px)
+   ======================================= */
+
+@media (max-width: 480px) {
+  .premium-page {
+    padding: 0 !important;
+  }
+
+  .vehicle-detail-wrapper {
+    padding: 14px 12px 18px !important;
+  }
+
+  .vehicle-detail-header {
+    padding: 16px 14px 14px !important;
+  }
+
+  .vehicle-detail-title {
+    font-size: 1.6rem !important;
+  }
+
+  .vehicle-image-card,
+  .vehicle-info-card {
+    padding: 14px 12px 16px !important;
+  }
+
+  .vehicle-image-container {
+    max-height: 240px !important;
+    min-height: 200px !important;
+  }
+
+  .vehicle-details-grid {
+    gap: 10px !important;
+  }
+
+  .detail-card {
+    padding: 10px 8px !important;
+    min-height: 65px !important;
+  }
+
+  .vehicle-meta-row span {
+    flex: 1 1 100% !important;
+    font-size: 0.85rem !important;
+  }
+
+  .vehicle-actions .btn-primary,
+  .vehicle-actions .btn-secondary {
+    padding: 12px 14px !important;
+    font-size: 0.95rem !important;
+  }
+}
+
+/* =======================================
+   TABLET TRANSITION (769px and above)
+   Keep desktop styles intact
+   ======================================= */
+
+@media (min-width: 769px) {
+  /* All desktop styles remain as originally written */
+  /* This ensures tablet/desktop views are not affected */
+}
   </style>
 </head>
 <body>

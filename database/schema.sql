@@ -28,7 +28,7 @@ INSERT INTO inventory (
 (
   2, 'Ford', 'Mustang', 2020,
   'The iconic 2020 Ford Mustang combines classic American muscle with modern technology. This vibrant red sports car features advanced safety systems, premium interior amenities, and a powerful engine that delivers exhilarating performance. With low mileage and meticulous maintenance, this Mustang offers both style and substance for driving enthusiasts seeking an authentic muscle car experience.',
-  '/images/vehicles/mustang.jpg', '/images/vehicles/wrangler-tn.jpg', 32000, 8500, 'Yellow', 2
+  '/images/vehicles/wrangler.jpg', '/images/vehicles/wrangler.jpg', 32000, 8500, 'Yellow', 2
 ),
 (
   7, 'Lamborghini', 'Adventador', 2023,
