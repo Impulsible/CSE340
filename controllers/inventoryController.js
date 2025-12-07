@@ -616,5 +616,142 @@ invCont.deleteInventoryItem = async function (req, res, next) {
     res.redirect(`/inv/delete/${req.body.inv_id}`);
   }
 };
+/* ****************************************
+*  Build Contact Form View
+* *************************************** */
+invCont.buildContact = async function (req, res, next) {
+  try {
+    const vehicleId = req.query.vehicle || null;
+    let vehicleData = null;
+    
+    if (vehicleId) {
+      // Fetch vehicle details from database
+      vehicleData = await invModel.getVehicleDetailById(vehicleId);
+    }
+    
+    const nav = await utilities.getNav();
+    const user = req.user || req.session.user || null;
+    
+    res.render("contact", {
+      title: 'Contact Us | CSE Motors',
+      vehicle: vehicleData,
+      user: user,
+      errors: null,
+      formData: {},
+      nav: nav
+    });
+  } catch (error) {
+    console.error("❌ Contact form error:", error);
+    next(error);
+  }
+};
+
+/* ****************************************
+*  Process Contact Form Submission
+* *************************************** */
+invCont.processContact = async function (req, res, next) {
+  try {
+    const { name, email, phone, message, vehicle_id, preferred_contact, subject, newsletter } = req.body;
+    
+    // Validate inputs
+    const errors = [];
+    if (!name || name.trim() === '') errors.push('Please enter your name');
+    if (!email || email.trim() === '') errors.push('Please enter your email');
+    if (!message || message.trim() === '') errors.push('Please enter a message');
+    
+    // Check if email is valid format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+      errors.push('Please enter a valid email address');
+    }
+    
+    let vehicleData = null;
+    if (vehicle_id) {
+      vehicleData = await invModel.getVehicleDetailById(vehicle_id);
+    }
+    
+    const nav = await utilities.getNav();
+    const user = req.user || req.session.user || null;
+    
+    if (errors.length > 0) {
+      return res.render("contact", {
+        title: 'Contact Us | CSE Motors',
+        vehicle: vehicleData,
+        user: user,
+        errors,
+        formData: req.body,
+        nav: nav
+      });
+    }
+    
+    // Process the contact form
+    console.log('📧 Contact form submission:', {
+      name,
+      email,
+      phone,
+      message,
+      vehicle_id,
+      preferred_contact,
+      subject,
+      newsletter: newsletter === 'on'
+    });
+    
+    // Here you would typically:
+    // 1. Save to database (uncomment below if you have the contact_submissions table)
+    // 2. Send email notification
+    // 3. Send confirmation email to user
+    
+    // Example of saving to database (requires contact_submissions table):
+    /*
+    try {
+      await invModel.saveContactSubmission({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone ? phone.trim() : null,
+        subject: subject ? subject.trim() : null,
+        message: message.trim(),
+        vehicle_id: vehicle_id || null,
+        preferred_contact: preferred_contact || 'email',
+        newsletter: newsletter === 'on'
+      });
+    } catch (dbError) {
+      console.log("⚠️ Could not save to database (table might not exist):", dbError.message);
+    }
+    */
+    
+    // Redirect to success page
+    req.flash("success", "Your message has been sent successfully! We'll respond within 24 hours.");
+    
+    req.session.save((err) => {
+      if (err) {
+        console.error('❌ Session save error:', err);
+      }
+      res.redirect('/contact/success');
+    });
+    
+  } catch (error) {
+    console.error("❌ Process contact error:", error);
+    next(error);
+  }
+};
+
+/* ****************************************
+*  Show Contact Success Page
+* *************************************** */
+invCont.contactSuccess = async function (req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+    const user = req.user || req.session.user || null;
+    
+    res.render("contact-success", {
+      title: 'Message Sent | CSE Motors',
+      user: user,
+      nav: nav
+    });
+  } catch (error) {
+    console.error("❌ Contact success page error:", error);
+    next(error);
+  }
+};
 
 module.exports = invCont;

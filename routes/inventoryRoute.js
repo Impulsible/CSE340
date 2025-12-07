@@ -4,14 +4,14 @@ const invController = require("../controllers/inventoryController");
 const utilities = require("../utilities");
 const classValidate = require("../utilities/classification-validation");
 const invValidate = require("../utilities/inventory-validation");
-const { requireEmployeeOrAdmin } = require("../middleware/jwtMiddleware"); // ADDED for Task 2
+const { requireEmployeeOrAdmin } = require("../middleware/jwtMiddleware");
 
 // ---------------------
 // Route to build management view (TASK 2: Protected)
 // ---------------------
 router.get(
   "/",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   utilities.handleErrors(invController.buildManagement)
 );
 
@@ -28,7 +28,7 @@ router.get(
 // ---------------------
 router.get(
   "/add-classification",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   utilities.handleErrors(invController.addClassificationView)
 );
 
@@ -37,7 +37,7 @@ router.get(
 // ---------------------
 router.post(
   "/add-classification",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   classValidate.classificationValidationRules(),
   classValidate.checkClassificationData,
   utilities.handleErrors(invController.addClassification)
@@ -48,7 +48,7 @@ router.post(
 // ---------------------
 router.post(
   "/add-classification-ajax",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   classValidate.classificationValidationRules(),
   classValidate.checkClassificationData,
   utilities.handleErrors(invController.addClassificationAJAX)
@@ -67,7 +67,7 @@ router.get(
 // ---------------------
 router.get(
   "/add-inventory",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   utilities.handleErrors(invController.addInventoryView)
 );
 
@@ -76,7 +76,7 @@ router.get(
 // ---------------------
 router.post(
   "/add-inventory",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   invValidate.inventoryValidationRules(),
   invValidate.checkInventoryData,
   utilities.handleErrors(invController.addInventory)
@@ -87,7 +87,7 @@ router.post(
 // ---------------------
 router.post(
   "/add-inventory-ajax",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   invValidate.inventoryValidationRules(),
   invValidate.checkInventoryData,
   utilities.handleErrors(invController.addInventoryAJAX)
@@ -120,7 +120,7 @@ router.get(
 // ---------------------
 router.get(
   "/edit/:inv_id",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   utilities.handleErrors(invController.editInventoryView)
 );
 
@@ -129,7 +129,7 @@ router.get(
 // ---------------------
 router.post(
   "/update",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   invValidate.inventoryValidationRules(),
   invValidate.checkUpdateData,
   utilities.handleErrors(invController.updateInventory)
@@ -142,14 +142,14 @@ router.post(
 // GET route to show delete confirmation view
 router.get(
   "/delete/:inv_id",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   utilities.handleErrors(invController.buildDeleteConfirmation)
 );
 
 // POST route to handle the actual deletion
 router.post(
   "/delete",
-  requireEmployeeOrAdmin, // ADDED: Only Employee/Admin can access
+  requireEmployeeOrAdmin,
   utilities.handleErrors(invController.deleteInventoryItem)
 );
 

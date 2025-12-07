@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .detail-page {
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .detail-card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    
+    .detail-header {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    
+    .detail-row {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .detail-label {
+      font-weight: 600;
+      color: #0c1022;
+      margin-bottom: 5px;
+      display: block;
+    }
+    
+    .detail-value {
+      color: #3a435a;
+      font-size: 1.1rem;
+    }
+    
+    .message-box {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      border-left: 4px solid #2c63ff;
+    }
+    
+    .message-box pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: inherit;
+      line-height: 1.6;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px solid #e2e8f0;
+    }
+    
+    .btn-small {
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-reply {
+      background: #059669;
+      color: white;
+      border: none;
+    }
+    
+    .btn-reply:hover {
+      background: #047857;
+    }
+    
+    .btn-back {
+      background: #3a435a;
+      color: white;
+      border: none;
+    }
+    
+    .btn-back:hover {
+      background: #0c1022;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main class="detail-page">
+      <div class="detail-card">
+        <div class="detail-header">
+          <h1>Contact Submission Details</h1>
+          <p>Received on <%= new Date(submission.created_at).toLocaleString() %></p>
+        </div>
+        
+        <div class="detail-row">
+          <span class="detail-label">Name</span>
+          <span class="detail-value"><%= submission.name %></span>
+        </div>
+        
+        <div class="detail-row">
+          <span class="detail-label">Email</span>
+          <span class="detail-value">
+            <a href="mailto:<%= submission.email %>"><%= submission.email %></a>
+          </span>
+        </div>
+        
+        <div class="detail-row">
+          <span class="detail-label">Phone</span>
+          <span class="detail-value"><%= submission.phone || 'N/A' %></span>
+        </div>
+        
+        <% if (submission.vehicle_id) { %>
+          <div class="detail-row">
+            <span class="detail-label">Vehicle</span>
+            <span class="detail-value">
+              <a href="/inv/detail/<%= submission.vehicle_id %>" class="vehicle-link">
+                <%= submission.inv_year %> <%= submission.inv_make %> <%= submission.inv_model %>
+              </a>
+            </span>
+          </div>
+        <% } %>
+        
+        <div class="detail-row">
+          <span class="detail-label">Preferred Contact Method</span>
+          <span class="detail-value"><%= submission.preferred_contact %></span>
+        </div>
+        
+        <% if (submission.subject) { %>
+          <div class="detail-row">
+            <span class="detail-label">Subject</span>
+            <span class="detail-value"><%= submission.subject %></span>
+          </div>
+        <% } %>
+        
+        <div class="message-box">
+          <span class="detail-label">Message</span>
+          <pre class="detail-value"><%= submission.message %></pre>
+        </div>
+        
+        <div class="detail-row">
+          <span class="detail-label">Newsletter Subscription</span>
+          <span class="detail-value">
+            <%= submission.newsletter ? 'Subscribed ✓' : 'Not subscribed' %>
+          </span>
+        </div>
+        
+        <div class="action-buttons">
+          <a href="mailto:<%= submission.email %>?subject=Re: <%= encodeURIComponent(submission.subject || 'Your Inquiry') %>" 
+             class="btn-small btn-reply">
+            <i class="fas fa-reply"></i> Reply via Email
+          </a>
+          
+          <a href="/inv/contact/submissions" class="btn-small btn-back">
+            <i class="fas fa-arrow-left"></i> Back to Submissions
+          </a>
+          
+          <a href="/inv/" class="btn-secondary">
+            <i class="fas fa-home"></i> Inventory Home
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

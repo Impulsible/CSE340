@@ -8,13 +8,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* ============================================
-           FAVORITES PAGE STYLES
+           FAVORITES PAGE STYLES - CSE Motors Themed
            ============================================ */
-        .favorites-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 30px 20px;
-            min-height: 70vh;
+        
+        /* Global Checkerboard Background */
+        @media (min-width: 961px) {
+            body {
+                background: url("/images/site/checkerboard.jpg") repeat center;
+                background-size: 700px 700px;
+            }
+        }
+        
+        /* Main Page Container */
+        .page {
+            width: min(980px, 100%);
+            margin: 16px auto;
+            background: #fff;
+            border: 4px solid #78d0ff;
+            border-radius: 14px;
+            box-shadow: 0 14px 34px rgba(0,0,0,.18);
+            overflow: clip;
+        }
+
+        /* Main Content Area */
+        main {
+            padding: 0 20px 30px;
+        }
+
+        /* Page Title */
+        .welcome {
+            font-family: Raleway, system-ui, sans-serif;
+            font-weight: 800;
+            font-size: clamp(1.35rem, 4.6vw, 1.75rem);
+            margin: 20px 0 25px;
+            text-align: center;
+            color: #0c1022;
         }
 
         /* Breadcrumbs */
@@ -22,6 +50,7 @@
             margin-bottom: 25px;
             font-size: 0.9rem;
             color: #666;
+            padding: 20px 20px 0;
         }
 
         .breadcrumbs ol {
@@ -39,31 +68,32 @@
         }
 
         .breadcrumbs a {
-            color: #2563eb;
+            color: #2c63ff;
             text-decoration: none;
-            transition: color 0.3s;
+            font-weight: 600;
         }
 
         .breadcrumbs a:hover {
-            color: #1e40af;
+            color: #059669;
             text-decoration: underline;
         }
 
-        /* Header */
+        /* Header Section */
         .favorites-header {
             text-align: center;
             margin-bottom: 40px;
-            padding: 25px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 15px;
-            border: 1px solid #cbd5e1;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            background: #eef5ff;
+            border-radius: 10px;
+            border: 2px solid #78d0ff;
         }
 
         .favorites-header h1 {
-            color: #1e293b;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            color: #0c1022;
+            font-family: Raleway, system-ui, sans-serif;
+            font-weight: 800;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -71,13 +101,14 @@
         }
 
         .favorites-header h1 i {
-            color: #dc2626;
+            color: #059669;
         }
 
         .favorites-header p {
-            color: #64748b;
+            color: #3a435a;
             font-size: 1.1rem;
             margin-bottom: 20px;
+            line-height: 1.6;
         }
 
         /* Stats Bar */
@@ -85,63 +116,71 @@
             display: flex;
             justify-content: center;
             gap: 30px;
-            margin-top: 20px;
+            margin-top: 30px;
             flex-wrap: wrap;
         }
 
         .stat-item {
             text-align: center;
-            padding: 15px 25px;
+            padding: 20px;
             background: white;
             border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            min-width: 120px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 2px solid #78d0ff;
+            min-width: 140px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
         }
 
         .stat-number {
             display: block;
             font-size: 2rem;
-            font-weight: 700;
-            color: #2563eb;
+            font-weight: 800;
+            color: #2c63ff;
             margin-bottom: 5px;
+            font-family: Raleway, system-ui, sans-serif;
         }
 
         .stat-label {
-            color: #64748b;
+            color: #3a435a;
             font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
 
-        /* Messages */
+        /* Flash Messages */
         .flash-message {
             padding: 15px 20px;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 10px;
             animation: slideIn 0.3s ease;
+            border: 2px solid transparent;
         }
 
         .flash-message.success {
             background: #f0fdf4;
             color: #166534;
-            border: 2px solid #bbf7d0;
+            border-color: #059669;
         }
 
         .flash-message.error {
             background: #fef2f2;
             color: #dc2626;
-            border: 2px solid #fecaca;
+            border-color: #ef4444;
         }
 
         .flash-message.info {
             background: #eff6ff;
             color: #1e40af;
-            border: 2px solid #bfdbfe;
+            border-color: #2c63ff;
         }
 
         /* Validation Container */
@@ -151,24 +190,25 @@
 
         .validation-message {
             padding: 12px 15px;
-            border-radius: 6px;
+            border-radius: 8px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 10px;
             animation: fadeIn 0.3s ease;
+            border: 1px solid transparent;
         }
 
         .validation-message.success {
             background: #f0fdf4;
             color: #166534;
-            border: 1px solid #bbf7d0;
+            border-color: #059669;
         }
 
         .validation-message.error {
             background: #fef2f2;
             color: #dc2626;
-            border: 1px solid #fecaca;
+            border-color: #ef4444;
         }
 
         /* Pagination */
@@ -195,7 +235,7 @@
             padding: 8px 15px;
             border-radius: 6px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 700;
             transition: all 0.3s;
         }
 
@@ -237,7 +277,7 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid #e2e8f0;
+            border: 3px solid #78d0ff;
             transition: all 0.3s ease;
             display: flex;
             flex-direction: column;
@@ -246,14 +286,14 @@
         .favorite-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-            border-color: #cbd5e1;
+            border-color: #2c63ff;
         }
 
         /* Card Header */
         .favorite-card-header {
             padding: 20px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-bottom: 2px solid #e2e8f0;
+            background: linear-gradient(135deg, #eef5ff 0%, #dbeafe 100%);
+            border-bottom: 3px solid #78d0ff;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -263,8 +303,10 @@
 
         .favorite-card-header h3 {
             margin: 0;
-            color: #1e293b;
-            font-size: 1.2rem;
+            color: #0c1022;
+            font-family: Raleway, system-ui, sans-serif;
+            font-weight: 800;
+            font-size: 1.3rem;
             flex: 1;
             min-width: 200px;
         }
@@ -275,42 +317,58 @@
         }
 
         .priority-select {
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 2px solid #78d0ff;
             background: white;
-            color: #475569;
-            font-weight: 600;
+            color: #0c1022;
+            font-weight: 700;
             font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s;
+            font-family: inherit;
         }
 
         .priority-select:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #2c63ff;
+            box-shadow: 0 0 0 3px rgba(44, 99, 255, 0.2);
         }
 
-        /* Card Image Area */
+        /* HIGH-QUALITY IMAGE CONTAINER */
         .favorite-card-image {
             position: relative;
-            height: 200px;
+            height: 240px; /* Slightly taller for better aspect ratio */
             overflow: hidden;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #eef5ff 0%, #dbeafe 100%);
+            border-bottom: 3px solid #78d0ff;
         }
 
+        /* High-quality image rendering */
         .favorite-card-image img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
+            object-fit: contain; /* Changed from 'cover' to 'contain' for sharpness */
+            image-rendering: -webkit-optimize-contrast; /* Chrome, Safari */
+            image-rendering: crisp-edges; /* Firefox */
+            image-rendering: pixelated; /* Fallback */
+            -webkit-backface-visibility: hidden; /* Prevents blur on scale */
+            -moz-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-transform: translateZ(0); /* Hardware acceleration */
+            -moz-transform: translateZ(0);
+            transform: translateZ(0);
+            will-change: transform; /* Performance hint */
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white; /* White background for transparent PNGs */
         }
 
+        /* Hover effect - subtle zoom that maintains sharpness */
         .favorite-card:hover .favorite-card-image img {
-            transform: scale(1.05);
+            transform: scale(1.08); /* Reduced zoom for better sharpness */
         }
 
+        /* No-image placeholder */
         .no-image {
             height: 100%;
             display: flex;
@@ -318,115 +376,245 @@
             align-items: center;
             justify-content: center;
             color: #94a3b8;
-            gap: 10px;
+            gap: 15px;
+            background: linear-gradient(135deg, #eef5ff 0%, #dbeafe 100%);
         }
 
         .no-image i {
-            font-size: 2rem;
+            font-size: 3.5rem;
+            color: #78d0ff;
+            opacity: 0.8;
         }
 
-        /* Notes Section */
-        .notes-section {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.95);
+        .no-image-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #2c63ff;
+        }
+
+        /* Image loading state */
+        .image-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #eef5ff 25%, #dbeafe 50%, #eef5ff 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Current Notes Display (Beautiful Display) */
+        .notes-display {
+            padding: 20px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-top: 3px solid #059669;
+            border-bottom: 3px solid #059669;
+            min-height: 120px;
+            position: relative;
+        }
+
+        .notes-display-content {
+            position: relative;
+            padding-right: 40px;
+        }
+
+        .notes-display-text {
+            color: #166534;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin: 0;
+            font-style: italic;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .notes-display-empty {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .notes-edit-icon {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            color: #059669;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s;
+            background: white;
+            border: 2px solid #059669;
+            font-size: 0.9rem;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notes-edit-icon:hover {
+            background: #059669;
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Notes Input Section (Hidden by default) */
+        .notes-input-section {
+            padding: 20px;
+            background: #f8fafc;
             border-top: 1px solid #e2e8f0;
+            display: none;
+        }
+
+        .notes-input-section.active {
+            display: block;
+            animation: slideDown 0.3s ease;
         }
 
         .notes-input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
+            padding: 12px;
+            border: 2px solid #78d0ff;
+            border-radius: 8px;
             font-family: inherit;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             resize: vertical;
-            min-height: 60px;
+            min-height: 100px;
             margin-bottom: 10px;
             transition: border-color 0.3s;
+            background: white;
+            line-height: 1.5;
         }
 
         .notes-input:focus {
             outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #2c63ff;
+            box-shadow: 0 0 0 3px rgba(44, 99, 255, 0.2);
+        }
+
+        .notes-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            align-items: center;
         }
 
         .save-notes-btn {
             background: #059669;
             color: white;
             border: none;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 8px;
             transition: all 0.3s;
+            font-family: inherit;
+            border: 2px solid #047857;
         }
 
         .save-notes-btn:hover {
             background: #047857;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+        }
+
+        .save-notes-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .cancel-notes-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            font-family: inherit;
+            border: 2px solid #dc2626;
+        }
+
+        .cancel-notes-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .notes-counter {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #64748b;
-            text-align: right;
-            margin-top: 5px;
+            margin-right: auto;
+            font-weight: 600;
         }
 
         .notes-counter.error {
             color: #dc2626;
-            font-weight: 600;
         }
 
         /* Card Details */
         .favorite-card-details {
             padding: 20px;
             flex: 1;
+            background: white;
         }
 
         .favorite-card-details dl {
             margin: 0 0 15px 0;
             display: grid;
             grid-template-columns: auto 1fr;
-            gap: 8px 15px;
+            gap: 10px 20px;
         }
 
         .favorite-card-details dt {
-            color: #64748b;
-            font-weight: 600;
+            color: #2c63ff;
+            font-weight: 700;
+            font-size: 0.95rem;
         }
 
         .favorite-card-details dd {
-            color: #1e293b;
+            color: #0c1022;
             margin: 0;
+            font-weight: 600;
         }
 
         .description {
-            color: #475569;
+            color: #3a435a;
             line-height: 1.6;
             font-size: 0.95rem;
             margin-top: 15px;
             padding-top: 15px;
-            border-top: 1px solid #e2e8f0;
+            border-top: 2px solid #eef5ff;
         }
 
         /* Action Buttons */
         .favorite-card-actions {
             padding: 0 20px 20px;
             display: flex;
-            gap: 10px;
+            gap: 15px;
         }
 
         .btn {
             flex: 1;
-            padding: 10px 15px;
-            border-radius: 6px;
+            padding: 12px 15px;
+            border-radius: 8px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 800;
             text-align: center;
             transition: all 0.3s ease;
             display: flex;
@@ -435,29 +623,34 @@
             gap: 8px;
             cursor: pointer;
             border: 2px solid transparent;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            font-family: inherit;
         }
 
         .btn-view {
-            background: #dbeafe;
-            color: #1e40af;
-            border-color: #bfdbfe;
+            background: #eef5ff;
+            color: #2c63ff;
+            border-color: #78d0ff;
         }
 
         .btn-view:hover {
-            background: #bfdbfe;
+            background: #2c63ff;
+            color: white;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 99, 255, 0.3);
         }
 
         .btn-remove {
-            background: #fee2e2;
+            background: #fef2f2;
             color: #dc2626;
             border-color: #fecaca;
         }
 
         .btn-remove:hover {
-            background: #fecaca;
+            background: #dc2626;
+            color: white;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         }
 
         .btn-remove:disabled {
@@ -469,21 +662,23 @@
         /* Card Footer */
         .favorite-card-footer {
             padding: 15px 20px;
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
+            background: #eef5ff;
+            border-top: 2px solid #78d0ff;
             text-align: center;
-            color: #94a3b8;
-            font-size: 0.85rem;
+            color: #2c63ff;
+            font-size: 0.9rem;
+            font-weight: 700;
         }
 
         /* Empty State */
         .no-favorites {
             text-align: center;
-            padding: 60px 20px;
+            padding: 60px 40px;
             background: white;
-            border-radius: 15px;
-            border: 2px dashed #cbd5e1;
+            border-radius: 14px;
+            border: 3px dashed #78d0ff;
             margin: 40px 0;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
         }
 
         .empty-state {
@@ -492,19 +687,21 @@
         }
 
         .empty-state i {
-            color: #fca5a5;
+            color: #78d0ff;
             margin-bottom: 20px;
             font-size: 4rem;
         }
 
         .empty-state h2 {
-            color: #1e293b;
+            color: #0c1022;
+            font-family: Raleway, system-ui, sans-serif;
             margin-bottom: 15px;
             font-size: 2rem;
+            font-weight: 800;
         }
 
         .empty-state p {
-            color: #64748b;
+            color: #3a435a;
             margin-bottom: 10px;
             line-height: 1.6;
             font-size: 1.1rem;
@@ -513,82 +710,98 @@
         /* Tips */
         .tips {
             margin: 30px 0;
-            padding: 20px;
-            background: #f8fafc;
+            padding: 25px;
+            background: #eef5ff;
             border-radius: 10px;
-            border: 1px solid #e2e8f0;
+            border: 2px solid #78d0ff;
         }
 
         .tips h3 {
-            color: #1e293b;
+            color: #0c1022;
+            font-family: Raleway, system-ui, sans-serif;
             margin-bottom: 15px;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+            font-weight: 800;
         }
 
         .tips ol {
             text-align: left;
             padding-left: 20px;
-            color: #475569;
+            color: #3a435a;
             line-height: 1.8;
         }
 
         .tips li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .tips a {
-            color: #2563eb;
+            color: #2c63ff;
             text-decoration: none;
+            font-weight: 600;
         }
 
         .tips a:hover {
+            color: #059669;
             text-decoration: underline;
         }
 
         /* Action Buttons Container */
         .favorites-actions {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             justify-content: center;
             margin-top: 40px;
             flex-wrap: wrap;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            background: linear-gradient(135deg, #2c63ff 0%, #1d4ed8 100%);
             color: white;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 1rem;
+            border: none;
+            font-weight: 800;
+            border-radius: 10px;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 8px 20px rgba(44, 99, 255, 0.3);
         }
 
         .btn-secondary {
-            background: #6b7280;
+            background: #3a435a;
             color: white;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 1rem;
+            border: 2px solid #3a435a;
+            border-radius: 10px;
+            font-weight: 800;
         }
 
         .btn-secondary:hover {
-            background: #4b5563;
+            background: #2d3548;
+            border-color: #2d3548;
             transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
         .btn-export {
             background: linear-gradient(135deg, #059669 0%, #047857 100%);
             color: white;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
         }
 
         .btn-export:hover {
             background: linear-gradient(135deg, #047857 0%, #065f46 100%);
             transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3);
         }
 
         /* Animations */
@@ -612,6 +825,17 @@
             }
         }
 
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Accessibility */
         .sr-only {
             position: absolute;
@@ -628,7 +852,9 @@
         /* Responsive */
         @media (max-width: 640px) {
             .favorites-header h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
+                flex-direction: column;
+                gap: 10px;
             }
             
             .favorites-stats {
@@ -636,16 +862,17 @@
             }
             
             .stat-item {
-                min-width: 100px;
-                padding: 10px 15px;
+                min-width: 120px;
+                padding: 15px;
             }
             
             .stat-number {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
             
             .favorites-actions {
                 flex-direction: column;
+                align-items: stretch;
             }
             
             .btn {
@@ -655,261 +882,412 @@
             .favorite-card-header {
                 flex-direction: column;
                 align-items: stretch;
+                text-align: center;
             }
             
             .priority-selector {
                 width: 100%;
+                margin-top: 10px;
             }
             
             .priority-select {
                 width: 100%;
             }
+            
+            .favorite-card-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .notes-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .notes-counter {
+                margin-right: 0;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+            
+            /* Mobile image optimization */
+            .favorite-card-image {
+                height: 200px;
+            }
+            
+            .favorite-card-image img {
+                object-fit: contain;
+            }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 600px) {
+            .page {
+                margin: 10px auto;
+                border-width: 3px;
+            }
+            
+            main {
+                padding: 0 15px 20px;
+            }
+            
+            .breadcrumbs {
+                padding: 15px 15px 0;
+            }
+            
+            .favorites-header {
+                padding: 20px;
+                margin-bottom: 30px;
+            }
+        }
+
+        /* High-DPI Screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .favorite-card-image img {
+                image-rendering: crisp-edges;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .favorite-card-image {
+                break-inside: avoid;
+            }
+            
+            .favorite-card-image img {
+                filter: none !important;
+                transform: none !important;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Skip to main content link -->
     <a href="#main-content" class="skip-link">Skip to main content</a>
-    
-    <!-- Include your header partial -->
-    <%- include('../partials/header') %>
 
-    <main class="favorites-container" id="main-content">
-        <!-- Breadcrumbs -->
-        <nav aria-label="Breadcrumb" class="breadcrumbs">
-            <ol>
-                <% breadcrumbs.forEach((crumb, index) => { %>
-                    <li>
-                        <% if (index < breadcrumbs.length - 1) { %>
-                            <a href="<%= crumb.url %>"><%= crumb.name %></a> &gt;
-                        <% } else { %>
-                            <span aria-current="page"><%= crumb.name %></span>
+    <!-- Main Content -->
+    <div class="page">
+        <main id="main-content">
+            <!-- Breadcrumbs -->
+            <nav aria-label="Breadcrumb" class="breadcrumbs">
+                <ol>
+                    <% breadcrumbs.forEach((crumb, index) => { %>
+                        <li>
+                            <% if (index < breadcrumbs.length - 1) { %>
+                                <a href="<%= crumb.url %>"><%= crumb.name %></a> &gt;
+                            <% } else { %>
+                                <span aria-current="page"><%= crumb.name %></span>
+                            <% } %>
+                        </li>
+                    <% }) %>
+                </ol>
+            </nav>
+
+            <!-- Page Title -->
+            <h1 class="welcome"><i class="fas fa-heart"></i> <%= title %></h1>
+
+            <!-- Header Section -->
+            <div class="favorites-header">
+                <p id="favorites-description">Your saved vehicles list. You have <strong><%= totalFavorites %></strong> saved vehicles.</p>
+                
+                <!-- Stats Bar -->
+                <% if (userStats && userStats.total_favorites) { %>
+                    <div class="favorites-stats" role="status" aria-live="polite">
+                        <div class="stat-item">
+                            <span class="stat-number"><%= userStats.total_favorites %></span>
+                            <span class="stat-label">Total Saved</span>
+                        </div>
+                        <% if (userStats.average_priority) { %>
+                            <div class="stat-item">
+                                <span class="stat-number"><%= parseFloat(userStats.average_priority).toFixed(1) %></span>
+                                <span class="stat-label">Avg Priority</span>
+                            </div>
                         <% } %>
-                    </li>
-                <% }) %>
-            </ol>
-        </nav>
-
-        <!-- Header -->
-        <div class="favorites-header">
-            <h1><i class="fas fa-heart" aria-hidden="true"></i> <span><%= title %></span></h1>
-            <p id="favorites-description">Your saved vehicles list. You have <strong><%= totalFavorites %></strong> saved vehicles.</p>
-            
-            <!-- Stats Bar -->
-            <% if (userStats && userStats.total_favorites) { %>
-                <div class="favorites-stats" role="status" aria-live="polite">
-                    <div class="stat-item">
-                        <span class="stat-number"><%= userStats.total_favorites %></span>
-                        <span class="stat-label">Total Saved</span>
-                    </div>
-                    <% if (userStats.average_priority) { %>
-                        <div class="stat-item">
-                            <span class="stat-number"><%= parseFloat(userStats.average_priority).toFixed(1) %></span>
-                            <span class="stat-label">Avg Priority</span>
-                        </div>
-                    <% } %>
-                    <% if (userStats.months_active) { %>
-                        <div class="stat-item">
-                            <span class="stat-number"><%= userStats.months_active %></span>
-                            <span class="stat-label">Months Active</span>
-                        </div>
-                    <% } %>
-                </div>
-            <% } %>
-        </div>
-
-        <!-- Validation Messages Container -->
-        <div id="validation-messages" class="validation-container" aria-live="assertive"></div>
-
-        <!-- Flash Messages -->
-        <% if (locals.messages) { %>
-            <% Object.keys(locals.messages).forEach(type => { %>
-                <% if (locals.messages[type] && locals.messages[type].length > 0) { %>
-                    <div class="flash-message <%= type %>" role="alert">
-                        <i class="fas fa-<%= type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle' %>"></i>
-                        <%= locals.messages[type][0] %>
+                        <% if (userStats.months_active) { %>
+                            <div class="stat-item">
+                                <span class="stat-number"><%= userStats.months_active %></span>
+                                <span class="stat-label">Months Active</span>
+                            </div>
+                        <% } %>
                     </div>
                 <% } %>
-            <% }) %>
-        <% } %>
+            </div>
 
-        <!-- Favorites Content -->
-        <% if (favorites && favorites.length > 0) { %>
-            <!-- Pagination -->
-            <% if (totalPages > 1) { %>
-                <nav class="pagination" aria-label="Favorites pagination">
-                    <ul>
-                        <% if (currentPage > 1) { %>
-                            <li><a href="?page=<%= currentPage - 1 %>" aria-label="Previous page">&laquo; Previous</a></li>
-                        <% } %>
-                        
-                        <% for (let i = 1; i <= totalPages; i++) { %>
-                            <li>
-                                <% if (i === currentPage) { %>
-                                    <span class="current" aria-current="page"><%= i %></span>
-                                <% } else { %>
-                                    <a href="?page=<%= i %>"><%= i %></a>
-                                <% } %>
-                            </li>
-                        <% } %>
-                        
-                        <% if (currentPage < totalPages) { %>
-                            <li><a href="?page=<%= currentPage + 1 %>" aria-label="Next page">Next &raquo;</a></li>
-                        <% } %>
-                    </ul>
-                </nav>
+            <!-- Validation Messages Container -->
+            <div id="validation-messages" class="validation-container" aria-live="assertive"></div>
+
+            <!-- Flash Messages -->
+            <% if (locals.messages) { %>
+                <% Object.keys(locals.messages).forEach(type => { %>
+                    <% if (locals.messages[type] && locals.messages[type].length > 0) { %>
+                        <div class="flash-message <%= type %>" role="alert">
+                            <i class="fas fa-<%= type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle' %>"></i>
+                            <%= locals.messages[type][0] %>
+                        </div>
+                    <% } %>
+                <% }) %>
             <% } %>
 
-            <!-- Favorites Grid -->
-            <div class="favorites-grid" role="list" aria-label="List of favorite vehicles">
-                <% favorites.forEach((vehicle, index) => { %>
-                    <div class="favorite-card" role="listitem" data-vehicle-id="<%= vehicle.inv_id %>">
-                        <!-- Card Header -->
-                        <div class="favorite-card-header">
-                            <h3 id="vehicle-title-<%= index %>">
-                                <%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>
-                            </h3>
-                            
-                            <!-- Priority Selector -->
-                            <div class="priority-selector">
-                                <label for="priority-<%= vehicle.inv_id %>" class="sr-only">Priority</label>
-                                <select id="priority-<%= vehicle.inv_id %>" class="priority-select" 
-                                        data-vehicle-id="<%= vehicle.inv_id %>"
-                                        aria-label="Set priority level for <%= vehicle.inv_make %> <%= vehicle.inv_model %>">
-                                    <% for (let i = 1; i <= 5; i++) { %>
-                                        <option value="<%= i %>" <%= vehicle.priority === i ? 'selected' : '' %>>
-                                            <% if (i === 1) { %>Lowest Priority<% } else if (i === 3) { %>Medium Priority<% } else if (i === 5) { %>Highest Priority<% } else { %>Priority <%= i %><% } %>
-                                        </option>
-                                    <% } %>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <!-- Vehicle Image -->
-                        <div class="favorite-card-image">
-                            <% if (vehicle.inv_thumbnail) { %>
-                                <img src="<%= vehicle.inv_thumbnail %>" 
-                                     alt="<%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
-                                     loading="lazy">
-                            <% } else { %>
-                                <div class="no-image" aria-hidden="true">
-                                    <i class="fas fa-car"></i>
-                                    <span class="sr-only">No image available for <%= vehicle.inv_make %> <%= vehicle.inv_model %></span>
-                                </div>
+            <!-- Favorites Content -->
+            <% if (favorites && favorites.length > 0) { %>
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                    <nav class="pagination" aria-label="Favorites pagination">
+                        <ul>
+                            <% if (currentPage > 1) { %>
+                                <li><a href="?page=<%= currentPage - 1 %>" aria-label="Previous page">&laquo; Previous</a></li>
                             <% } %>
-                        </div>
-                        
-                        <!-- Notes Section -->
-                        <div class="notes-section">
-                            <label for="notes-<%= vehicle.inv_id %>" class="sr-only">Notes</label>
-                            <textarea id="notes-<%= vehicle.inv_id %>" 
-                                      class="notes-input" 
-                                      placeholder="Add notes about this vehicle (max 500 characters)..."
-                                      data-vehicle-id="<%= vehicle.inv_id %>"
-                                      aria-label="Notes for <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
-                                      maxlength="500"><%= vehicle.notes || '' %></textarea>
-                            <div id="notes-counter-<%= vehicle.inv_id %>" class="notes-counter">
-                                <%= (vehicle.notes || '').length %>/500 characters
+                            
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li>
+                                    <% if (i === currentPage) { %>
+                                        <span class="current" aria-current="page"><%= i %></span>
+                                    <% } else { %>
+                                        <a href="?page=<%= i %>"><%= i %></a>
+                                    <% } %>
+                                </li>
+                            <% } %>
+                            
+                            <% if (currentPage < totalPages) { %>
+                                <li><a href="?page=<%= currentPage + 1 %>" aria-label="Next page">Next &raquo;</a></li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                <% } %>
+
+                <!-- Favorites Grid -->
+                <div class="favorites-grid" role="list" aria-label="List of favorite vehicles">
+                    <% favorites.forEach((vehicle, index) => { %>
+                        <div class="favorite-card" role="listitem" data-vehicle-id="<%= vehicle.inv_id %>">
+                            <!-- Card Header -->
+                            <div class="favorite-card-header">
+                                <h3 id="vehicle-title-<%= index %>">
+                                    <%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>
+                                </h3>
+                                
+                                <!-- Priority Selector -->
+                                <div class="priority-selector">
+                                    <label for="priority-<%= vehicle.inv_id %>" class="sr-only">Priority</label>
+                                    <select id="priority-<%= vehicle.inv_id %>" class="priority-select" 
+                                            data-vehicle-id="<%= vehicle.inv_id %>"
+                                            aria-label="Set priority level for <%= vehicle.inv_make %> <%= vehicle.inv_model %>">
+                                        <% for (let i = 1; i <= 5; i++) { %>
+                                            <option value="<%= i %>" <%= vehicle.priority === i ? 'selected' : '' %>>
+                                                <% if (i === 1) { %>Lowest<% } else if (i === 3) { %>Medium<% } else if (i === 5) { %>Highest<% } else { %>Priority <%= i %><% } %>
+                                            </option>
+                                        <% } %>
+                                    </select>
+                                </div>
                             </div>
-                            <button class="save-notes-btn" data-vehicle-id="<%= vehicle.inv_id %>">
-                                <i class="fas fa-save"></i> Save Notes
-                            </button>
-                        </div>
-                        
-                        <!-- Vehicle Details -->
-                        <div class="favorite-card-details">
-                            <dl>
-                                <dt>Classification:</dt>
-                                <dd><%= vehicle.classification_name %></dd>
-                                
-                                <dt>Price:</dt>
-                                <dd>$<%= parseFloat(vehicle.inv_price).toLocaleString('en-US', {minimumFractionDigits: 2}) %></dd>
-                                
-                                <dt>Mileage:</dt>
-                                <dd><%= vehicle.inv_miles.toLocaleString() %> miles</dd>
-                                
-                                <dt>Color:</dt>
-                                <dd><%= vehicle.inv_color %></dd>
-                                
-                                <dt>Added:</dt>
-                                <dd><%= new Date(vehicle.created_at).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></dd>
-                            </dl>
                             
-                            <p class="description"><%= vehicle.inv_description.substring(0, 150) %>...</p>
-                        </div>
-                        
-                        <!-- Action Buttons -->
-                        <div class="favorite-card-actions">
-                            <a href="/inv/detail/<%= vehicle.inv_id %>" class="btn btn-view" 
-                               aria-label="View details of <%= vehicle.inv_make %> <%= vehicle.inv_model %>">
-                                <i class="fas fa-eye" aria-hidden="true"></i> View Details
-                            </a>
+                            <!-- Vehicle Image with High Quality -->
+                            <div class="favorite-card-image">
+                                <% if (vehicle.inv_thumbnail) { %>
+                                    <!-- Lazy loading with high-quality attributes -->
+                                    <img src="<%= vehicle.inv_thumbnail %>" 
+                                         alt="<%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
+                                         loading="lazy"
+                                         data-src="<%= vehicle.inv_thumbnail %>"
+                                         onload="this.style.opacity='1';"
+                                         style="opacity:0;transition:opacity 0.3s ease-in-out;"
+                                         onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<div class=\'no-image\' aria-hidden=\'true\'><i class=\'fas fa-car\'></i><span class=\'no-image-text\'>Image unavailable</span></div>';">
+                                <% } else { %>
+                                    <div class="no-image" aria-hidden="true">
+                                        <i class="fas fa-car"></i>
+                                        <span class="no-image-text">Image unavailable</span>
+                                        <span class="sr-only">No image available for <%= vehicle.inv_make %> <%= vehicle.inv_model %></span>
+                                    </div>
+                                <% } %>
+                            </div>
                             
-                            <button class="btn btn-remove remove-favorite-btn" 
-                                    data-vehicle-id="<%= vehicle.inv_id %>"
-                                    aria-label="Remove <%= vehicle.inv_make %> <%= vehicle.inv_model %> from favorites">
-                                <i class="fas fa-trash" aria-hidden="true"></i> Remove
-                            </button>
+                            <!-- Current Notes Display (Beautifully Styled) -->
+                            <div class="notes-display">
+                                <div class="notes-display-content">
+                                    <% if (vehicle.notes && vehicle.notes.trim()) { %>
+                                        <p class="notes-display-text">"<%= vehicle.notes %>"</p>
+                                    <% } else { %>
+                                        <p class="notes-display-empty">No notes added yet. Click the edit icon to add notes.</p>
+                                    <% } %>
+                                    <i class="fas fa-edit notes-edit-icon" 
+                                       data-vehicle-id="<%= vehicle.inv_id %>"
+                                       aria-label="Edit notes for <%= vehicle.inv_make %> <%= vehicle.inv_model %>"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Notes Input Section (Hidden by default) -->
+                            <div class="notes-input-section" id="notes-input-<%= vehicle.inv_id %>">
+                                <textarea id="notes-<%= vehicle.inv_id %>" 
+                                          class="notes-input" 
+                                          placeholder="Add or edit your notes about this vehicle (max 500 characters)..."
+                                          data-vehicle-id="<%= vehicle.inv_id %>"
+                                          aria-label="Notes for <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
+                                          maxlength="500"><%= vehicle.notes || '' %></textarea>
+                                <div class="notes-actions">
+                                    <div id="notes-counter-<%= vehicle.inv_id %>" class="notes-counter">
+                                        <%= (vehicle.notes || '').length %>/500 characters
+                                    </div>
+                                    <button class="cancel-notes-btn" data-vehicle-id="<%= vehicle.inv_id %>">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                    <button class="save-notes-btn" data-vehicle-id="<%= vehicle.inv_id %>">
+                                        <i class="fas fa-save"></i> Save Notes
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Vehicle Details -->
+                            <div class="favorite-card-details">
+                                <dl>
+                                    <dt>Classification:</dt>
+                                    <dd><%= vehicle.classification_name %></dd>
+                                    
+                                    <dt>Price:</dt>
+                                    <dd>$<%= parseFloat(vehicle.inv_price).toLocaleString('en-US', {minimumFractionDigits: 2}) %></dd>
+                                    
+                                    <dt>Mileage:</dt>
+                                    <dd><%= vehicle.inv_miles.toLocaleString() %> miles</dd>
+                                    
+                                    <dt>Color:</dt>
+                                    <dd><%= vehicle.inv_color %></dd>
+                                    
+                                    <dt>Added:</dt>
+                                    <dd><%= new Date(vehicle.created_at).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></dd>
+                                </dl>
+                                
+                                <p class="description"><%= vehicle.inv_description.substring(0, 150) %>...</p>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="favorite-card-actions">
+                                <a href="/inv/detail/<%= vehicle.inv_id %>" class="btn btn-view" 
+                                   aria-label="View details of <%= vehicle.inv_make %> <%= vehicle.inv_model %>">
+                                    <i class="fas fa-eye" aria-hidden="true"></i> View Details
+                                </a>
+                                
+                                <button class="btn btn-remove remove-favorite-btn" 
+                                        data-vehicle-id="<%= vehicle.inv_id %>"
+                                        aria-label="Remove <%= vehicle.inv_make %> <%= vehicle.inv_model %> from favorites">
+                                    <i class="fas fa-trash" aria-hidden="true"></i> Remove
+                                </button>
+                            </div>
+                            
+                            <!-- Card Footer -->
+                            <div class="favorite-card-footer">
+                                <small>Priority level: <%= vehicle.priority %>/5</small>
+                            </div>
                         </div>
-                        
-                        <!-- Card Footer -->
-                        <div class="favorite-card-footer">
-                            <small>Priority level: <%= vehicle.priority %>/5</small>
-                        </div>
-                    </div>
-                <% }) %>
-            </div>
-            
-            <!-- Export and Actions -->
-            <div class="favorites-actions">
-                <a href="/account/favorites/export" class="btn btn-export" 
-                   aria-label="Export favorites list as CSV file">
-                    <i class="fas fa-download"></i> Export to CSV
-                </a>
-                <a href="/inv/" class="btn btn-primary" aria-label="Browse more vehicles">
-                    <i class="fas fa-car"></i> Browse More Vehicles
-                </a>
-                <a href="/account/dashboard" class="btn btn-secondary" aria-label="Return to account dashboard">
-                    <i class="fas fa-user"></i> Back to Dashboard
-                </a>
-            </div>
-            
-        <% } else { %>
-            <!-- Empty State -->
-            <div class="no-favorites" role="alert" aria-live="polite">
-                <div class="empty-state">
-                    <i class="fas fa-heart" aria-hidden="true"></i>
-                    <h2>No Favorite Vehicles Yet</h2>
-                    <p>Start building your dream garage by saving vehicles you're interested in.</p>
-                    
-                    <!-- Quick Tips -->
-                    <div class="tips">
-                        <h3>How to save vehicles:</h3>
-                        <ol>
-                            <li>Browse our <a href="/inv/">inventory</a></li>
-                            <li>Click the heart icon on any vehicle page</li>
-                            <li>Set priority levels and add notes</li>
-                            <li>Compare and manage your favorites here</li>
-                        </ol>
-                    </div>
-                    
-                    <a href="/inv/" class="btn btn-primary" aria-label="Browse vehicle inventory">
-                        <i class="fas fa-car"></i> Start Browsing
+                    <% }) %>
+                </div>
+                
+                <!-- Export and Actions -->
+                <div class="favorites-actions">
+                    <a href="/account/favorites/export" class="btn btn-export" 
+                       aria-label="Export favorites list as CSV file">
+                        <i class="fas fa-download"></i> Export to CSV
+                    </a>
+                    <a href="/inv/" class="btn btn-primary" aria-label="Browse more vehicles">
+                        <i class="fas fa-car"></i> Browse More Vehicles
+                    </a>
+                    <a href="/account/dashboard" class="btn btn-secondary" aria-label="Return to account dashboard">
+                        <i class="fas fa-user"></i> Back to Dashboard
                     </a>
                 </div>
-            </div>
-        <% } %>
-    </main>
+                
+            <% } else { %>
+                <!-- Empty State -->
+                <div class="no-favorites" role="alert" aria-live="polite">
+                    <div class="empty-state">
+                        <i class="fas fa-heart" aria-hidden="true"></i>
+                        <h2>No Favorite Vehicles Yet</h2>
+                        <p>Start building your dream garage by saving vehicles you're interested in.</p>
+                        
+                        <!-- Quick Tips -->
+                        <div class="tips">
+                            <h3>How to save vehicles:</h3>
+                            <ol>
+                                <li>Browse our <a href="/inv/">inventory</a></li>
+                                <li>Click the heart icon on any vehicle page</li>
+                                <li>Set priority levels and add notes</li>
+                                <li>Compare and manage your favorites here</li>
+                            </ol>
+                        </div>
+                        
+                        <a href="/inv/" class="btn btn-primary" aria-label="Browse vehicle inventory">
+                            <i class="fas fa-car"></i> Start Browsing
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+        </main>
 
-    <!-- Include your footer partial -->
-    <%- include('../partials/footer') %>
+       
+    </div>
 
-    <!-- JavaScript -->
+    <!-- JavaScript with Image Quality Optimizations -->
     <script>
         class FavoritesManager {
             constructor() {
+                this.debounceTimers = {};
                 this.initEventListeners();
                 this.setupValidation();
                 this.initializeAccessibility();
+                this.setupImageLoading();
+            }
+            
+            setupImageLoading() {
+                // Progressive image loading for better perceived performance
+                const images = document.querySelectorAll('.favorite-card-image img[data-src]');
+                
+                if ('IntersectionObserver' in window) {
+                    const imageObserver = new IntersectionObserver((entries, observer) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const img = entry.target;
+                                const src = img.getAttribute('data-src');
+                                
+                                if (src) {
+                                    // Create a new image to preload
+                                    const tempImg = new Image();
+                                    tempImg.src = src;
+                                    tempImg.onload = () => {
+                                        img.src = src;
+                                        img.removeAttribute('data-src');
+                                        img.style.opacity = '1';
+                                        imageObserver.unobserve(img);
+                                    };
+                                    tempImg.onerror = () => {
+                                        // Handle image load error
+                                        img.style.display = 'none';
+                                        const parent = img.parentElement;
+                                        parent.innerHTML = `
+                                            <div class="no-image" aria-hidden="true">
+                                                <i class="fas fa-car"></i>
+                                                <span class="no-image-text">Image unavailable</span>
+                                                <span class="sr-only">No image available</span>
+                                            </div>
+                                        `;
+                                        imageObserver.unobserve(img);
+                                    };
+                                }
+                            }
+                        });
+                    }, {
+                        rootMargin: '50px 0px',
+                        threshold: 0.1
+                    });
+                    
+                    images.forEach(img => imageObserver.observe(img));
+                } else {
+                    // Fallback for browsers without IntersectionObserver
+                    images.forEach(img => {
+                        const src = img.getAttribute('data-src');
+                        if (src) {
+                            img.src = src;
+                            img.removeAttribute('data-src');
+                            img.style.opacity = '1';
+                        }
+                    });
+                }
             }
             
             initEventListeners() {
@@ -923,9 +1301,19 @@
                     select.addEventListener('change', (e) => this.handlePriorityChange(e));
                 });
                 
+                // Notes edit icons
+                document.querySelectorAll('.notes-edit-icon').forEach(icon => {
+                    icon.addEventListener('click', (e) => this.handleEditNotes(e));
+                });
+                
                 // Notes save buttons
                 document.querySelectorAll('.save-notes-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => this.handleSaveNotes(e));
+                });
+                
+                // Notes cancel buttons
+                document.querySelectorAll('.cancel-notes-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.handleCancelNotes(e));
                 });
                 
                 // Notes input validation
@@ -940,6 +1328,30 @@
                 if (exportBtn) {
                     exportBtn.addEventListener('click', (e) => this.handleExport(e));
                 }
+                
+                // Prevent image blur on hover by preloading hover state
+                this.preloadImageHoverEffects();
+            }
+            
+            preloadImageHoverEffects() {
+                // This helps prevent blur during hover animations
+                const cards = document.querySelectorAll('.favorite-card');
+                cards.forEach(card => {
+                    card.addEventListener('mouseenter', () => {
+                        const img = card.querySelector('.favorite-card-image img');
+                        if (img && img.complete) {
+                            // Force browser to prepare for animation
+                            img.style.willChange = 'transform';
+                        }
+                    });
+                    
+                    card.addEventListener('mouseleave', () => {
+                        const img = card.querySelector('.favorite-card-image img');
+                        if (img) {
+                            img.style.willChange = 'auto';
+                        }
+                    });
+                });
             }
             
             setupValidation() {
@@ -953,7 +1365,7 @@
                 // Add keyboard navigation
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
-                        this.closeAllModals();
+                        this.closeAllOpenNotesEditors();
                     }
                 });
                 
@@ -963,6 +1375,15 @@
                     mainContent.setAttribute('tabindex', '-1');
                     mainContent.focus();
                 }
+                
+                // Image accessibility
+                document.querySelectorAll('.favorite-card-image img').forEach(img => {
+                    if (!img.getAttribute('alt')) {
+                        const card = img.closest('.favorite-card');
+                        const title = card.querySelector('h3').textContent;
+                        img.setAttribute('alt', title);
+                    }
+                });
             }
             
             validateNotes(textarea) {
@@ -984,6 +1405,55 @@
                     }
                 }
                 return true;
+            }
+            
+            handleEditNotes(event) {
+                const icon = event.currentTarget;
+                const vehicleId = icon.dataset.vehicleId;
+                
+                // Close any other open editors first
+                this.closeAllOpenNotesEditors();
+                
+                // Show the input section
+                const inputSection = document.getElementById(`notes-input-${vehicleId}`);
+                const textarea = document.getElementById(`notes-${vehicleId}`);
+                
+                inputSection.classList.add('active');
+                setTimeout(() => {
+                    textarea.focus();
+                    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+                }, 10);
+                
+                // Scroll the textarea into view if needed
+                inputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            handleCancelNotes(event) {
+                const button = event.currentTarget;
+                const vehicleId = button.dataset.vehicleId;
+                const inputSection = document.getElementById(`notes-input-${vehicleId}`);
+                const textarea = document.getElementById(`notes-${vehicleId}`);
+                
+                // Reset textarea to original value
+                const originalNotes = textarea.defaultValue || '';
+                textarea.value = originalNotes;
+                this.validateNotes(textarea);
+                
+                inputSection.classList.remove('active');
+            }
+            
+            closeAllOpenNotesEditors() {
+                document.querySelectorAll('.notes-input-section.active').forEach(section => {
+                    const textarea = section.querySelector('textarea');
+                    const vehicleId = textarea.dataset.vehicleId;
+                    const originalTextarea = document.getElementById(`notes-${vehicleId}`);
+                    
+                    // Reset to original value
+                    textarea.value = originalTextarea.defaultValue || '';
+                    this.validateNotes(textarea);
+                    
+                    section.classList.remove('active');
+                });
             }
             
             async handleRemoveFavorite(event) {
@@ -1044,6 +1514,15 @@
                 const vehicleId = select.dataset.vehicleId;
                 const priority = select.value;
                 
+                // Store original value for rollback
+                if (!select.dataset.originalValue) {
+                    select.dataset.originalValue = select.value;
+                }
+                
+                // Show loading state
+                const originalText = select.options[select.selectedIndex].text;
+                select.disabled = true;
+                
                 try {
                     const response = await fetch('/account/favorites/update-priority', {
                         method: 'POST',
@@ -1060,12 +1539,26 @@
                     
                     if (result.success) {
                         this.showValidationMessage('Priority updated successfully', 'success');
+                        
+                        // Update the card footer
+                        const card = select.closest('.favorite-card');
+                        const footer = card.querySelector('.favorite-card-footer small');
+                        if (footer) {
+                            footer.textContent = `Priority level: ${priority}/5`;
+                        }
+                        
+                        // Update stored original value
+                        select.dataset.originalValue = priority;
                     } else {
                         throw new Error(result.message || 'Failed to update priority');
                     }
                 } catch (error) {
                     console.error('Priority update error:', error);
                     this.showValidationMessage('Failed to update priority', 'error');
+                    // Revert selection
+                    select.value = select.dataset.originalValue;
+                } finally {
+                    select.disabled = false;
                 }
             }
             
@@ -1073,6 +1566,7 @@
                 const button = event.currentTarget;
                 const vehicleId = button.dataset.vehicleId;
                 const textarea = document.getElementById(`notes-${vehicleId}`);
+                const inputSection = document.getElementById(`notes-input-${vehicleId}`);
                 
                 if (!this.validateNotes(textarea)) {
                     return;
@@ -1097,20 +1591,39 @@
                     const result = await response.json();
                     
                     if (result.success) {
+                        // Update the notes display
+                        const notesDisplay = document.querySelector(`[data-vehicle-id="${vehicleId}"] .notes-display-text`) ||
+                                           document.querySelector(`[data-vehicle-id="${vehicleId}"] .notes-display-empty`);
+                        const notesDisplayContent = document.querySelector(`[data-vehicle-id="${vehicleId}"] .notes-display-content`);
+                        
+                        if (notes && notes.trim()) {
+                            if (notesDisplay.classList.contains('notes-display-empty')) {
+                                notesDisplay.classList.remove('notes-display-empty');
+                                notesDisplay.classList.add('notes-display-text');
+                            }
+                            notesDisplay.textContent = `"${notes}"`;
+                        } else {
+                            notesDisplay.classList.remove('notes-display-text');
+                            notesDisplay.classList.add('notes-display-empty');
+                            notesDisplay.textContent = 'No notes added yet. Click the edit icon to add notes.';
+                        }
+                        
+                        // Update textarea default value for future cancels
+                        textarea.defaultValue = notes;
+                        
+                        // Hide the input section
+                        inputSection.classList.remove('active');
+                        
                         this.showValidationMessage('Notes saved successfully', 'success');
-                        button.innerHTML = '<i class="fas fa-check"></i> Saved';
-                        setTimeout(() => {
-                            button.innerHTML = '<i class="fas fa-save"></i> Save Notes';
-                            button.disabled = false;
-                        }, 2000);
                     } else {
                         throw new Error(result.message || 'Failed to save notes');
                     }
                 } catch (error) {
                     console.error('Save notes error:', error);
-                    button.innerHTML = '<i class="fas fa-save"></i> Save Notes';
-                    button.disabled = false;
                     this.showValidationMessage('Failed to save notes', 'error');
+                } finally {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-save"></i> Save Notes';
                 }
             }
             
@@ -1125,12 +1638,18 @@
                     <span>${message}</span>
                 `;
                 
+                // Clear previous messages
+                container.innerHTML = '';
                 container.appendChild(messageEl);
                 
                 // Auto-remove after 5 seconds
                 setTimeout(() => {
                     messageEl.style.opacity = '0';
-                    setTimeout(() => messageEl.remove(), 300);
+                    setTimeout(() => {
+                        if (messageEl.parentNode === container) {
+                            messageEl.remove();
+                        }
+                    }, 300);
                 }, 5000);
             }
             

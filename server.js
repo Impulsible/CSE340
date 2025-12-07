@@ -393,6 +393,125 @@ if (typeof accountRoutes !== 'function') {
 console.log('✅ Routes mounted successfully');
 
 /* ***********************
+ * DIRECT CONTACT ROUTES - MOVED AFTER FLASH MIDDLEWARE
+ *************************/
+
+// GET route for contact form
+app.get("/contact", async (req, res) => {
+  try {
+    console.log('📞 Contact page requested with query:', req.query);
+    
+    const vehicleId = req.query.vehicle;
+    let vehicle = null;
+    
+    // If vehicle ID is provided, try to get vehicle info
+    if (vehicleId) {
+      try {
+        // Import inside route to avoid circular dependency
+        const invModel = require("./models/inventory-model");
+        const vehicleData = await invModel.getVehicleById(vehicleId);
+        
+        if (vehicleData && vehicleData.length > 0) {
+          vehicle = vehicleData[0];
+          console.log('✅ Found vehicle:', vehicle.inv_year, vehicle.inv_make, vehicle.inv_model);
+        } else {
+          console.log('⚠️ No vehicle found for ID:', vehicleId);
+        }
+      } catch (error) {
+        console.error('❌ Error fetching vehicle:', error.message);
+      }
+    }
+    
+    // Get navigation data
+    const nav = await utilities.getNav();
+    
+    // Render the contact page with ALL required variables
+    res.render("contact", {
+      title: "Contact Us",
+      vehicle: vehicle,
+      errors: null,
+      formData: {},
+      user: req.user || null,
+      nav: nav, // Add navigation
+      flashMessages: res.locals.flashMessages || { success: [], error: [], warning: [], info: [], message: [] } // Add flashMessages
+    });
+    
+  } catch (error) {
+    console.error('❌ Error in contact route:', error);
+    const nav = await utilities.getNav();
+    res.status(500).render('errors/500', {
+      title: 'Server Error',
+      message: error.message,
+      nav: nav,
+      user: req.user || null,
+      flashMessages: res.locals.flashMessages || { success: [], error: [], warning: [], info: [], message: [] }
+    });
+  }
+});
+
+// POST route for contact form submission
+app.post("/contact", async (req, res) => {
+  try {
+    console.log('📧 Contact form submitted:', req.body);
+    
+    const { name, email, phone, subject, message, vehicle_id } = req.body;
+    let vehicle = null;
+    
+    // If vehicle ID is provided, get vehicle info
+    if (vehicle_id) {
+      try {
+        const invModel = require("./models/inventory-model");
+        const vehicleData = await invModel.getVehicleById(vehicle_id);
+        if (vehicleData && vehicleData.length > 0) {
+          vehicle = vehicleData[0];
+        }
+      } catch (error) {
+        console.error('Error loading vehicle:', error);
+      }
+    }
+    
+    // Simple validation
+    const errors = [];
+    if (!name || name.trim() === '') errors.push('Name is required');
+    if (!email || !isValidEmail(email)) errors.push('Valid email is required');
+    if (!message || message.trim() === '') errors.push('Message is required');
+    
+    // Helper function for email validation
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+    
+    // Get navigation data
+    const nav = await utilities.getNav();
+    
+    // If there are errors, show the form again
+    if (errors.length > 0) {
+      return res.render("contact", {
+        title: "Contact Us - Please Fix Errors",
+        vehicle: vehicle,
+        errors: errors,
+        formData: req.body,
+        user: req.user || null,
+        nav: nav,
+        flashMessages: res.locals.flashMessages || { success: [], error: [], warning: [], info: [], message: [] }
+      });
+    }
+    
+    // Success - show success message
+    req.flash("success", "Thank you for your message! We'll contact you within 24 hours.");
+    
+    // Redirect back to contact page with success message
+    res.redirect("/contact");
+    
+  } catch (error) {
+    console.error('❌ Error processing contact form:', error);
+    req.flash("error", "There was an error sending your message. Please try again.");
+    res.redirect("/contact");
+  }
+});
+
+/* ***********************
  * JWT Test Routes
  *************************/
 app.get("/jwt-test", (req, res) => {
@@ -552,7 +671,8 @@ app.use(async (req, res) => {
   res.status(404).render('errors/404', {
     title: '404 - Page Not Found',
     nav,
-    user: req.user // Pass user to template for conditional rendering
+    user: req.user, // Pass user to template for conditional rendering
+    flashMessages: res.locals.flashMessages || { success: [], error: [], warning: [], info: [], message: [] }
   })
 })
 
@@ -563,6 +683,7 @@ app.use(async (err, req, res, next) => {
     title: '500 - Server Error',
     nav,
     user: req.user, // Pass user to template for conditional rendering
+    flashMessages: res.locals.flashMessages || { success: [], error: [], warning: [], info: [], message: [] },
     message: process.env.NODE_ENV === 'production' 
       ? 'Something went wrong!' 
       : err.message
@@ -591,4 +712,5 @@ app.listen(port, () => {
   console.log(`Account Manager: http://localhost:${port}/debug-account-manager`)
   console.log(`View All Accounts: http://localhost:${port}/debug-accounts`)
   console.log(`Delete Henry's Account: http://localhost:${port}/delete-henry-account`)
+  console.log(`Contact Page: http://localhost:${port}/contact`) // Added this line
 })

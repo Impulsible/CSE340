@@ -3,6 +3,7 @@
   <head>
     <%- include("../partials/head") %>
     <style>
+      /* Same styles as above */
       .flash-messages { 
         margin: 20px auto; 
         max-width: 1200px;
@@ -14,7 +15,27 @@
         border-radius: 5px; 
         border: 1px solid transparent;
       }
-      .alert-notice { 
+      .alert-success { 
+        background: #d1fae5; 
+        color: #065f46; 
+        border-color: #a7f3d0; 
+      }
+      .alert-error { 
+        background: #fee2e2; 
+        color: #991b1b; 
+        border-color: #fecaca; 
+      }
+      .alert-warning { 
+        background: #fef3c7; 
+        color: #92400e; 
+        border-color: #fde68a; 
+      }
+      .alert-info { 
+        background: #dbeafe; 
+        color: #1e40af; 
+        border-color: #bfdbfe; 
+      }
+      .alert-message { 
         background: #d1ecf1; 
         color: #0c5460; 
         border-color: #bee5eb; 
@@ -25,15 +46,40 @@
     <div class="page">
       <%- include("../partials/header") %>
 
-      <!-- FLASH MESSAGES -->
-      <% if (flashMessages) { %>
-        <% Object.keys(flashMessages).forEach(type => { %>
-          <% flashMessages[type].forEach(message => { %>
-            <div class="alert alert-<%= type %>">
-              <%= message %>
-            </div>
-          <% }) %>
-        <% }) %>
+      <!-- FLASH MESSAGES - ULTRA SAFE VERSION -->
+      <% try { %>
+        <% 
+          // Try to get flashMessages from various possible locations
+          let messages = { success: [], error: [], warning: [], info: [], message: [] };
+          
+          if (typeof flashMessages !== 'undefined' && flashMessages !== null) {
+            messages = flashMessages;
+          } else if (typeof locals !== 'undefined' && locals.flashMessages) {
+            messages = locals.flashMessages;
+          } else if (typeof res !== 'undefined' && res.locals && res.locals.flashMessages) {
+            messages = res.locals.flashMessages;
+          }
+          
+          // Filter to only types that have messages
+          const messageTypes = Object.keys(messages).filter(type => 
+            messages[type] && Array.isArray(messages[type]) && messages[type].length > 0
+          );
+        %>
+        
+        <% if (messageTypes.length > 0) { %>
+          <div class="flash-messages">
+            <% messageTypes.forEach(type => { %>
+              <% messages[type].forEach(message => { %>
+                <div class="alert alert-<%= type %>">
+                  <%= message || 'Message' %>
+                </div>
+              <% }) %>
+            <% }) %>
+          </div>
+        <% } %>
+      <% } catch (error) { %>
+        <!-- Silently fail if there's an error with flash messages -->
+        <script>console.warn('Flash messages error:', '<%= error.message %>');</script>
       <% } %>
 
       <main id="main">

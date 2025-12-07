@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .admin-page {
+      padding: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, #2c63ff, #1d4ed8);
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(44, 99, 255, 0.3);
+    }
+    
+    .stat-card h3 {
+      margin: 0 0 10px 0;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .stat-card .number {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    .submissions-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .submissions-table th {
+      background: #0c1022;
+      color: white;
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .submissions-table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+    
+    .submissions-table tr:hover {
+      background: #f5f9ff;
+    }
+    
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .status-new {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .status-read {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .vehicle-link {
+      color: #2c63ff;
+      text-decoration: none;
+    }
+    
+    .vehicle-link:hover {
+      text-decoration: underline;
+    }
+    
+    .message-preview {
+      max-width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-view {
+      background: #2c63ff;
+      color: white;
+      border: none;
+    }
+    
+    .btn-view:hover {
+      background: #1d4ed8;
+    }
+    
+    .btn-delete {
+      background: #ef4444;
+      color: white;
+      border: none;
+    }
+    
+    .btn-delete:hover {
+      background: #dc2626;
+    }
+    
+    .btn-reply {
+      background: #059669;
+      color: white;
+      border: none;
+    }
+    
+    .btn-reply:hover {
+      background: #047857;
+    }
+    
+    /* Alert styles */
+    .alert {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+    
+    .alert-info {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+    
+    .alert-warning {
+      background: linear-gradient(135deg, #fffbeb, #fef3c7);
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+    
+    .alert i {
+      font-size: 1.2rem;
+    }
+    
+    /* Button styles */
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: white;
+      color: #2c63ff;
+      border: 2px solid #2c63ff;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: #2c63ff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main class="admin-page">
+      <h1>Contact Submissions</h1>
+      
+      <!-- Statistics Cards - WITH ERROR HANDLING -->
+      <% if (statistics) { %>
+        <div class="stats-cards">
+          <div class="stat-card">
+            <h3>Total Submissions</h3>
+            <p class="number"><%= statistics.total_submissions || 0 %></p>
+          </div>
+          <div class="stat-card">
+            <h3>Today's Submissions</h3>
+            <p class="number"><%= statistics.today_submissions || 0 %></p>
+          </div>
+          <div class="stat-card">
+            <h3>Vehicle Inquiries</h3>
+            <p class="number"><%= statistics.with_vehicle || 0 %></p>
+          </div>
+          <div class="stat-card">
+            <h3>Unread</h3>
+            <p class="number"><%= statistics.unread_submissions || 0 %></p>
+          </div>
+        </div>
+      <% } else { %>
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle"></i>
+          Statistics not available
+        </div>
+      <% } %>
+      
+      <% if (submissions && submissions.length > 0) { %>
+        <table class="submissions-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Vehicle</th>
+              <th>Subject</th>
+              <th>Message</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% submissions.forEach(function(submission) { %>
+              <tr>
+                <td>
+                  <% if (submission.created_at) { %>
+                    <%= new Date(submission.created_at).toLocaleDateString() %>
+                  <% } else { %>
+                    N/A
+                  <% } %>
+                </td>
+                <td><%= submission.name || 'N/A' %></td>
+                <td><%= submission.email || 'N/A' %></td>
+                <td><%= submission.phone || 'N/A' %></td>
+                <td>
+                  <% if (submission.vehicle_id) { %>
+                    <a href="/inv/detail/<%= submission.vehicle_id %>" class="vehicle-link">
+                      <% if (submission.inv_year && submission.inv_make && submission.inv_model) { %>
+                        <%= submission.inv_year %> <%= submission.inv_make %> <%= submission.inv_model %>
+                      <% } else { %>
+                        Vehicle #<%= submission.vehicle_id %>
+                      <% } %>
+                    </a>
+                  <% } else { %>
+                    General Inquiry
+                  <% } %>
+                </td>
+                <td><%= submission.subject || 'No subject' %></td>
+                <td class="message-preview" title="<%= submission.message || '' %>">
+                  <% if (submission.message) { %>
+                    <%= submission.message.substring(0, 50) %>...
+                  <% } else { %>
+                    No message
+                  <% } %>
+                </td>
+                <td>
+                  <span class="status-badge <%= submission.is_read ? 'status-read' : 'status-new' %>">
+                    <%= submission.is_read ? 'Read' : 'New' %>
+                  </span>
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <% if (submission.contact_id) { %>
+                      <a href="/inv/contact/submission/<%= submission.contact_id %>" 
+                         class="btn-small btn-view" title="View Details">
+                        <i class="fas fa-eye"></i>
+                      </a>
+                    <% } %>
+                    <% if (submission.email) { %>
+                      <a href="mailto:<%= submission.email %>?subject=Re: <%= encodeURIComponent(submission.subject || 'Your Inquiry') %>" 
+                         class="btn-small btn-reply" title="Reply via Email">
+                        <i class="fas fa-reply"></i>
+                      </a>
+                    <% } %>
+                    <% if (submission.contact_id) { %>
+                      <button onclick="deleteSubmission('<%= submission.contact_id %>')" 
+                              class="btn-small btn-delete" title="Delete">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    <% } %>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle"></i>
+          No contact submissions yet.
+        </div>
+      <% } %>
+      
+      <div style="margin-top: 20px;">
+        <a href="/inv/" class="btn-secondary">
+          <i class="fas fa-arrow-left"></i> Back to Inventory
+        </a>
+      </div>
+    </main>
+  </div>
+  
+  <script>
+    function deleteSubmission(contact_id) {
+      if (confirm('Are you sure you want to delete this contact submission? This action cannot be undone.')) {
+        fetch('/inv/contact/delete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ contact_id: contact_id })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert(data.message);
+            window.location.reload();
+          } else {
+            alert('Error: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error deleting submission');
+        });
+      }
+    }
+  </script>
+</body>
+</html>

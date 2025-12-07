@@ -210,6 +210,156 @@ const invModel = {
       console.error("Error deleting inventory item:", error);
       throw error;
     }
+  }, // <-- ADDED COMMA HERE
+
+  /* ***************************
+   *  Save Contact Submission to Database
+   * ************************** */
+  saveContactSubmission: async (contactData) => {
+    try {
+      console.log(`📝 Database: Saving contact submission from ${contactData.name} (${contactData.email})`);
+      
+      const sql = `INSERT INTO contact_submissions 
+                   (name, email, phone, subject, message, vehicle_id, preferred_contact, newsletter) 
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+                   RETURNING *`;
+      
+      const result = await pool.query(sql, [
+        contactData.name,
+        contactData.email,
+        contactData.phone || null,
+        contactData.subject || null,
+        contactData.message,
+        contactData.vehicle_id || null,
+        contactData.preferred_contact || 'email',
+        contactData.newsletter || false
+      ]);
+      
+      console.log(`✅ Database: Contact submission saved successfully with ID ${result.rows[0].contact_id}`);
+      return result.rows[0];
+    } catch (error) {
+      console.error("❌ Database: Error saving contact submission:", error);
+      throw error;
+    }
+  },
+
+  /* ***************************
+   *  Get Contact Submissions (for admin view)
+   * ************************** */
+  getContactSubmissions: async () => {
+    try {
+      console.log(`📊 Database: Getting all contact submissions`);
+      
+      const sql = `SELECT cs.*, i.inv_make, i.inv_model, i.inv_year 
+                   FROM contact_submissions cs
+                   LEFT JOIN inventory i ON cs.vehicle_id = i.inv_id
+                   ORDER BY cs.created_at DESC`;
+      
+      const result = await pool.query(sql);
+      console.log(`📊 Database: Found ${result.rows.length} contact submissions`);
+      return result.rows;
+    } catch (error) {
+      console.error("❌ Database: Error getting contact submissions:", error);
+      throw error;
+    }
+  },
+
+  /* ***************************
+   *  Get Contact Submission by ID
+   * ************************** */
+  getContactSubmissionById: async (contact_id) => {
+    try {
+      console.log(`🔍 Database: Getting contact submission ID ${contact_id}`);
+      
+      const sql = `SELECT cs.*, i.inv_make, i.inv_model, i.inv_year 
+                   FROM contact_submissions cs
+                   LEFT JOIN inventory i ON cs.vehicle_id = i.inv_id
+                   WHERE cs.contact_id = $1`;
+      
+      const result = await pool.query(sql, [contact_id]);
+      
+      if (result.rows.length > 0) {
+        console.log(`✅ Database: Found contact submission ID ${contact_id}`);
+        return result.rows[0];
+      } else {
+        console.log(`❌ Database: No contact submission found with ID ${contact_id}`);
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ Database: Error getting contact submission by ID:", error);
+      throw error;
+    }
+  },
+
+  /* ***************************
+   *  Delete Contact Submission
+   * ************************** */
+  deleteContactSubmission: async (contact_id) => {
+    try {
+      console.log(`🗑️ Database: Deleting contact submission ID ${contact_id}`);
+      
+      const sql = "DELETE FROM contact_submissions WHERE contact_id = $1 RETURNING *";
+      const result = await pool.query(sql, [contact_id]);
+      
+      if (result.rowCount > 0) {
+        console.log(`✅ Database: Successfully deleted contact submission ID ${contact_id}`);
+        return true;
+      } else {
+        console.log(`❌ Database: No contact submission found with ID ${contact_id}`);
+        return false;
+      }
+    } catch (error) {
+      console.error("❌ Database: Error deleting contact submission:", error);
+      throw error;
+    }
+  },
+
+  /* ***************************
+   *  Mark Contact Submission as Read
+   * ************************** */
+  markContactAsRead: async (contact_id) => {
+    try {
+      console.log(`📋 Database: Marking contact submission ID ${contact_id} as read`);
+      
+      const sql = "UPDATE contact_submissions SET is_read = true WHERE contact_id = $1 RETURNING *";
+      const result = await pool.query(sql, [contact_id]);
+      
+      if (result.rowCount > 0) {
+        console.log(`✅ Database: Successfully marked contact submission ID ${contact_id} as read`);
+        return result.rows[0];
+      } else {
+        console.log(`❌ Database: No contact submission found with ID ${contact_id}`);
+        return null;
+      }
+    } catch (error) {
+      console.error("❌ Database: Error marking contact as read:", error);
+      throw error;
+    }
+  },
+
+  /* ***************************
+   *  Get Contact Statistics
+   * ************************** */
+  getContactStatistics: async () => {
+    try {
+      console.log(`📈 Database: Getting contact statistics`);
+      
+      const sql = `
+        SELECT 
+          COUNT(*) as total_submissions,
+          COUNT(CASE WHEN DATE(created_at) = CURRENT_DATE THEN 1 END) as today_submissions,
+          COUNT(CASE WHEN vehicle_id IS NOT NULL THEN 1 END) as with_vehicle,
+          COUNT(CASE WHEN newsletter = true THEN 1 END) as newsletter_subscribers,
+          COUNT(CASE WHEN is_read = false THEN 1 END) as unread_submissions
+        FROM contact_submissions
+      `;
+      
+      const result = await pool.query(sql);
+      return result.rows[0];
+    } catch (error) {
+      console.error("❌ Database: Error getting contact statistics:", error);
+      throw error;
+    }
   }
 };
 

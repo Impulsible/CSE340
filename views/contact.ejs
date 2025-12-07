@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <style>
+    /* =======================================
+       PREMIUM CONTACT PAGE STYLES
+       ======================================= */
+    
+    .premium-contact-page {
+      padding: 14px 16px 20px;
+      min-height: calc(100vh - 200px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .contact-wrapper {
+      position: relative;
+      margin-inline: auto;
+      max-width: 960px;
+      width: 100%;
+      background: radial-gradient(circle at top left, #f5f9ff, #ffffff);
+      border-radius: 20px;
+      padding: 24px 20px 28px;
+      margin-top: 10px;
+    }
+    
+    .contact-wrapper::before {
+      content: "";
+      position: absolute;
+      inset: -12px;
+      border-radius: 26px;
+      border: 3px solid #78d0ff;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    /* Header Section */
+    .contact-header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #eef5ff, #dbeafe);
+      border: 1px solid #c4ddff;
+      box-shadow: 0 8px 32px rgba(44, 99, 255, 0.08);
+    }
+    
+    .contact-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2c63ff, #1d4ed8);
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(44, 99, 255, 0.4);
+    }
+    
+    .contact-title {
+      font-family: Raleway, system-ui, sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+      margin: 0 0 8px;
+      color: #0c1022;
+    }
+    
+    .contact-title span {
+      color: #2c63ff;
+    }
+    
+    .contact-subtitle {
+      margin: 0;
+      font-size: 1.05rem;
+      color: #3a435a;
+      max-width: 36rem;
+      margin-inline: auto;
+      line-height: 1.6;
+    }
+    
+    /* Vehicle Preview Card - Always defined, shown conditionally */
+    .vehicle-preview-card {
+      background: linear-gradient(145deg, #ffffff, #f4f7ff);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 20px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .vehicle-preview-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+    }
+    
+    .vehicle-preview-image {
+      width: 120px;
+      height: 80px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+    }
+    
+    .vehicle-preview-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+    
+    .vehicle-preview-card:hover .vehicle-preview-image img {
+      transform: scale(1.05);
+    }
+    
+    .vehicle-preview-info {
+      flex: 1;
+    }
+    
+    .vehicle-preview-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0c1022;
+      margin-bottom: 6px;
+    }
+    
+    .vehicle-preview-title span {
+      color: #2c63ff;
+    }
+    
+    .vehicle-preview-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: #3a435a;
+    }
+    
+    .vehicle-preview-details span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3f6ff;
+    }
+    
+    .vehicle-preview-details i {
+      font-size: 0.85rem;
+      color: #2c63ff;
+    }
+    
+    /* Main Contact Grid */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-top: 20px;
+    }
+    
+    /* Contact Info Sidebar */
+    .contact-info-sidebar {
+      background: linear-gradient(135deg, #0c1022, #1e293b);
+      color: white;
+      border-radius: 16px;
+      padding: 28px 24px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.2);
+    }
+    
+    .info-sidebar-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .info-sidebar-title i {
+      color: #78d0ff;
+    }
+    
+    .contact-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .contact-info-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .contact-info-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #2c63ff, #78d0ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1.2rem;
+      box-shadow: 0 6px 16px rgba(44, 99, 255, 0.3);
+    }
+    
+    .contact-info-content h4 {
+      margin: 0 0 6px 0;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    
+    .contact-info-content p {
+      margin: 0;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .contact-info-content a {
+      color: #78d0ff;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .contact-info-content a:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+    
+    /* Contact Hours */
+    .contact-hours {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 20px;
+    }
+    
+    .contact-hours h4 {
+      color: #ffffff;
+      margin-bottom: 12px;
+      font-size: 1rem;
+    }
+    
+    .hours-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .hours-day {
+      color: #cbd5e1;
+    }
+    
+    .hours-time {
+      color: #ffffff;
+      font-weight: 600;
+    }
+    
+    /* Contact Form */
+    .contact-form-container {
+      background: linear-gradient(145deg, #ffffff, #f4f7ff);
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 28px 24px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    
+    .form-header {
+      margin-bottom: 24px;
+    }
+    
+    .form-header h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #0c1022;
+      margin-bottom: 8px;
+    }
+    
+    .form-header p {
+      color: #3a435a;
+      font-size: 0.95rem;
+      margin: 0;
+      line-height: 1.5;
+    }
+    
+    /* Form Styles */
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    .form-group {
+      position: relative;
+    }
+    
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #0c1022;
+      font-size: 0.95rem;
+    }
+    
+    .form-label span {
+      color: #ef4444;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      background: white;
+      transition: all 0.3s ease;
+      color: #0c1022;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: #2c63ff;
+      box-shadow: 0 0 0 4px rgba(44, 99, 255, 0.1);
+    }
+    
+    .form-input::placeholder {
+      color: #94a3b8;
+    }
+    
+    .form-input:hover {
+      border-color: #c4ddff;
+    }
+    
+    textarea.form-input {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    
+    /* Error States */
+    .form-input.error {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+    
+    .error-message {
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    /* Form Actions */
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+    }
+    
+    .form-actions .btn-primary,
+    .form-actions .btn-secondary {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 12px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      font-family: inherit;
+    }
+    
+    .form-actions .btn-primary {
+      background: linear-gradient(135deg, #2c63ff, #1d4ed8);
+      color: white;
+      border: 2px solid #2c63ff;
+      box-shadow: 0 6px 16px rgba(44, 99, 255, 0.3);
+    }
+    
+    .form-actions .btn-primary:hover {
+      background: linear-gradient(135deg, #1e40af, #1e3a8a);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(30, 64, 175, 0.4);
+    }
+    
+    .form-actions .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .form-actions .btn-secondary {
+      background: white;
+      color: #2c63ff;
+      border: 2px solid #2c63ff;
+    }
+    
+    .form-actions .btn-secondary:hover {
+      background: #2c63ff;
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    /* Success/Error Alerts */
+    .alert {
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      animation: slideIn 0.3s ease;
+    }
+    
+    .alert-error {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      border: 1px solid #fecaca;
+      color: #dc2626;
+    }
+    
+    .alert-success {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+    
+    .alert-info {
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+    
+    .alert-icon {
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    
+    .alert-content {
+      flex: 1;
+    }
+    
+    .alert-content h4 {
+      margin: 0 0 6px 0;
+      font-size: 1.1rem;
+    }
+    
+    .alert-content p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .premium-contact-page {
+        padding: 10px;
+      }
+      
+      .contact-wrapper {
+        padding: 20px 16px;
+        border-radius: 16px;
+      }
+      
+      .contact-wrapper::before {
+        inset: -6px;
+        border-radius: 22px;
+      }
+      
+      .contact-header {
+        padding: 16px;
+        margin-bottom: 20px;
+      }
+      
+      .vehicle-preview-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px;
+      }
+      
+      .vehicle-preview-image {
+        width: 100%;
+        max-width: 200px;
+        height: 120px;
+      }
+      
+      .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .contact-form-container,
+      .contact-info-sidebar {
+        padding: 20px 16px;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .contact-info-item {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+      }
+      
+      .contact-info-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .contact-title {
+        font-size: 1.6rem;
+      }
+      
+      .contact-subtitle {
+        font-size: 0.95rem;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .vehicle-preview-title {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#contact-heading" class="skip-link">Skip to main content</a>
+  
+  <div class="page">
+    <main id="main" class="premium-contact-page">
+      <div class="contact-wrapper" aria-label="Contact form">
+        <!-- Header -->
+        <header class="contact-header">
+          <div class="contact-badge">
+            <i class="fas fa-headset"></i>
+            Premium Support
+          </div>
+          <h1 id="contact-heading" class="contact-title">
+            Contact <span>CSE Motors</span>
+          </h1>
+          <p class="contact-subtitle">
+            Get in touch with our expert team for inquiries, test drive bookings, or assistance with any vehicle
+          </p>
+        </header>
+        
+        <% if (errors && errors.length > 0) { %>
+          <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle alert-icon"></i>
+            <div class="alert-content">
+              <h4>Please fix the following errors:</h4>
+              <ul>
+                <% errors.forEach(function(error) { %>
+                  <li><%= error %></li>
+                <% }); %>
+              </ul>
+            </div>
+          </div>
+        <% } %>
+        
+        <% if (vehicle) { %>
+          <!-- Vehicle Preview Card -->
+          <div class="vehicle-preview-card">
+            <div class="vehicle-preview-image">
+              <img src="<%= vehicle.inv_image %>" alt="<%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
+                   onerror="this.src='/images/vehicles/no-image.jpg'; this.alt='Vehicle image not available';">
+            </div>
+            <div class="vehicle-preview-info">
+              <h3 class="vehicle-preview-title">
+                Regarding: <span><%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %></span>
+              </h3>
+              <div class="vehicle-preview-details">
+                <span><i class="fas fa-hashtag"></i> Stock #<%= vehicle.inv_id %></span>
+                <span><i class="fas fa-tags"></i> $<%= vehicle.inv_price.toLocaleString() %></span>
+                <span><i class="fas fa-gauge-high"></i> <%= vehicle.inv_miles.toLocaleString() %> miles</span>
+              </div>
+            </div>
+          </div>
+        <% } %>
+        
+        <!-- Main Contact Grid -->
+        <div class="contact-grid">
+          <!-- Contact Information Sidebar -->
+          <aside class="contact-info-sidebar">
+            <h3 class="info-sidebar-title">
+              <i class="fas fa-info-circle"></i>
+              Contact Information
+            </h3>
+            
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="contact-info-content">
+                <h4>Visit Our Showroom</h4>
+                <p>
+                  123 Premium Auto Drive<br>
+                  Motor City, MC 12345<br>
+                  United States
+                </p>
+                <a href="https://maps.google.com/?q=123+Premium+Auto+Drive" target="_blank">
+                  <i class="fas fa-directions"></i> Get Directions
+                </a>
+              </div>
+            </div>
+            
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <i class="fas fa-phone-alt"></i>
+              </div>
+              <div class="contact-info-content">
+                <h4>Call Us Directly</h4>
+                <p>
+                  Sales: <a href="tel:+18001234567">(800) 123-4567</a><br>
+                  Service: <a href="tel:+18001234568">(800) 123-4568</a><br>
+                  Parts: <a href="tel:+18001234569">(800) 123-4569</a>
+                </p>
+              </div>
+            </div>
+            
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <i class="fas fa-envelope"></i>
+              </div>
+              <div class="contact-info-content">
+                <h4>Email Us</h4>
+                <p>
+                  General Inquiries: <a href="mailto:info@csemotors.com">info@csemotors.com</a><br>
+                  Sales Team: <a href="mailto:sales@csemotors.com">sales@csemotors.com</a><br>
+                  Service: <a href="mailto:service@csemotors.com">service@csemotors.com</a>
+                </p>
+              </div>
+            </div>
+            
+            <!-- Business Hours -->
+            <div class="contact-hours">
+              <h4><i class="fas fa-clock"></i> Business Hours</h4>
+              <div class="hours-grid">
+                <span class="hours-day">Monday - Friday</span>
+                <span class="hours-time">8:00 AM - 8:00 PM</span>
+                <span class="hours-day">Saturday</span>
+                <span class="hours-time">9:00 AM - 6:00 PM</span>
+                <span class="hours-day">Sunday</span>
+                <span class="hours-time">10:00 AM - 4:00 PM</span>
+              </div>
+            </div>
+          </aside>
+          
+          <!-- Contact Form -->
+          <section class="contact-form-container">
+            <div class="form-header">
+              <h3>Send Us a Message</h3>
+              <p>Fill out the form below and our team will respond within 24 hours. All fields marked with <span>*</span> are required.</p>
+            </div>
+            
+            <!-- FIXED FORM ACTION: Changed from "/inv/contact" to "/contact" -->
+            <form action="/contact" method="POST" class="contact-form" id="contactForm">
+              <% if (vehicle) { %>
+                <input type="hidden" name="vehicle_id" value="<%= vehicle.inv_id %>">
+              <% } %>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="name" class="form-label">
+                    Full Name <span>*</span>
+                  </label>
+                  <input type="text" 
+                         id="name" 
+                         name="name" 
+                         class="form-input <%= errors && errors.some(e => e.includes('name')) ? 'error' : '' %>"
+                         placeholder="Enter your full name"
+                         value="<%= formData.name || (user ? user.account_firstname + ' ' + user.account_lastname : '') %>"
+                         required>
+                  <% if (errors && errors.some(e => e.includes('name'))) { %>
+                    <div class="error-message">
+                      <i class="fas fa-exclamation-circle"></i>
+                      Please enter your name
+                    </div>
+                  <% } %>
+                </div>
+                
+                <div class="form-group">
+                  <label for="email" class="form-label">
+                    Email Address <span>*</span>
+                  </label>
+                  <input type="email" 
+                         id="email" 
+                         name="email" 
+                         class="form-input <%= errors && errors.some(e => e.includes('email')) ? 'error' : '' %>"
+                         placeholder="your.email@example.com"
+                         value="<%= formData.email || (user ? user.account_email : '') %>"
+                         required>
+                  <% if (errors && errors.some(e => e.includes('email'))) { %>
+                    <div class="error-message">
+                      <i class="fas fa-exclamation-circle"></i>
+                      Please enter a valid email address
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="phone" class="form-label">
+                    Phone Number
+                  </label>
+                  <input type="tel" 
+                         id="phone" 
+                         name="phone" 
+                         class="form-input"
+                         placeholder="(123) 456-7890"
+                         value="<%= formData.phone || (user ? user.account_phone : '') %>">
+                </div>
+                
+                <div class="form-group">
+                  <label for="preferred_contact" class="form-label">
+                    Preferred Contact Method
+                  </label>
+                  <select id="preferred_contact" name="preferred_contact" class="form-input">
+                    <option value="email" <%= (formData.preferred_contact || 'email') === 'email' ? 'selected' : '' %>>Email</option>
+                    <option value="phone" <%= (formData.preferred_contact || 'email') === 'phone' ? 'selected' : '' %>>Phone Call</option>
+                    <option value="text" <%= (formData.preferred_contact || 'email') === 'text' ? 'selected' : '' %>>Text Message</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-group full-width">
+                <label for="subject" class="form-label">
+                  Subject
+                </label>
+                <input type="text" 
+                       id="subject" 
+                       name="subject" 
+                       class="form-input"
+                       placeholder="What is this regarding?"
+                       value="<%= formData.subject || (vehicle ? 'Inquiry about ' + vehicle.inv_year + ' ' + vehicle.inv_make + ' ' + vehicle.inv_model : '') %>">
+              </div>
+              
+              <div class="form-group full-width">
+                <label for="message" class="form-label">
+                  Your Message <span>*</span>
+                </label>
+                <textarea id="message" 
+                          name="message" 
+                          class="form-input <%= errors && errors.some(e => e.includes('message')) ? 'error' : '' %>"
+                          placeholder="Please provide details about your inquiry..."
+                          required><%= formData.message || (vehicle ? 'I\'m interested in the ' + vehicle.inv_year + ' ' + vehicle.inv_make + ' ' + vehicle.inv_model + ' (Stock #' + vehicle.inv_id + '). Please provide more information about availability and scheduling a test drive.' : '') %></textarea>
+                <% if (errors && errors.some(e => e.includes('message'))) { %>
+                  <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Please enter your message
+                  </div>
+                <% } %>
+              </div>
+              
+              <div class="form-group full-width">
+                <label class="form-label">
+                  <input type="checkbox" name="newsletter" <%= formData.newsletter ? 'checked' : '' %>>
+                  Sign up for exclusive offers and vehicle updates from CSE Motors
+                </label>
+              </div>
+              
+              <div class="form-actions">
+                <button type="submit" class="btn-primary" id="submitBtn">
+                  <i class="fas fa-paper-plane"></i>
+                  Send Message
+                </button>
+                
+                <% if (vehicle) { %>
+                  <!-- FIXED: Changed from "/inv/detail/" to "/inv/detail/" (keep this as it's correct) -->
+                  <a href="/inv/detail/<%= vehicle.inv_id %>" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Vehicle
+                  </a>
+                <% } else { %>
+                  <a href="/" class="btn-secondary">
+                    <i class="fas fa-home"></i>
+                    Back to Home
+                  </a>
+                <% } %>
+              </div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const contactForm = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+          // Basic client-side validation
+          const name = document.getElementById('name').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const message = document.getElementById('message').value.trim();
+          
+          let isValid = true;
+          
+          // Reset previous error states
+          document.querySelectorAll('.form-input.error').forEach(input => {
+            input.classList.remove('error');
+          });
+          document.querySelectorAll('.error-message').forEach(error => {
+            error.remove();
+          });
+          
+          // Validate name
+          if (!name) {
+            showError('name', 'Please enter your name');
+            isValid = false;
+          }
+          
+          // Validate email
+          if (!email) {
+            showError('email', 'Please enter your email address');
+            isValid = false;
+          } else if (!isValidEmail(email)) {
+            showError('email', 'Please enter a valid email address');
+            isValid = false;
+          }
+          
+          // Validate message
+          if (!message) {
+            showError('message', 'Please enter your message');
+            isValid = false;
+          } else if (message.length < 10) {
+            showError('message', 'Please provide more details in your message (minimum 10 characters)');
+            isValid = false;
+          }
+          
+          if (!isValid) {
+            e.preventDefault();
+            
+            // Scroll to first error
+            const firstError = document.querySelector('.form-input.error');
+            if (firstError) {
+              firstError.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+              });
+              firstError.focus();
+            }
+          } else {
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            
+            // Form is valid, allow submission
+            // (You could add AJAX submission here if desired)
+          }
+        });
+      }
+      
+      function showError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.classList.add('error');
+          
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-message';
+          errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+          
+          field.parentNode.appendChild(errorDiv);
+        }
+      }
+      
+      function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      }
+      
+      // Auto-format phone number
+      const phoneInput = document.getElementById('phone');
+      if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+          let value = e.target.value.replace(/\D/g, '');
+          if (value.length > 3 && value.length <= 6) {
+            value = '(' + value.substring(0, 3) + ') ' + value.substring(3);
+          } else if (value.length > 6) {
+            value = '(' + value.substring(0, 3) + ') ' + value.substring(3, 6) + '-' + value.substring(6, 10);
+          }
+          e.target.value = value;
+        });
+      }
+    });
+  </script>
+</body>
+</html>
