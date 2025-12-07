@@ -1,10 +1,10 @@
-// routes/accountRoute.js
 const express = require("express")
 const router = express.Router()
 const utilities = require("../utilities/")
 const { AccountController } = require("../controllers/accountController")
 const accountValidate = require("../utilities/account-validation")
 const { requireAuth } = require("../middleware/jwtMiddleware")
+const favoriteRoutes = require("./favoriteRoute") // ADD THIS LINE
 
 // GET login view
 router.get(
@@ -86,6 +86,11 @@ router.get(
   "/logout",
   utilities.handleErrors(AccountController.logout)
 )
+
+/* *****************************
+ *  FAVORITE VEHICLES ROUTES
+ * ***************************** */
+router.use("/favorites", favoriteRoutes) // ADD THIS LINE
 
 // CRITICAL: Export the router, not an object
 module.exports = router

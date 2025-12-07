@@ -117,7 +117,7 @@
     .vehicle-detail-grid {
       display: grid;
       gap: 18px;
-      align-items: stretch; /* make both sides same height for “app card” feel */
+      align-items: stretch; /* make both sides same height for "app card" feel */
       margin-top: 18px;
     }
 
@@ -537,19 +537,254 @@
         text-align: left;
       }
     }
-/* ========================= */
-/* MOBILE-ONLY STYLES (max-width: 768px) */
-/* ========================= */
 
-@media (max-width: 768px) {
-    /* Main layout adjustments */
-    .premium-page {
-        padding: 10px;
-        overflow-x: hidden;
+    /* =======================================
+       FAVORITE BUTTON STYLES - UPDATED
+       ======================================= */
+
+    .favorite-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
     }
 
-    /* Vehicle detail wrapper - full width, no cutting */
-    .vehicle-detail-wrapper {
+    .favorite-section:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .favorite-btn {
+      background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+      color: #dc2626;
+      border: 2px solid #fecaca;
+      padding: 12px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+      min-height: 50px;
+      font-family: inherit;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .favorite-btn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(220, 38, 38, 0.2);
+      border-color: #fca5a5;
+    }
+
+    .favorite-btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+    }
+
+    .favorite-btn.favorited {
+      background: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
+      color: #059669;
+      border-color: #bbf7d0;
+    }
+
+    .favorite-btn.favorited:hover:not(:disabled) {
+      background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+      box-shadow: 0 6px 12px rgba(5, 150, 105, 0.2);
+      border-color: #86efac;
+    }
+
+    .favorite-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .favorite-btn i {
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .favorite-btn:hover:not(:disabled) i {
+      transform: scale(1.1);
+    }
+
+    .favorite-count {
+      color: #64748b;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      min-width: 200px;
+      font-weight: 500;
+    }
+
+    .favorite-count i {
+      color: #dc2626;
+      font-size: 1rem;
+    }
+
+    .favorite-count span {
+      font-weight: 600;
+      color: #334155;
+    }
+
+    /* Favorite message styles */
+    .favorite-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 500;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      animation: slideIn 0.3s ease;
+      max-width: 400px;
+      min-width: 300px;
+    }
+    
+    .favorite-message.success {
+      background: #f0fdf4;
+      color: #166534;
+      border: 2px solid #bbf7d0;
+    }
+    
+    .favorite-message.error {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 2px solid #fecaca;
+    }
+    
+    .favorite-message.warning {
+      background: #fffbeb;
+      color: #92400e;
+      border: 2px solid #fde68a;
+    }
+    
+    .favorite-message.info {
+      background: #eff6ff;
+      color: #1e40af;
+      border: 2px solid #dbeafe;
+    }
+    
+    .favorite-message i {
+      font-size: 1.2rem;
+    }
+    
+    .favorite-message span {
+      flex: 1;
+    }
+    
+    .favorite-message .close-message {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: inherit;
+      opacity: 0.7;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s ease;
+    }
+    
+    .favorite-message .close-message:hover {
+      opacity: 1;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      to {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .favorite-section {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        padding: 15px;
+      }
+      
+      .favorite-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .favorite-count {
+        justify-content: center;
+        text-align: center;
+        min-width: auto;
+      }
+      
+      .favorite-message {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        min-width: auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .favorite-btn {
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        min-height: 44px;
+      }
+      
+      .favorite-count {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* ========================= */
+    /* MOBILE-ONLY STYLES (max-width: 768px) */
+    /* ========================= */
+
+    @media (max-width: 768px) {
+      /* Main layout adjustments */
+      .premium-page {
+        padding: 10px;
+        overflow-x: hidden;
+      }
+
+      /* Vehicle detail wrapper - full width, no cutting */
+      .vehicle-detail-wrapper {
         width: 100%;
         max-width: 100%;
         margin-inline: 0;
@@ -557,94 +792,94 @@
         padding: 12px 10px 16px;
         margin-top: 0;
         box-sizing: border-box;
-    }
+      }
 
-    .vehicle-detail-wrapper::before {
+      .vehicle-detail-wrapper::before {
         inset: -4px;
         border-radius: 16px;
         border-width: 2px;
-    }
+      }
 
-    /* Header section - better mobile fit */
-    .vehicle-detail-header {
+      /* Header section - better mobile fit */
+      .vehicle-detail-header {
         padding: 16px 12px 14px;
         border-radius: 10px;
         margin-bottom: 16px;
         text-align: center;
-    }
+      }
 
-    .vehicle-detail-badge {
+      .vehicle-detail-badge {
         padding: 4px 10px;
         font-size: 0.72rem;
         margin-bottom: 6px;
-    }
+      }
 
-    .vehicle-detail-title {
+      .vehicle-detail-title {
         font-size: 1.4rem;
         line-height: 1.3;
         margin-bottom: 4px;
-    }
+      }
 
-    .vehicle-detail-subtitle {
+      .vehicle-detail-subtitle {
         font-size: 0.88rem;
         line-height: 1.4;
         max-width: 100%;
         text-align: center;
-    }
+      }
 
-    /* Grid layout - single column for mobile */
-    .vehicle-detail-grid {
+      /* Grid layout - single column for mobile */
+      .vehicle-detail-grid {
         grid-template-columns: 1fr;
         gap: 16px;
         margin-top: 16px;
-    }
+      }
 
-    /* Image card - ensure image doesn't get cut */
-    .vehicle-image-card {
+      /* Image card - ensure image doesn't get cut */
+      .vehicle-image-card {
         padding: 10px;
         border-radius: 12px;
         width: 100%;
         box-sizing: border-box;
-    }
+      }
 
-    .vehicle-image-header {
+      .vehicle-image-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 6px;
         margin-bottom: 8px;
-    }
+      }
 
-    .stock-tag,
-    .image-chip {
+      .stock-tag,
+      .image-chip {
         width: 100%;
         justify-content: center;
         padding: 6px 8px;
         font-size: 0.75rem;
         box-sizing: border-box;
-    }
+      }
 
-    /* Image container - maintain aspect ratio, no cropping */
-    .vehicle-image-container {
+      /* Image container - maintain aspect ratio, no cropping */
+      .vehicle-image-container {
         aspect-ratio: 4/3;
         max-height: none;
         border-radius: 10px;
         width: 100%;
-    }
+      }
 
-    .vehicle-main-image {
+      .vehicle-main-image {
         object-fit: contain;
         max-width: 100%;
         height: auto;
-    }
+      }
 
-    /* Category highlights - stack vertically */
-    .vehicle-category-highlights {
+      /* Category highlights - stack vertically */
+      .vehicle-category-highlights {
         margin-top: 8px;
         flex-direction: column;
         gap: 6px;
-    }
+      }
 
-    .highlight-pill {
+      .highlight-pill {
         flex: 1 1 auto;
         width: 100%;
         padding: 8px 10px;
@@ -652,80 +887,80 @@
         text-align: center;
         box-sizing: border-box;
         min-width: 100%;
-    }
+      }
 
-    /* Image footer - stack vertically */
-    .vehicle-image-footer {
+      /* Image footer - stack vertically */
+      .vehicle-image-footer {
         flex-direction: column;
         gap: 6px;
         margin-top: 8px;
         font-size: 0.72rem;
-    }
+      }
 
-    /* Info card - full width */
-    .vehicle-info-card {
+      /* Info card - full width */
+      .vehicle-info-card {
         padding: 12px 10px 16px;
         border-radius: 12px;
         width: 100%;
         box-sizing: border-box;
-    }
+      }
 
-    /* Price row - stack vertically */
-    .price-row {
+      /* Price row - stack vertically */
+      .price-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 8px;
-    }
+      }
 
-    .vehicle-price-large {
+      .vehicle-price-large {
         font-size: 1.6rem;
         white-space: normal;
         line-height: 1.2;
-    }
+      }
 
-    .vehicle-price-note {
+      .vehicle-price-note {
         text-align: left;
         font-size: 0.75rem;
         max-width: 100%;
-    }
+      }
 
-    /* Meta row - wrap properly */
-    .vehicle-meta-row {
+      /* Meta row - wrap properly */
+      .vehicle-meta-row {
         gap: 6px;
         font-size: 0.8rem;
-    }
+      }
 
-    .vehicle-meta-row span {
+      .vehicle-meta-row span {
         padding: 4px 8px;
         font-size: 0.78rem;
         flex: 1 1 auto;
         min-width: calc(50% - 3px);
         box-sizing: border-box;
         justify-content: center;
-    }
+      }
 
-    /* Details grid - 2 columns on mobile */
-    .vehicle-details-grid {
+      /* Details grid - 2 columns on mobile */
+      .vehicle-details-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
-    }
+      }
 
-    .detail-card {
+      .detail-card {
         padding: 6px 6px 8px;
         border-radius: 8px;
         text-align: center;
-    }
+      }
 
-    .detail-label {
+      .detail-label {
         font-size: 0.7rem;
-    }
+      }
 
-    .detail-value {
+      .detail-value {
         font-size: 0.86rem;
-    }
+      }
 
-    /* Vehicle description - ensure justified text doesn't break layout */
-    .vehicle-description {
+      /* Vehicle description - ensure justified text doesn't break layout */
+      .vehicle-description {
         margin-top: 8px;
         padding: 10px 10px 10px 12px;
         border-radius: 8px;
@@ -738,27 +973,27 @@
         word-wrap: break-word;
         width: 100%;
         box-sizing: border-box;
-    }
+      }
 
-    .vehicle-description h3 {
+      .vehicle-description h3 {
         font-size: 0.92rem;
         margin: 0 0 4px 6px;
-    }
+      }
 
-    .vehicle-description p {
+      .vehicle-description p {
         margin: 0 0 0 6px;
         width: 100%;
-    }
+      }
 
-    /* Action buttons - stack vertically */
-    .vehicle-actions {
+      /* Action buttons - stack vertically */
+      .vehicle-actions {
         flex-direction: column;
         gap: 8px;
         margin-top: 8px;
-    }
+      }
 
-    .vehicle-actions .btn-primary,
-    .vehicle-actions .btn-secondary {
+      .vehicle-actions .btn-primary,
+      .vehicle-actions .btn-secondary {
         flex: 1 1 auto;
         width: 100%;
         padding: 10px 12px;
@@ -769,174 +1004,186 @@
         box-sizing: border-box;
         white-space: normal;
         line-height: 1.3;
-    }
+      }
 
-    /* Ensure no horizontal scrolling */
-    body {
+      /* Ensure no horizontal scrolling */
+      body {
         overflow-x: hidden;
         width: 100%;
         max-width: 100%;
-    }
+      }
 
-    /* Prevent text truncation */
-    h1, h2, h3, h4, p, span {
+      /* Prevent text truncation */
+      h1, h2, h3, h4, p, span {
         word-wrap: break-word;
         overflow-wrap: break-word;
         max-width: 100%;
-    }
+      }
 
-    /* Proper touch targets for mobile */
-    button, a, .btn-primary, .btn-secondary {
+      /* Proper touch targets for mobile */
+      button, a, .btn-primary, .btn-secondary {
         min-height: 44px;
         display: flex;
         align-items: center;
-    }
+      }
 
-    /* Fix for iOS form elements */
-    input, select, textarea {
+      /* Fix for iOS form elements */
+      input, select, textarea {
         font-size: 16px; /* Prevents iOS zoom */
-    }
+      }
 
-    /* Smooth scrolling for mobile */
-    html {
+      /* Smooth scrolling for mobile */
+      html {
         -webkit-overflow-scrolling: touch;
-    }
+      }
 
-    /* Text alignment for better mobile reading */
-    .vehicle-description {
+      /* Text alignment for better mobile reading */
+      .vehicle-description {
         text-align-last: left;
-    }
+      }
 
-    /* Adjust badge sizes */
-    .vehicle-detail-badge i {
+      /* Adjust badge sizes */
+      .vehicle-detail-badge i {
         font-size: 0.7rem;
-    }
+      }
 
-    /* Ensure meta icons are visible */
-    .vehicle-meta-row i {
+      /* Ensure meta icons are visible */
+      .vehicle-meta-row i {
         font-size: 0.8rem;
-    }
+      }
 
-    /* Action button icons */
-    .vehicle-actions a i {
+      /* Action button icons */
+      .vehicle-actions a i {
         font-size: 0.8rem;
+      }
     }
-}
 
-/* Extra small devices (phones, 480px and down) */
-@media (max-width: 480px) {
-    .premium-page {
+    /* Extra small devices (phones, 480px and down) */
+    @media (max-width: 480px) {
+      .premium-page {
         padding: 8px;
-    }
+      }
 
-    .vehicle-detail-wrapper {
+      .vehicle-detail-wrapper {
         padding: 10px 8px 14px;
-    }
+      }
 
-    .vehicle-detail-header {
+      .vehicle-detail-header {
         padding: 14px 10px 12px;
-    }
+      }
 
-    .vehicle-detail-title {
+      .vehicle-detail-title {
         font-size: 1.3rem;
-    }
+      }
 
-    .vehicle-detail-subtitle {
+      .vehicle-detail-subtitle {
         font-size: 0.82rem;
-    }
+      }
 
-    .vehicle-price-large {
+      .vehicle-price-large {
         font-size: 1.4rem;
-    }
+      }
 
-    .vehicle-description {
+      .vehicle-description {
         font-size: 0.82rem;
         line-height: 1.4;
-    }
+      }
 
-    .vehicle-details-grid {
+      .vehicle-details-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 6px;
-    }
+      }
 
-    .detail-label {
+      .detail-label {
         font-size: 0.68rem;
-    }
+      }
 
-    .detail-value {
+      .detail-value {
         font-size: 0.8rem;
-    }
+      }
 
-    /* Make meta row single column on very small screens */
-    @media (max-width: 360px) {
+      /* Make meta row single column on very small screens */
+      @media (max-width: 360px) {
         .vehicle-meta-row span {
-            min-width: 100%;
+          min-width: 100%;
         }
+      }
     }
-}
 
-/* Prevent font scaling on mobile */
-@media screen and (max-width: 768px) {
-    html {
+    /* Prevent font scaling on mobile */
+    @media screen and (max-width: 768px) {
+      html {
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
+      }
     }
-}
 
-/* Ensure justified text works properly on mobile */
-@media (max-width: 768px) {
-    .vehicle-description {
+    /* Ensure justified text works properly on mobile */
+    @media (max-width: 768px) {
+      .vehicle-description {
         text-align: justify;
         text-justify: distribute;
         -webkit-hyphens: auto;
         -ms-hyphens: auto;
         hyphens: auto;
-    }
+      }
 
-    /* Prevent orphans in justified text */
-    .vehicle-description p::after {
+      /* Prevent orphans in justified text */
+      .vehicle-description p::after {
         content: "";
         display: inline-block;
         width: 100%;
+      }
     }
-}
 
-/* Image loading optimization for mobile */
-@media (max-width: 768px) {
-    .vehicle-main-image {
+    /* Image loading optimization for mobile */
+    @media (max-width: 768px) {
+      .vehicle-main-image {
         max-width: 100%;
         height: auto;
         object-fit: contain;
+      }
     }
-}
 
-/* Touch-friendly hover states for mobile */
-@media (hover: none) and (pointer: coarse) {
-    .detail-card:hover,
-    .vehicle-actions .btn-primary:hover,
-    .vehicle-actions .btn-secondary:hover,
-    .vehicle-image-card:hover .vehicle-main-image {
+    /* Touch-friendly hover states for mobile */
+    @media (hover: none) and (pointer: coarse) {
+      .detail-card:hover,
+      .vehicle-actions .btn-primary:hover,
+      .vehicle-actions .btn-secondary:hover,
+      .vehicle-image-card:hover .vehicle-main-image,
+      .favorite-btn:hover {
         transform: none;
-    }
+      }
 
-    /* Provide active states instead */
-    .detail-card:active {
+      /* Provide active states instead */
+      .detail-card:active {
         border-color: #b7d5ff;
         box-shadow: 0 5px 15px rgba(44, 99, 255, 0.15);
-    }
+      }
 
-    .vehicle-actions .btn-primary:active {
+      .vehicle-actions .btn-primary:active {
         background: #1e40af;
         transform: scale(0.98);
-    }
+      }
 
-    .vehicle-actions .btn-secondary:active {
+      .vehicle-actions .btn-secondary:active {
         background: #2c63ff;
         color: #ffffff;
         transform: scale(0.98);
+      }
+
+      .favorite-btn:active {
+        transform: scale(0.98);
+      }
+      
+      .favorite-btn.favorited:active {
+        background: #86efac;
+      }
+      
+      .favorite-btn:not(.favorited):active {
+        background: #fca5a5;
+      }
     }
-}
-    
   </style>
 </head>
 <body>
@@ -1081,6 +1328,30 @@
               </span>
             </div>
 
+            <!-- FAVORITE SECTION - UPDATED -->
+            <div class="favorite-section">
+              <% if (user) { %>
+                <button id="favoriteBtn" class="favorite-btn <%= isFavorite ? 'favorited' : '' %>" 
+                        data-vehicle-id="<%= vehicle.inv_id %>"
+                        data-is-favorite="<%= isFavorite %>">
+                  <i id="favoriteIcon" class="<%= isFavorite ? 'fas' : 'far' %> fa-heart"></i>
+                  <span id="favoriteText">
+                    <%= isFavorite ? 'Remove from Favorites' : 'Add to Favorites' %>
+                  </span>
+                </button>
+              <% } else { %>
+                <button id="favoriteBtn" class="favorite-btn" onclick="window.location.href='/account/login?redirect=' + encodeURIComponent(window.location.pathname)">
+                  <i class="fas fa-sign-in-alt"></i>
+                  <span>Login to Save to Favorites</span>
+                </button>
+              <% } %>
+              
+              <span class="favorite-count">
+                <i class="fas fa-users"></i> 
+                <span id="favoriteCount"><%= favoriteCount || 0 %></span> people have favorited this vehicle
+              </span>
+            </div>
+
             <div class="vehicle-details-grid">
               <div class="detail-card">
                 <div class="detail-label">Year</div>
@@ -1127,5 +1398,165 @@
       </section>
     </main>
   </div>
+     
+  <script>
+    class FavoriteManager {
+      constructor() {
+        this.favoriteBtn = document.getElementById('favoriteBtn');
+        this.favoriteIcon = document.getElementById('favoriteIcon');
+        this.favoriteText = document.getElementById('favoriteText');
+        this.favoriteCount = document.getElementById('favoriteCount');
+        this.vehicleId = this.favoriteBtn ? this.favoriteBtn.dataset.vehicleId : null;
+        this.isFavorite = this.favoriteBtn ? this.favoriteBtn.dataset.isFavorite === 'true' : false;
+        
+        if (this.favoriteBtn && this.vehicleId) {
+          this.init();
+        }
+      }
+      
+      init() {
+        // Only add event listener if user is logged in (button doesn't have onclick attribute)
+        if (!this.favoriteBtn.onclick) {
+          this.favoriteBtn.addEventListener('click', (e) => this.handleFavoriteClick(e));
+        }
+      }
+      
+      async handleFavoriteClick(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const button = event.currentTarget;
+        
+        // Disable button during request
+        button.disabled = true;
+        const originalHTML = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        try {
+          // Show loading state
+          this.showMessage('Updating favorites...', 'info', false);
+          
+          const response = await fetch('/account/favorites/toggle', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({ 
+              vehicle_id: parseInt(this.vehicleId)
+            }),
+            credentials: 'same-origin'
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok && result.success) {
+            // Toggle the favorite state
+            this.isFavorite = result.isFavorite;
+            
+            // Update button appearance
+            this.updateButtonState();
+            
+            // Update favorite count
+            if (result.favoriteCount !== undefined) {
+              this.favoriteCount.textContent = result.favoriteCount;
+            }
+            
+            // Show success message
+            this.showMessage(result.message, 'success');
+            
+          } else {
+            // Handle specific errors
+            if (result.code === 'UNAUTHORIZED') {
+              window.location.href = '/account/login?redirect=' + encodeURIComponent(window.location.pathname);
+              return;
+            }
+            
+            if (result.code === 'LIMIT_EXCEEDED') {
+              this.showMessage(result.message, 'error');
+              if (confirm("Would you like to view your favorites to remove some?")) {
+                window.location.href = '/account/favorites';
+              }
+            } else {
+              this.showMessage(result.message || 'Failed to update favorites', 'error');
+            }
+          }
+          
+        } catch (error) {
+          console.error('Error toggling favorite:', error);
+          
+          // Check for network errors
+          if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            this.showMessage('Network error. Please check your connection.', 'error');
+          } else {
+            this.showMessage('An unexpected error occurred. Please try again.', 'error');
+          }
+          
+        } finally {
+          // Re-enable button
+          button.disabled = false;
+          button.innerHTML = originalHTML;
+        }
+      }
+      
+      updateButtonState() {
+        if (this.isFavorite) {
+          this.favoriteBtn.classList.add('favorited');
+          this.favoriteIcon.className = 'fas fa-heart';
+          this.favoriteText.textContent = 'Remove from Favorites';
+        } else {
+          this.favoriteBtn.classList.remove('favorited');
+          this.favoriteIcon.className = 'far fa-heart';
+          this.favoriteText.textContent = 'Add to Favorites';
+        }
+      }
+      
+      showMessage(message, type = 'info', autoRemove = true) {
+        // Remove existing messages
+        const existingMessages = document.querySelectorAll('.favorite-message');
+        existingMessages.forEach(msg => msg.remove());
+        
+        // Create message element
+        const messageEl = document.createElement('div');
+        messageEl.className = `favorite-message ${type}`;
+        messageEl.innerHTML = `
+          <i class="fas fa-${type === 'success' ? 'check-circle' : 
+                                type === 'error' ? 'exclamation-circle' : 
+                                type === 'warning' ? 'exclamation-triangle' : 
+                                'info-circle'}"></i>
+          <span>${message}</span>
+          <button class="close-message">&times;</button>
+        `;
+        
+        // Add close button functionality
+        const closeBtn = messageEl.querySelector('.close-message');
+        closeBtn.addEventListener('click', () => {
+          messageEl.style.animation = 'slideOut 0.3s ease forwards';
+          setTimeout(() => messageEl.remove(), 300);
+        });
+        
+        // Add to document
+        document.body.appendChild(messageEl);
+        
+        // Auto-remove after delay if specified
+        if (autoRemove) {
+          setTimeout(() => {
+            if (messageEl.parentNode) {
+              messageEl.style.animation = 'slideOut 0.3s ease forwards';
+              setTimeout(() => messageEl.remove(), 300);
+            }
+          }, 4000);
+        }
+        
+        return messageEl;
+      }
+    }
+    
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      new FavoriteManager();
+    });
+  </script>
 </body>
 </html>

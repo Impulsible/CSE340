@@ -45,7 +45,7 @@
           <li><a href="/account/update/<%= user.userId || user.account_id %>"><i class="fas fa-user-edit"></i>Update Account Info</a></li>
           
           <li><a href="/account/orders"><i class="fas fa-receipt"></i>My Orders</a></li>
-          <li><a href="/account/saved"><i class="fas fa-heart"></i>Saved Vehicles</a></li>
+          <li><a href="/account/favorites"><i class="fas fa-heart"></i>My Favorites</a></li>
           
           <!-- ADMIN/EMPLOYEE LINKS -->
           <% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
@@ -121,6 +121,14 @@
           <a href="/account/update/<%= user.userId || user.account_id %>" class="nav-update-link">
             <i class="fas fa-user-edit"></i>
             Update Account
+          </a>
+        </li>
+        
+        <!-- FAVORITES LINK -->
+        <li class="auth-nav-item">
+          <a href="/account/favorites" class="nav-favorites-link">
+            <i class="fas fa-heart"></i>
+            My Favorites
           </a>
         </li>
         
@@ -253,6 +261,37 @@
   /* Auth Navigation Items */
   .auth-nav-item {
     display: none; /* Hidden by default, show on mobile if needed */
+  }
+
+    /* Update account link specific styling */
+  .nav-update-link {
+    color: #059669;
+    font-weight: 500;
+  }
+
+  .nav-update-link:hover {
+    color: #047857;
+  }
+
+  /* Favorites link specific styling */
+  .nav-favorites-link {
+    color: #dc2626;
+    font-weight: 500;
+  }
+
+  .nav-favorites-link:hover {
+    color: #b91c1c;
+    background: #fef2f2 !important;
+  }
+
+  .nav-favorites-link i {
+    color: #dc2626;
+  }
+
+  /* Welcome link styling */
+  .nav-dashboard-link {
+    font-weight: 600;
+    color: #1e40af;
   }
 
   /* Enhanced account toggle for logged-in users */

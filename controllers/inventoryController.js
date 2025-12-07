@@ -1,6 +1,14 @@
 const invModel = require("../models/inventory-model");
 const utilities = require("../utilities");
 
+// Import favorite model if available
+let favoriteModel;
+try {
+  favoriteModel = require("../models/favorite-model");
+} catch (error) {
+  console.log("⚠️ Favorite model not available yet, will be loaded when needed");
+}
+
 const invCont = {};
 
 /**
@@ -35,7 +43,7 @@ invCont.buildByClassificationId = async function (req, res, next) {
 };
 
 /**
- * Build vehicle detail view - UPDATED WITH DYNAMIC NAV
+ * Build vehicle detail view - FIXED: Added proper user and isFavorite variables
  */
 invCont.buildVehicleDetail = async function (req, res, next) {
   try {
@@ -49,10 +57,66 @@ invCont.buildVehicleDetail = async function (req, res, next) {
     // Use dynamic navigation
     const nav = await utilities.getNav();
     
+    // Initialize favorite data with defaults
+    let isFavorite = false;
+    let favoriteCount = 0;
+    let userFavoritesCount = 0;
+    let maxFavorites = 50;
+    
+    // FIX: Get user properly - check multiple possible locations
+    const user = req.user || req.session.user || null;
+    
+    // Debug logging
+    console.log("🔍 Debug - User check:");
+    console.log("  - req.user:", req.user ? `Yes (${req.user.account_firstname})` : "No");
+    console.log("  - req.session.user:", req.session.user ? `Yes (${req.session.user.account_firstname})` : "No");
+    console.log("  - Final user variable:", user ? `Yes (${user.account_firstname})` : "No");
+    
+    // Check if user is logged in and get favorite data
+    if (user) {
+      try {
+        // Load favorite model if not already loaded
+        if (!favoriteModel) {
+          favoriteModel = require("../models/favorite-model");
+        }
+        
+        // Get favorite status for this vehicle
+        isFavorite = await favoriteModel.isFavorite(user.account_id, inv_id);
+        
+        // Get total favorite count for this vehicle
+        favoriteCount = await favoriteModel.getVehicleFavoriteCount(inv_id);
+        
+        // Get user's favorite count and limit info
+        const limitCheck = await favoriteModel.canAddMoreFavorites(user.account_id);
+        userFavoritesCount = limitCheck.currentCount;
+        maxFavorites = limitCheck.maxAllowed;
+        
+        console.log(`⭐ Favorite data - isFavorite: ${isFavorite}, count: ${favoriteCount}, user has: ${userFavoritesCount}/${maxFavorites}`);
+      } catch (error) {
+        console.log("⚠️ Favorite features not available:", error.message);
+        // Continue with default values
+      }
+    }
+    
+    // FIX: Ensure isFavorite is always defined
+    if (typeof isFavorite === 'undefined') {
+      isFavorite = false;
+    }
+    
+    console.log("🔍 Final values being passed to template:");
+    console.log("  - user:", user ? `Present (ID: ${user.account_id})` : "null");
+    console.log("  - isFavorite:", isFavorite);
+    console.log("  - favoriteCount:", favoriteCount);
+    
     res.render("./inventory/detail", {
       title: `${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
       nav: nav,
-      vehicle: vehicle
+      vehicle: vehicle,
+      isFavorite: isFavorite,  // CRITICAL: This was missing in the template
+      favoriteCount: favoriteCount,
+      userFavoritesCount: userFavoritesCount,
+      maxFavorites: maxFavorites,
+      user: user  // CRITICAL: Ensure this is passed
     });
     
   } catch (error) {

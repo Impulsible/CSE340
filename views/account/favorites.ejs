@@ -3,229 +3,888 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %> - CSE Motors</title>
+    <title><%= title %> | CSE Motors</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ============================================
+           FAVORITES PAGE STYLES
+           ============================================ */
+        .favorites-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            min-height: 70vh;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumbs {
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .breadcrumbs ol {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .breadcrumbs li {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumbs a {
+            color: #2563eb;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .breadcrumbs a:hover {
+            color: #1e40af;
+            text-decoration: underline;
+        }
+
+        /* Header */
+        .favorites-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .favorites-header h1 {
+            color: #1e293b;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .favorites-header h1 i {
+            color: #dc2626;
+        }
+
+        .favorites-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        /* Stats Bar */
+        .favorites-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px 25px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            min-width: 120px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Messages */
+        .flash-message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .flash-message.success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 2px solid #bbf7d0;
+        }
+
+        .flash-message.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 2px solid #fecaca;
+        }
+
+        .flash-message.info {
+            background: #eff6ff;
+            color: #1e40af;
+            border: 2px solid #bfdbfe;
+        }
+
+        /* Validation Container */
+        .validation-container {
+            margin-bottom: 20px;
+        }
+
+        .validation-message {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .validation-message.success {
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .validation-message.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        /* Pagination */
+        .pagination {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .pagination ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: inline-flex;
+            gap: 5px;
+        }
+
+        .pagination li {
+            display: inline-block;
+        }
+
+        .pagination a,
+        .pagination .current {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .pagination a {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pagination a:hover {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .pagination .current {
+            background: #2563eb;
+            color: white;
+            border: 1px solid #2563eb;
+        }
+
+        /* Favorites Grid */
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .favorites-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Favorite Card */
+        .favorite-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .favorite-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: #cbd5e1;
+        }
+
+        /* Card Header */
+        .favorite-card-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .favorite-card-header h3 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 1.2rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Priority Selector */
+        .priority-selector {
+            flex-shrink: 0;
+        }
+
+        .priority-select {
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background: white;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .priority-select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Card Image Area */
+        .favorite-card-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        .favorite-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .favorite-card:hover .favorite-card-image img {
+            transform: scale(1.05);
+        }
+
+        .no-image {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            gap: 10px;
+        }
+
+        .no-image i {
+            font-size: 2rem;
+        }
+
+        /* Notes Section */
+        .notes-section {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .notes-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 60px;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .notes-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .save-notes-btn {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .save-notes-btn:hover {
+            background: #047857;
+            transform: translateY(-2px);
+        }
+
+        .notes-counter {
+            font-size: 0.8rem;
+            color: #64748b;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        .notes-counter.error {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        /* Card Details */
+        .favorite-card-details {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .favorite-card-details dl {
+            margin: 0 0 15px 0;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 8px 15px;
+        }
+
+        .favorite-card-details dt {
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .favorite-card-details dd {
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .description {
+            color: #475569;
+            line-height: 1.6;
+            font-size: 0.95rem;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Action Buttons */
+        .favorite-card-actions {
+            padding: 0 20px 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-size: 0.9rem;
+        }
+
+        .btn-view {
+            background: #dbeafe;
+            color: #1e40af;
+            border-color: #bfdbfe;
+        }
+
+        .btn-view:hover {
+            background: #bfdbfe;
+            transform: translateY(-2px);
+        }
+
+        .btn-remove {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .btn-remove:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+        }
+
+        .btn-remove:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Card Footer */
+        .favorite-card-footer {
+            padding: 15px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        /* Empty State */
+        .no-favorites {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 15px;
+            border: 2px dashed #cbd5e1;
+            margin: 40px 0;
+        }
+
+        .empty-state {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .empty-state i {
+            color: #fca5a5;
+            margin-bottom: 20px;
+            font-size: 4rem;
+        }
+
+        .empty-state h2 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 2rem;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* Tips */
+        .tips {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .tips h3 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .tips ol {
+            text-align: left;
+            padding-left: 20px;
+            color: #475569;
+            line-height: 1.8;
+        }
+
+        .tips li {
+            margin-bottom: 8px;
+        }
+
+        .tips a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .tips a:hover {
+            text-decoration: underline;
+        }
+
+        /* Action Buttons Container */
+        .favorites-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: white;
+            padding: 12px 24px;
+            font-size: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            padding: 12px 24px;
+            font-size: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            color: white;
+            padding: 12px 24px;
+            font-size: 1rem;
+        }
+
+        .btn-export:hover {
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            transform: translateY(-2px);
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .favorites-header h1 {
+                font-size: 2rem;
+            }
+            
+            .favorites-stats {
+                gap: 15px;
+            }
+            
+            .stat-item {
+                min-width: 100px;
+                padding: 10px 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+            
+            .favorites-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .favorite-card-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .priority-selector {
+                width: 100%;
+            }
+            
+            .priority-select {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <%- include('partials/header') %>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
     
-    <main class="container favorites-container">
-        <div class="page-header">
-            <h1><i class="fas fa-heart text-danger"></i> <%= title %></h1>
-            <p class="lead">Your personal collection of favorite vehicles</p>
+    <!-- Include your header partial -->
+    <%- include('../partials/header') %>
+
+    <main class="favorites-container" id="main-content">
+        <!-- Breadcrumbs -->
+        <nav aria-label="Breadcrumb" class="breadcrumbs">
+            <ol>
+                <% breadcrumbs.forEach((crumb, index) => { %>
+                    <li>
+                        <% if (index < breadcrumbs.length - 1) { %>
+                            <a href="<%= crumb.url %>"><%= crumb.name %></a> &gt;
+                        <% } else { %>
+                            <span aria-current="page"><%= crumb.name %></span>
+                        <% } %>
+                    </li>
+                <% }) %>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="favorites-header">
+            <h1><i class="fas fa-heart" aria-hidden="true"></i> <span><%= title %></span></h1>
+            <p id="favorites-description">Your saved vehicles list. You have <strong><%= totalFavorites %></strong> saved vehicles.</p>
+            
+            <!-- Stats Bar -->
+            <% if (userStats && userStats.total_favorites) { %>
+                <div class="favorites-stats" role="status" aria-live="polite">
+                    <div class="stat-item">
+                        <span class="stat-number"><%= userStats.total_favorites %></span>
+                        <span class="stat-label">Total Saved</span>
+                    </div>
+                    <% if (userStats.average_priority) { %>
+                        <div class="stat-item">
+                            <span class="stat-number"><%= parseFloat(userStats.average_priority).toFixed(1) %></span>
+                            <span class="stat-label">Avg Priority</span>
+                        </div>
+                    <% } %>
+                    <% if (userStats.months_active) { %>
+                        <div class="stat-item">
+                            <span class="stat-number"><%= userStats.months_active %></span>
+                            <span class="stat-label">Months Active</span>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
         </div>
+
+        <!-- Validation Messages Container -->
+        <div id="validation-messages" class="validation-container" aria-live="assertive"></div>
 
         <!-- Flash Messages -->
-        <% if (messages.notice && messages.notice.length > 0) { %>
-            <div class="alert alert-info">
-                <i class="fas fa-info-circle"></i> <%= messages.notice[0] %>
-            </div>
-        <% } %>
-        
-        <% if (messages.success && messages.success.length > 0) { %>
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i> <%= messages.success[0] %>
-            </div>
-        <% } %>
-        
-        <% if (messages.error && messages.error.length > 0) { %>
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i> <%= messages.error[0] %>
-            </div>
+        <% if (locals.messages) { %>
+            <% Object.keys(locals.messages).forEach(type => { %>
+                <% if (locals.messages[type] && locals.messages[type].length > 0) { %>
+                    <div class="flash-message <%= type %>" role="alert">
+                        <i class="fas fa-<%= type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle' %>"></i>
+                        <%= locals.messages[type][0] %>
+                    </div>
+                <% } %>
+            <% }) %>
         <% } %>
 
-        <!-- Stats Section -->
-        <% if (stats) { %>
-        <div class="favorites-stats mb-4">
-            <div class="row">
-                <div class="col-md-3 col-6">
-                    <div class="stat-card text-center p-3 border rounded">
-                        <div class="stat-number display-4 text-primary"><%= stats.total || 0 %></div>
-                        <div class="stat-label text-muted">Total Favorites</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-card text-center p-3 border rounded">
-                        <div class="stat-number display-4 text-warning"><%= stats.high_priority_count || 0 %></div>
-                        <div class="stat-label text-muted">High Priority</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-card text-center p-3 border rounded">
-                        <div class="stat-number h4">
-                            <i class="fas fa-star text-warning"></i> <%= stats.avg_priority ? parseFloat(stats.avg_priority).toFixed(1) : '0.0' %>
+        <!-- Favorites Content -->
+        <% if (favorites && favorites.length > 0) { %>
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+                <nav class="pagination" aria-label="Favorites pagination">
+                    <ul>
+                        <% if (currentPage > 1) { %>
+                            <li><a href="?page=<%= currentPage - 1 %>" aria-label="Previous page">&laquo; Previous</a></li>
+                        <% } %>
+                        
+                        <% for (let i = 1; i <= totalPages; i++) { %>
+                            <li>
+                                <% if (i === currentPage) { %>
+                                    <span class="current" aria-current="page"><%= i %></span>
+                                <% } else { %>
+                                    <a href="?page=<%= i %>"><%= i %></a>
+                                <% } %>
+                            </li>
+                        <% } %>
+                        
+                        <% if (currentPage < totalPages) { %>
+                            <li><a href="?page=<%= currentPage + 1 %>" aria-label="Next page">Next &raquo;</a></li>
+                        <% } %>
+                    </ul>
+                </nav>
+            <% } %>
+
+            <!-- Favorites Grid -->
+            <div class="favorites-grid" role="list" aria-label="List of favorite vehicles">
+                <% favorites.forEach((vehicle, index) => { %>
+                    <div class="favorite-card" role="listitem" data-vehicle-id="<%= vehicle.inv_id %>">
+                        <!-- Card Header -->
+                        <div class="favorite-card-header">
+                            <h3 id="vehicle-title-<%= index %>">
+                                <%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>
+                            </h3>
+                            
+                            <!-- Priority Selector -->
+                            <div class="priority-selector">
+                                <label for="priority-<%= vehicle.inv_id %>" class="sr-only">Priority</label>
+                                <select id="priority-<%= vehicle.inv_id %>" class="priority-select" 
+                                        data-vehicle-id="<%= vehicle.inv_id %>"
+                                        aria-label="Set priority level for <%= vehicle.inv_make %> <%= vehicle.inv_model %>">
+                                    <% for (let i = 1; i <= 5; i++) { %>
+                                        <option value="<%= i %>" <%= vehicle.priority === i ? 'selected' : '' %>>
+                                            <% if (i === 1) { %>Lowest Priority<% } else if (i === 3) { %>Medium Priority<% } else if (i === 5) { %>Highest Priority<% } else { %>Priority <%= i %><% } %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                            </div>
                         </div>
-                        <div class="stat-label text-muted">Avg. Priority</div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-6">
-                    <div class="stat-card text-center p-3 border rounded">
-                        <div class="stat-number h4">
-                            <% if (stats.first_favorite) { %>
-                                <%= new Date(stats.first_favorite).toLocaleDateString() %>
+                        
+                        <!-- Vehicle Image -->
+                        <div class="favorite-card-image">
+                            <% if (vehicle.inv_thumbnail) { %>
+                                <img src="<%= vehicle.inv_thumbnail %>" 
+                                     alt="<%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
+                                     loading="lazy">
                             <% } else { %>
-                                --
+                                <div class="no-image" aria-hidden="true">
+                                    <i class="fas fa-car"></i>
+                                    <span class="sr-only">No image available for <%= vehicle.inv_make %> <%= vehicle.inv_model %></span>
+                                </div>
                             <% } %>
                         </div>
-                        <div class="stat-label text-muted">First Saved</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <% } %>
-
-        <!-- Sorting Controls -->
-        <div class="sort-controls mb-4">
-            <div class="d-flex flex-wrap align-items-center gap-2">
-                <span class="text-muted">Sort by:</span>
-                <a href="?sort=created_at" class="btn btn-sm <%= sortBy === 'created_at' ? 'btn-primary' : 'btn-outline-primary' %>">
-                    <i class="fas fa-clock"></i> Recently Added
-                </a>
-                <a href="?sort=priority" class="btn btn-sm <%= sortBy === 'priority' ? 'btn-primary' : 'btn-outline-primary' %>">
-                    <i class="fas fa-star"></i> Priority
-                </a>
-                <a href="?sort=price" class="btn btn-sm <%= sortBy === 'price' ? 'btn-primary' : 'btn-outline-primary' %>">
-                    <i class="fas fa-dollar-sign"></i> Price
-                </a>
-                <a href="?sort=year" class="btn btn-sm <%= sortBy === 'year' ? 'btn-primary' : 'btn-outline-primary' %>">
-                    <i class="fas fa-calendar"></i> Year
-                </a>
-                <a href="?sort=make" class="btn btn-sm <%= sortBy === 'make' ? 'btn-primary' : 'btn-outline-primary' %>">
-                    <i class="fas fa-car"></i> Make
-                </a>
-            </div>
-        </div>
-
-        <% if (favorites && favorites.length > 0) { %>
-            <!-- Favorites Grid -->
-            <div class="favorites-grid row g-4">
-                <% favorites.forEach((vehicle, index) => { %>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="card favorite-card h-100" data-vehicle-id="<%= vehicle.inv_id %>">
-                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0" id="vehicle-title-<%= index %>">
-                                    <%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>
-                                </h5>
-                                <div class="priority-badge">
-                                    <% for (let i = 1; i <= 5; i++) { %>
-                                        <i class="fas fa-star <%= i <= vehicle.priority ? 'text-warning' : 'text-muted' %>"></i>
-                                    <% } %>
-                                </div>
+                        
+                        <!-- Notes Section -->
+                        <div class="notes-section">
+                            <label for="notes-<%= vehicle.inv_id %>" class="sr-only">Notes</label>
+                            <textarea id="notes-<%= vehicle.inv_id %>" 
+                                      class="notes-input" 
+                                      placeholder="Add notes about this vehicle (max 500 characters)..."
+                                      data-vehicle-id="<%= vehicle.inv_id %>"
+                                      aria-label="Notes for <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
+                                      maxlength="500"><%= vehicle.notes || '' %></textarea>
+                            <div id="notes-counter-<%= vehicle.inv_id %>" class="notes-counter">
+                                <%= (vehicle.notes || '').length %>/500 characters
                             </div>
+                            <button class="save-notes-btn" data-vehicle-id="<%= vehicle.inv_id %>">
+                                <i class="fas fa-save"></i> Save Notes
+                            </button>
+                        </div>
+                        
+                        <!-- Vehicle Details -->
+                        <div class="favorite-card-details">
+                            <dl>
+                                <dt>Classification:</dt>
+                                <dd><%= vehicle.classification_name %></dd>
+                                
+                                <dt>Price:</dt>
+                                <dd>$<%= parseFloat(vehicle.inv_price).toLocaleString('en-US', {minimumFractionDigits: 2}) %></dd>
+                                
+                                <dt>Mileage:</dt>
+                                <dd><%= vehicle.inv_miles.toLocaleString() %> miles</dd>
+                                
+                                <dt>Color:</dt>
+                                <dd><%= vehicle.inv_color %></dd>
+                                
+                                <dt>Added:</dt>
+                                <dd><%= new Date(vehicle.created_at).toLocaleDateString('en-US', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) %></dd>
+                            </dl>
                             
-                            <!-- Vehicle Image -->
-                            <div class="card-img-container">
-                                <% if (vehicle.inv_thumbnail) { %>
-                                    <img src="<%= vehicle.inv_thumbnail %>" 
-                                         class="card-img-top" 
-                                         alt="<%= vehicle.inv_year %> <%= vehicle.inv_make %> <%= vehicle.inv_model %>"
-                                         style="height: 200px; object-fit: cover;">
-                                <% } else { %>
-                                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" 
-                                         style="height: 200px;">
-                                        <i class="fas fa-car fa-3x text-light"></i>
-                                    </div>
-                                <% } %>
-                            </div>
+                            <p class="description"><%= vehicle.inv_description.substring(0, 150) %>...</p>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="favorite-card-actions">
+                            <a href="/inv/detail/<%= vehicle.inv_id %>" class="btn btn-view" 
+                               aria-label="View details of <%= vehicle.inv_make %> <%= vehicle.inv_model %>">
+                                <i class="fas fa-eye" aria-hidden="true"></i> View Details
+                            </a>
                             
-                            <!-- Vehicle Details -->
-                            <div class="card-body">
-                                <div class="row mb-2">
-                                    <div class="col-6">
-                                        <small class="text-muted">Classification:</small>
-                                        <div class="fw-bold"><%= vehicle.classification_name %></div>
-                                    </div>
-                                    <div class="col-6">
-                                        <small class="text-muted">Price:</small>
-                                        <div class="fw-bold text-success">$<%= parseFloat(vehicle.inv_price).toLocaleString('en-US', {minimumFractionDigits: 2}) %></div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Notes Section -->
-                                <% if (vehicle.notes) { %>
-                                    <div class="notes-section mb-3">
-                                        <small class="text-muted">Your Notes:</small>
-                                        <div class="notes-content p-2 bg-light rounded">
-                                            <i class="fas fa-sticky-note text-muted me-1"></i>
-                                            <%= vehicle.notes %>
-                                        </div>
-                                    </div>
-                                <% } %>
-                                
-                                <!-- Description -->
-                                <p class="card-text text-muted small">
-                                    <%= vehicle.inv_description.substring(0, 100) %>...
-                                </p>
-                                
-                                <!-- Actions -->
-                                <div class="d-flex gap-2">
-                                    <a href="/inv/detail/<%= vehicle.inv_id %>" class="btn btn-primary btn-sm flex-grow-1">
-                                        <i class="fas fa-eye"></i> View Details
-                                    </a>
-                                    <button class="btn btn-outline-danger btn-sm remove-favorite-btn"
-                                            data-vehicle-id="<%= vehicle.inv_id %>"
-                                            title="Remove from favorites">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                                
-                                <!-- Update Notes Form -->
-                                <div class="update-notes mt-3">
-                                    <div class="input-group input-group-sm">
-                                        <input type="text" 
-                                               class="form-control notes-input" 
-                                               placeholder="Update notes..."
-                                               data-vehicle-id="<%= vehicle.inv_id %>"
-                                               value="<%= vehicle.notes || '' %>">
-                                        <button class="btn btn-outline-secondary update-notes-btn"
-                                                data-vehicle-id="<%= vehicle.inv_id %>">
-                                            <i class="fas fa-save"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Card Footer -->
-                            <div class="card-footer text-muted small d-flex justify-content-between">
-                                <div>
-                                    <i class="fas fa-calendar me-1"></i>
-                                    <%= new Date(vehicle.created_at).toLocaleDateString() %>
-                                </div>
-                                <div>
-                                    <i class="fas fa-eye me-1"></i>
-                                    <%= new Date(vehicle.last_viewed).toLocaleDateString() %>
-                                </div>
-                            </div>
+                            <button class="btn btn-remove remove-favorite-btn" 
+                                    data-vehicle-id="<%= vehicle.inv_id %>"
+                                    aria-label="Remove <%= vehicle.inv_make %> <%= vehicle.inv_model %> from favorites">
+                                <i class="fas fa-trash" aria-hidden="true"></i> Remove
+                            </button>
+                        </div>
+                        
+                        <!-- Card Footer -->
+                        <div class="favorite-card-footer">
+                            <small>Priority level: <%= vehicle.priority %>/5</small>
                         </div>
                     </div>
                 <% }) %>
             </div>
             
-            <!-- Empty State (when all favorites removed) -->
-            <div id="no-favorites-message" class="text-center py-5" style="display: none;">
-                <div class="empty-state">
-                    <i class="fas fa-heart fa-4x text-muted mb-3"></i>
-                    <h3>No Favorite Vehicles</h3>
-                    <p class="text-muted">Your favorites list is empty.</p>
-                    <a href="/inv/" class="btn btn-primary">
-                        <i class="fas fa-car"></i> Browse Vehicles
-                    </a>
-                </div>
+            <!-- Export and Actions -->
+            <div class="favorites-actions">
+                <a href="/account/favorites/export" class="btn btn-export" 
+                   aria-label="Export favorites list as CSV file">
+                    <i class="fas fa-download"></i> Export to CSV
+                </a>
+                <a href="/inv/" class="btn btn-primary" aria-label="Browse more vehicles">
+                    <i class="fas fa-car"></i> Browse More Vehicles
+                </a>
+                <a href="/account/dashboard" class="btn btn-secondary" aria-label="Return to account dashboard">
+                    <i class="fas fa-user"></i> Back to Dashboard
+                </a>
             </div>
             
         <% } else { %>
-            <!-- Empty State (no favorites at all) -->
-            <div class="text-center py-5">
+            <!-- Empty State -->
+            <div class="no-favorites" role="alert" aria-live="polite">
                 <div class="empty-state">
-                    <i class="fas fa-heart fa-4x text-muted mb-3"></i>
-                    <h3>No Favorite Vehicles Yet</h3>
-                    <p class="text-muted mb-4">Start building your dream garage by saving vehicles you're interested in.</p>
+                    <i class="fas fa-heart" aria-hidden="true"></i>
+                    <h2>No Favorite Vehicles Yet</h2>
+                    <p>Start building your dream garage by saving vehicles you're interested in.</p>
                     
-                    <div class="tips bg-light p-4 rounded mb-4 text-start mx-auto" style="max-width: 500px;">
-                        <h5 class="mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>How to save vehicles:</h5>
-                        <ol class="mb-0">
+                    <!-- Quick Tips -->
+                    <div class="tips">
+                        <h3>How to save vehicles:</h3>
+                        <ol>
                             <li>Browse our <a href="/inv/">inventory</a></li>
                             <li>Click the heart icon on any vehicle page</li>
                             <li>Set priority levels and add notes</li>
@@ -233,256 +892,281 @@
                         </ol>
                     </div>
                     
-                    <a href="/inv/" class="btn btn-primary btn-lg">
-                        <i class="fas fa-car"></i> Start Browsing Vehicles
+                    <a href="/inv/" class="btn btn-primary" aria-label="Browse vehicle inventory">
+                        <i class="fas fa-car"></i> Start Browsing
                     </a>
                 </div>
             </div>
         <% } %>
-        
-        <!-- Back to Account -->
-        <div class="mt-4 text-center">
-            <a href="/account/management" class="btn btn-outline-secondary">
-                <i class="fas fa-arrow-left"></i> Back to Account Management
-            </a>
-        </div>
     </main>
 
-    <!-- Footer -->
-    <%- include('partials/footer') %>
+    <!-- Include your footer partial -->
+    <%- include('../partials/footer') %>
 
     <!-- JavaScript -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Handle remove favorite buttons
-            document.querySelectorAll('.remove-favorite-btn').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const vehicleId = this.dataset.vehicleId;
-                    const vehicleCard = this.closest('.favorite-card');
-                    const vehicleName = vehicleCard.querySelector('.card-header h5').textContent;
-                    
-                    if (!confirm(`Remove "${vehicleName}" from favorites?`)) {
-                        return;
-                    }
-                    
-                    // Show loading state
-                    const originalHTML = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                    this.disabled = true;
-                    
-                    try {
-                        const response = await fetch('/account/favorites/toggle', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ vehicle_id: vehicleId })
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (result.success) {
-                            // Animate removal
-                            vehicleCard.style.transition = 'all 0.3s ease';
-                            vehicleCard.style.opacity = '0';
-                            vehicleCard.style.transform = 'translateY(-20px)';
-                            
-                            setTimeout(() => {
-                                vehicleCard.remove();
-                                
-                                // Check if no favorites left
-                                const remainingCards = document.querySelectorAll('.favorite-card');
-                                if (remainingCards.length === 0) {
-                                    // Show empty state
-                                    document.querySelector('.favorites-grid').style.display = 'none';
-                                    document.getElementById('no-favorites-message').style.display = 'block';
-                                }
-                                
-                                // Show success message
-                                showToast(result.message, 'success');
-                            }, 300);
-                        } else {
-                            throw new Error(result.message);
-                        }
-                    } catch (error) {
-                        console.error('Error removing favorite:', error);
-                        showToast('Failed to remove favorite. Please try again.', 'error');
-                        
-                        // Reset button
-                        this.innerHTML = originalHTML;
-                        this.disabled = false;
-                    }
-                });
-            });
-            
-            // Handle update notes
-            document.querySelectorAll('.update-notes-btn').forEach(button => {
-                button.addEventListener('click', async function() {
-                    const vehicleId = this.dataset.vehicleId;
-                    const input = document.querySelector(`.notes-input[data-vehicle-id="${vehicleId}"]`);
-                    const notes = input.value.trim();
-                    
-                    // Show loading state
-                    const originalHTML = this.innerHTML;
-                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                    this.disabled = true;
-                    
-                    try {
-                        const response = await fetch('/account/favorites/update', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ 
-                                vehicle_id: vehicleId,
-                                notes: notes
-                            })
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (result.success) {
-                            showToast('Notes updated successfully!', 'success');
-                            
-                            // Update notes display
-                            const notesSection = input.closest('.card-body').querySelector('.notes-content');
-                            if (notesSection) {
-                                if (notes) {
-                                    notesSection.innerHTML = `<i class="fas fa-sticky-note text-muted me-1"></i>${notes}`;
-                                    notesSection.parentElement.style.display = 'block';
-                                } else {
-                                    notesSection.parentElement.style.display = 'none';
-                                }
-                            }
-                            
-                            // Reset button with success state
-                            this.innerHTML = '<i class="fas fa-check"></i>';
-                            setTimeout(() => {
-                                this.innerHTML = originalHTML;
-                                this.disabled = false;
-                            }, 2000);
-                        } else {
-                            throw new Error(result.message);
-                        }
-                    } catch (error) {
-                        console.error('Error updating notes:', error);
-                        showToast('Failed to update notes. Please try again.', 'error');
-                        
-                        // Reset button
-                        this.innerHTML = originalHTML;
-                        this.disabled = false;
-                    }
-                });
-            });
-            
-            // Enter key for notes input
-            document.querySelectorAll('.notes-input').forEach(input => {
-                input.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        const vehicleId = this.dataset.vehicleId;
-                        const updateBtn = document.querySelector(`.update-notes-btn[data-vehicle-id="${vehicleId}"]`);
-                        if (updateBtn) {
-                            updateBtn.click();
-                        }
-                    }
-                });
-            });
-            
-            // Toast notification function
-            function showToast(message, type = 'info') {
-                // Remove existing toasts
-                document.querySelectorAll('.toast').forEach(toast => toast.remove());
-                
-                // Create toast
-                const toast = document.createElement('div');
-                toast.className = `toast show position-fixed ${type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info'}`;
-                toast.style.cssText = `
-                    bottom: 20px;
-                    right: 20px;
-                    z-index: 1050;
-                    color: white;
-                    padding: 1rem;
-                    border-radius: 5px;
-                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-                `;
-                
-                toast.innerHTML = `
-                    <div class="d-flex align-items-center">
-                        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} me-2"></i>
-                        <div>${message}</div>
-                    </div>
-                `;
-                
-                document.body.appendChild(toast);
-                
-                // Auto remove after 3 seconds
-                setTimeout(() => {
-                    toast.remove();
-                }, 3000);
+        class FavoritesManager {
+            constructor() {
+                this.initEventListeners();
+                this.setupValidation();
+                this.initializeAccessibility();
             }
+            
+            initEventListeners() {
+                // Remove favorite buttons
+                document.querySelectorAll('.remove-favorite-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.handleRemoveFavorite(e));
+                });
+                
+                // Priority selectors
+                document.querySelectorAll('.priority-select').forEach(select => {
+                    select.addEventListener('change', (e) => this.handlePriorityChange(e));
+                });
+                
+                // Notes save buttons
+                document.querySelectorAll('.save-notes-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.handleSaveNotes(e));
+                });
+                
+                // Notes input validation
+                document.querySelectorAll('.notes-input').forEach(textarea => {
+                    textarea.addEventListener('input', (e) => {
+                        this.validateNotes(e.target);
+                    });
+                });
+                
+                // Export button
+                const exportBtn = document.querySelector('.btn-export');
+                if (exportBtn) {
+                    exportBtn.addEventListener('click', (e) => this.handleExport(e));
+                }
+            }
+            
+            setupValidation() {
+                // Initialize notes counters
+                document.querySelectorAll('.notes-input').forEach(textarea => {
+                    this.validateNotes(textarea);
+                });
+            }
+            
+            initializeAccessibility() {
+                // Add keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeAllModals();
+                    }
+                });
+                
+                // Focus management
+                const mainContent = document.getElementById('main-content');
+                if (mainContent) {
+                    mainContent.setAttribute('tabindex', '-1');
+                    mainContent.focus();
+                }
+            }
+            
+            validateNotes(textarea) {
+                const maxLength = 500;
+                const currentLength = textarea.value.length;
+                const vehicleId = textarea.dataset.vehicleId;
+                const counter = document.getElementById(`notes-counter-${vehicleId}`);
+                
+                if (counter) {
+                    counter.textContent = `${currentLength}/${maxLength} characters`;
+                    
+                    if (currentLength > maxLength) {
+                        counter.classList.add('error');
+                        this.showValidationMessage(`Notes cannot exceed ${maxLength} characters`, 'error');
+                        return false;
+                    } else {
+                        counter.classList.remove('error');
+                        return true;
+                    }
+                }
+                return true;
+            }
+            
+            async handleRemoveFavorite(event) {
+                const button = event.currentTarget;
+                const vehicleId = button.dataset.vehicleId;
+                const card = button.closest('.favorite-card');
+                const vehicleName = card.querySelector('h3').textContent;
+                
+                if (!confirm(`Are you sure you want to remove "${vehicleName}" from your favorites?`)) {
+                    return;
+                }
+                
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Removing...';
+                
+                try {
+                    const response = await fetch('/account/favorites/toggle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: JSON.stringify({ vehicle_id: vehicleId })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Animate removal
+                        card.style.transition = 'all 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateX(-100px)';
+                        
+                        setTimeout(() => {
+                            card.remove();
+                            this.updateStats(result.userStats);
+                            this.showValidationMessage(result.message, 'success');
+                            
+                            // Check if empty
+                            const remaining = document.querySelectorAll('.favorite-card').length;
+                            if (remaining === 0) {
+                                setTimeout(() => location.reload(), 1000);
+                            }
+                        }, 300);
+                    } else {
+                        throw new Error(result.message || 'Failed to remove favorite');
+                    }
+                } catch (error) {
+                    console.error('Remove favorite error:', error);
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-trash"></i> Remove';
+                    this.showValidationMessage('Failed to remove favorite. Please try again.', 'error');
+                }
+            }
+            
+            async handlePriorityChange(event) {
+                const select = event.target;
+                const vehicleId = select.dataset.vehicleId;
+                const priority = select.value;
+                
+                try {
+                    const response = await fetch('/account/favorites/update-priority', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            vehicle_id: vehicleId, 
+                            priority: parseInt(priority) 
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showValidationMessage('Priority updated successfully', 'success');
+                    } else {
+                        throw new Error(result.message || 'Failed to update priority');
+                    }
+                } catch (error) {
+                    console.error('Priority update error:', error);
+                    this.showValidationMessage('Failed to update priority', 'error');
+                }
+            }
+            
+            async handleSaveNotes(event) {
+                const button = event.currentTarget;
+                const vehicleId = button.dataset.vehicleId;
+                const textarea = document.getElementById(`notes-${vehicleId}`);
+                
+                if (!this.validateNotes(textarea)) {
+                    return;
+                }
+                
+                const notes = textarea.value;
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                
+                try {
+                    const response = await fetch('/account/favorites/update-notes', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            vehicle_id: vehicleId, 
+                            notes: notes 
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showValidationMessage('Notes saved successfully', 'success');
+                        button.innerHTML = '<i class="fas fa-check"></i> Saved';
+                        setTimeout(() => {
+                            button.innerHTML = '<i class="fas fa-save"></i> Save Notes';
+                            button.disabled = false;
+                        }, 2000);
+                    } else {
+                        throw new Error(result.message || 'Failed to save notes');
+                    }
+                } catch (error) {
+                    console.error('Save notes error:', error);
+                    button.innerHTML = '<i class="fas fa-save"></i> Save Notes';
+                    button.disabled = false;
+                    this.showValidationMessage('Failed to save notes', 'error');
+                }
+            }
+            
+            showValidationMessage(message, type) {
+                const container = document.getElementById('validation-messages');
+                const messageEl = document.createElement('div');
+                
+                messageEl.className = `validation-message ${type}`;
+                messageEl.setAttribute('role', 'alert');
+                messageEl.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    <span>${message}</span>
+                `;
+                
+                container.appendChild(messageEl);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    messageEl.style.opacity = '0';
+                    setTimeout(() => messageEl.remove(), 300);
+                }, 5000);
+            }
+            
+            updateStats(stats) {
+                if (stats && stats.total_favorites) {
+                    const totalEl = document.querySelector('.stat-item:first-child .stat-number');
+                    const avgPriorityEl = document.querySelector('.stat-item:nth-child(2) .stat-number');
+                    
+                    if (totalEl) {
+                        totalEl.textContent = stats.total_favorites;
+                    }
+                    
+                    if (avgPriorityEl && stats.average_priority) {
+                        avgPriorityEl.textContent = parseFloat(stats.average_priority).toFixed(1);
+                    }
+                    
+                    // Update favorites description
+                    const desc = document.getElementById('favorites-description');
+                    if (desc) {
+                        desc.innerHTML = `Your saved vehicles list. You have <strong>${stats.total_favorites}</strong> saved vehicles.`;
+                    }
+                }
+            }
+            
+            handleExport(event) {
+                // Export is handled by the link href, but we can add confirmation
+                if (!confirm('Export your favorites as a CSV file? This may take a moment.')) {
+                    event.preventDefault();
+                }
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new FavoritesManager();
         });
     </script>
-
-    <style>
-        .favorites-container {
-            padding: 2rem 1rem;
-        }
-        
-        .page-header {
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        
-        .stat-card {
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .favorite-card {
-            transition: all 0.3s ease;
-            border: 1px solid #dee2e6;
-        }
-        
-        .favorite-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .priority-badge {
-            font-size: 0.9rem;
-        }
-        
-        .notes-content {
-            font-size: 0.9rem;
-            border-left: 3px solid #007bff;
-        }
-        
-        .sort-controls .btn {
-            min-width: 120px;
-        }
-        
-        .empty-state {
-            padding: 3rem 1rem;
-        }
-        
-        .tips {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        }
-        
-        @media (max-width: 768px) {
-            .stat-card {
-                margin-bottom: 1rem;
-            }
-            
-            .sort-controls .btn {
-                min-width: auto;
-                flex: 1;
-            }
-        }
-    </style>
 </body>
 </html>
