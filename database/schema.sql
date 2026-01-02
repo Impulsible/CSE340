@@ -1,3 +1,24 @@
+-- Create the classification table first
+CREATE TABLE IF NOT EXISTS classification (
+  classification_id INTEGER PRIMARY KEY,
+  classification_name VARCHAR NOT NULL UNIQUE
+);
+
+-- Create the inventory table with foreign key reference to classification
+CREATE TABLE IF NOT EXISTS inventory (
+  inv_id INTEGER PRIMARY KEY,
+  inv_make VARCHAR NOT NULL,
+  inv_model VARCHAR NOT NULL,
+  inv_year INTEGER NOT NULL,
+  inv_description TEXT NOT NULL,
+  inv_image VARCHAR NOT NULL,
+  inv_thumbnail VARCHAR NOT NULL,
+  inv_price NUMERIC(9,0) NOT NULL,
+  inv_miles INTEGER NOT NULL,
+  inv_color VARCHAR NOT NULL,
+  classification_id INTEGER NOT NULL REFERENCES classification(classification_id) ON DELETE CASCADE
+);
+
 -- Clear existing data to start fresh
 DELETE FROM inventory;
 DELETE FROM classification;
@@ -11,8 +32,9 @@ INSERT INTO classification (classification_id, classification_name) VALUES
 (5, 'Sedan')
 ON CONFLICT (classification_id) DO NOTHING;
 
--- FIX: Reset classification sequence to ensure IDs match
-SELECT setval('classification_classification_id_seq', (SELECT MAX(classification_id) FROM classification));
+-- Note: In PostgreSQL, sequences are typically handled automatically for SERIAL columns
+-- If classification_id is SERIAL, the setval line below might not be needed
+-- SELECT setval('classification_classification_id_seq', (SELECT MAX(classification_id) FROM classification));
 
 -- Insert inventory vehicles with SPECIFIC IDs that match your HTML links
 INSERT INTO inventory (
@@ -105,5 +127,6 @@ INSERT INTO inventory (
 )
 ON CONFLICT (inv_id) DO NOTHING;
 
--- FIX: Reset the inventory sequence to continue from the highest ID used
-SELECT setval('inventory_inv_id_seq', (SELECT MAX(inv_id) FROM inventory));
+-- Note: In PostgreSQL, sequences are typically handled automatically for SERIAL columns
+-- If inv_id is SERIAL, the setval line below might not be needed
+-- SELECT setval('inventory_inv_id_seq', (SELECT MAX(inv_id) FROM inventory));
